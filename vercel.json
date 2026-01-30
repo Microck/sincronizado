@@ -3,6 +3,42 @@
   "framework": null,
   "rewrites": [
     {
+      "source": "/:path*",
+      "destination": "https://micrtde.mintlify.app/:path*"
+    },
+    {
+      "source": "/_mintlify/:path*",
+      "destination": "https://micrtde.mintlify.app/_mintlify/:path*"
+    },
+    {
+      "source": "/api/request",
+      "destination": "https://micrtde.mintlify.app/_mintlify/api/request"
+    },
+    {
+      "source": "/mintlify-assets/:path+",
+      "destination": "https://micrtde.mintlify.app/mintlify-assets/:path+"
+    },
+    {
+      "source": "/llms.txt",
+      "destination": "https://micrtde.mintlify.app/llms.txt"
+    },
+    {
+      "source": "/llms-full.txt",
+      "destination": "https://micrtde.mintlify.app/llms-full.txt"
+    },
+    {
+      "source": "/sitemap.xml",
+      "destination": "https://micrtde.mintlify.app/sitemap.xml"
+    },
+    {
+      "source": "/robots.txt",
+      "destination": "https://micrtde.mintlify.app/robots.txt"
+    },
+    {
+      "source": "/mcp",
+      "destination": "https://micrtde.mintlify.app/mcp"
+    },
+    {
       "source": "/install.sh",
       "destination": "https://raw.githubusercontent.com/microck/sincronizado/main/scripts/setup-vps.sh"
     },
@@ -13,12 +49,7 @@
     {
       "source": "/launcher/:path*",
       "destination": "https://raw.githubusercontent.com/microck/sincronizado/main/launcher/:path*"
-    },
-
-    {
-      "source": "/_mintlify/:path*",
-      "destination": "https://micrtde.mintlify.app/_mintlify/:path*"
-    },
+    }
     {
       "source": "/api/request",
       "destination": "https://micrtde.mintlify.app/_mintlify/api/request"
