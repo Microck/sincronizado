@@ -1,0 +1,35 @@
+{
+  "name": "sincronizado",
+  "version": "0.1.0",
+  "description": "Hyper-local development stack with remote AI execution",
+  "main": "index.js",
+  "bin": {
+    "sincronizado": "./bin/sincronizado.js",
+    "sincronizado-config": "./bin/config-wizard.js"
+  },
+  "scripts": {
+    "test": "echo 'Tests in development'",
+    "lint": "echo 'Linting in development'"
+  },
+  "keywords": [
+    "development",
+    "remote",
+    "ai",
+    "sync",
+    "mutagen",
+    "opencode"
+  ],
+  "author": "Microck",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/microck/sincronizado.git"
+  },
+  "bugs": {
+    "url": "https://github.com/microck/sincronizado/issues"
+  },
+  "homepage": "https://github.com/microck/sincronizado#readme",
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

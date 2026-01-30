@@ -1,0 +1,22 @@
+{
+  "version": "0.1.0",
+  "description": "Sincronizado - Hyper-local development stack with remote AI execution",
+  "homepage": "https://github.com/microck/sincronizado",
+  "license": "MIT",
+  "architecture": {
+    "64bit": {
+      "url": "https://github.com/microck/sincronizado/archive/refs/heads/main.zip",
+      "extract_dir": "sincronizado-main"
+    }
+  },
+  "bin": [
+    "launcher/opencode.ps1",
+    "scripts/config-wizard.ps1"
+  ],
+  "checkver": {
+    "github": "https://github.com/microck/sincronizado"
+  },
+  "autoupdate": {
+    "url": "https://github.com/microck/sincronizado/archive/refs/heads/main.zip"
+  }
+}
