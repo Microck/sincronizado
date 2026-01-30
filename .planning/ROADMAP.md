@@ -20,25 +20,21 @@
 - [x] Create configuration template
 
 ### Phase 2: VPS Setup Script
-**Status:** Pending
+**Status:** ✅ Complete
 **Goal:** One-command VPS setup for Ubuntu/Debian
+**Summary:** [.planning/phases/02-vps-setup-script/02-01-SUMMARY.md](./phases/02-vps-setup-script/02-01-SUMMARY.md)
 
-- [ ] Create setup-vps.sh script
-- [ ] Add OS detection (Ubuntu 20.04+, Debian 11+)
-- [ ] Install base dependencies (git, npm, direnv, tmux)
-- [ ] Install Eternal Terminal (et) from official docs
-- [ ] Install agent-os via npm
-- [ ] Install all OpenCode plugins
-  - simonwjackson/opencode-direnv
-  - remorses/agentmap
-  - tctinh/opencode-sync
-  - yoavf/ai-sessions-mcp
-- [ ] Install kbwo/ccmanager for session management
-- [ ] Configure firewall (ports 2222, 3000)
-- [ ] Add validation and error handling
-- [ ] Create rollback script
-- [ ] Test on fresh Ubuntu 20.04
-- [ ] Test on fresh Debian 11
+- [x] Create setup-vps.sh script with OS detection
+- [x] Install base dependencies (git, npm, direnv, tmux, curl, wget, ufw)
+- [x] Install Eternal Terminal with binary or source fallback
+- [x] Install Agent-OS with systemd service
+- [x] Install OpenCode plugins (direnv, agentmap, sync, ai-sessions)
+- [x] Install ccmanager for session management
+- [x] Configure UFW firewall (ports 2222, 3000)
+- [x] Add validation and error handling
+- [x] Create rollback-vps.sh script
+- [ ] Test on fresh Ubuntu 20.04 (manual testing required)
+- [ ] Test on fresh Debian 11 (manual testing required)
 
 ### Phase 3: Windows Launcher (opencode.ps1)
 **Status:** Pending
