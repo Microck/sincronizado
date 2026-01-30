@@ -1,173 +1,287 @@
 # Sincronizado Roadmap
 
-**Version: 1.0.0**
-**Status: In Progress**
+**Goal: Package hyper-local dev solution so anyone can recreate it**
 
-## Milestone 1: MVP Release
+## Milestone 1: MVP - Complete Solution Packaged
 
-### Phase 1: Foundation & Repository Setup
+### Phase 1: Create Project Structure
 **Status:** Pending
-**Goal:** Establish project structure, tooling, and development environment
+**Goal:** Organize repository for packaging solution
 
-- [ ] Initialize Git repository with proper structure
-- [ ] Set up CI/CD pipeline (GitHub Actions)
-- [ ] Create contribution guidelines
-- [ ] Set up documentation site (Docusaurus/Next.js)
-- [ ] Configure code quality tools (ESLint, Prettier)
-- [ ] Add license and legal files
+- [ ] Create directory structure (scripts/, launcher/, config/, docs/)
+- [ ] Extract opencode.ps1 from PLAN.md (my hash collision logic)
+- [ ] Extract VPS setup commands from PLAN.md
+- [ ] Document all referenced tools/repositories
+- [ ] Create configuration template
+- [ ] Initialize Git repository
 
-### Phase 2: Core Documentation & README
+### Phase 2: VPS Setup Script
 **Status:** Pending
-**Goal:** Create clear, comprehensive documentation that anyone can follow
+**Goal:** One-command VPS setup for Ubuntu/Debian
 
-- [ ] Write comprehensive README.md
-- [ ] Create quick start guide
-- [ ] Document architecture decisions
-- [ ] Create FAQ section
-- [ ] Write troubleshooting guide
-- [ ] Add video tutorial placeholder
-
-### Phase 3: VPS Setup Automation
-**Status:** Pending
-**Goal:** One-command VPS setup script
-
-- [ ] Create Bash setup script for Ubuntu/Debian
-- [ ] Install Eternal Terminal (et)
-- [ ] Install Agent-OS
-- [ ] Install OpenCode and plugins
-- [ ] Configure firewall/security
-- [ ] Add dependency validation
+- [ ] Create setup-vps.sh script
+- [ ] Add OS detection (Ubuntu 20.04+, Debian 11+)
+- [ ] Install base dependencies (git, npm, direnv, tmux)
+- [ ] Install Eternal Terminal (et) from official docs
+- [ ] Install agent-os via npm
+- [ ] Install all OpenCode plugins
+  - simonwjackson/opencode-direnv
+  - remorses/agentmap
+  - tctinh/opencode-sync
+  - yoavf/ai-sessions-mcp
+- [ ] Install kbwo/ccmanager for session management
+- [ ] Configure firewall (ports 2222, 3000)
+- [ ] Add validation and error handling
 - [ ] Create rollback script
 - [ ] Test on fresh Ubuntu 20.04
 - [ ] Test on fresh Debian 11
 
-### Phase 4: Windows Launcher & Mutagen Integration
+### Phase 3: Windows Launcher (opencode.ps1)
 **Status:** Pending
-**Goal:** Single command to start development session
+**Goal:** Package my hash-based session launcher
 
-- [ ] Refine opencode.ps1 launcher
-- [ ] Add error handling and validation
-- [ ] Create Mutagen configuration generator
-- [ ] Add project hash collision detection
-- [ ] Implement session management
-- [ ] Create uninstall script
-- [ ] Add progress indicators
-- [ ] Test with various project types (Node.js, Python, Rust)
-
-### Phase 5: Tailscale Integration
-**Status:** Pending
-**Goal:** Simplify Tailscale setup and configuration
-
-- [ ] Create Tailscale installation helper
-- [ ] Generate Tailscale config templates
-- [ ] Add MagicDNS setup automation
-- [ ] Create VPS connection validator
-- [ ] Document custom domain setup
-- [ ] Add network diagnostics tools
-
-### Phase 6: Mobile UI Integration (Agent-OS)
-**Status:** Pending
-**Goal:** Seamless mobile access to development sessions
-
-- [ ] Configure Agent-OS daemon mode
-- [ ] Create session auto-detection
-- [ ] Implement tmux session binding
-- [ ] Add mobile UI customization
-- [ ] Create mobile quick start guide
-- [ ] Test mobile UX flow
-- [ ] Add push notifications (optional)
-
-### Phase 7: Plugin Ecosystem Integration
-**Status:** Pending
-**Goal:** Install and configure all OpenCode plugins automatically
-
-- [ ] Automate opencode-direnv installation
-- [ ] Create .envrc templates
-- [ ] Automate agentmap installation
-- [ ] Configure tree integration
-- [ ] Automate opencode-sync setup
-- [ ] Create GitHub Gist integration
-- [ ] Automate ai-sessions-mcp installation
-- [ ] Test all plugin interactions
-
-### Phase 8: Session Management & Cleanup
-**Status:** Pending
-**Goal:** Tools to manage remote sessions efficiently
-
-- [ ] Integrate ccmanager
+- [ ] Extract exact opencode.ps1 from PLAN.md
+- [ ] Add pre-flight checks
+  - Mutagen installed?
+  - Tailscale running?
+  - Target host reachable?
+- [ ] Add error handling and user-friendly messages
+- [ ] Add verbose/quiet modes
+- [ ] Add help command
 - [ ] Create session list command
-- [ ] Add cleanup automation
-- [ ] Create orphaned session detector
-- [ ] Add session backup feature
-- [ ] Implement session templates
+- [ ] Create session kill command
+- [ ] Add configuration file support (.opencode.config.json)
+- [ ] Test on Windows 10
+- [ ] Test on Windows 11
+- [ ] Test with various project types
 
-### Phase 9: Testing & Validation
+### Phase 4: macOS Launcher (opencode.sh)
 **Status:** Pending
-**Goal:** Ensure everything works end-to-end
+**Goal:** Bash equivalent of Windows launcher
 
-- [ ] Create integration test suite
-- [ ] Test complete workflow (fresh VPS → dev session → mobile)
-- [ ] Test network resilience (WiFi ↔ 5G handoff)
-- [ ] Test file sync speed benchmarks
+- [ ] Port hash collision logic to Bash
+- [ ] Same session ID format
+- [ ] Same Mutagen sync patterns
+- [ ] Same session management commands
+- [ ] Add macOS-specific paths and tools
+- [ ] Test on macOS 12+ Intel
+- [ ] Test on macOS 12+ Apple Silicon
+
+### Phase 5: Configuration System
+**Status:** Pending
+**Goal:** Make solution customizable
+
+- [ ] Create .opencode.config.json schema
+  - VPS targets (name, hostname, provider)
+  - Port configuration
+  - Session prefix (default: sync-)
+  - Sync ignore patterns
+  - Plugin selection
+- [ ] Create config validation script
+- [ ] Create example config with defaults
+- [ ] Add interactive config generator
+- [ ] Document all options
+- [ ] Create config migration script
+
+### Phase 6: Multi-VPS Provider Support
+**Status:** Pending
+**Goal:** Support multiple cloud providers
+
+- [ ] Create AWS VPS setup script
+  - EC2 instance requirements
+  - Security group configuration
+  - User setup
+- [ ] Create GCP VPS setup script
+  - Compute Engine requirements
+  - Firewall rules
+  - User setup
+- [ ] Create Azure VPS setup script
+  - VM requirements
+  - Network configuration
+  - User setup
+- [ ] Create DigitalOcean VPS setup script
+  - Droplet requirements
+  - Firewall configuration
+- [ ] Create provider comparison guide
+  - Pricing
+  - Setup complexity
+  - Performance
+
+### Phase 7: Plugin Documentation
+**Status:** Pending
+**Goal:** Document all plugin integrations
+
+- [ ] Document simonwjackson/opencode-direnv
+  - Installation
+  - .envrc creation
+  - Usage examples
+- [ ] Document remorses/agentmap
+  - Installation
+  - Tree integration
+  - Usage in OpenCode
+- [ ] Document tctinh/opencode-sync
+  - GitHub Gist setup
+  - Sync workflow
+  - Multi-VPS config
+- [ ] Document yoavf/ai-sessions-mcp
+  - History search
+  - Examples
+- [ ] Document kbwo/ccmanager
+  - Session listing
+  - Cleanup commands
+- [ ] Create troubleshooting guide for each plugin
+
+### Phase 8: Mobile Access Documentation
+**Status:** Pending
+**Goal:** Complete mobile setup guide
+
+- [ ] Document agent-os daemon setup
+- [ ] Create auto-start script
+- [ ] Configure tmux session detection
+- [ ] Document Tailscale mobile setup
+  - DNS configuration
+  - MagicDNS setup
+  - Mobile app usage
+- [ ] Test mobile UX flow end-to-end
+- [ ] Create mobile troubleshooting guide
+- [ ] Document UI customization options
+
+### Phase 9: Workflow Documentation
+**Status:** Pending
+**Goal:** Document how to use solution
+
+- [ ] Create daily workflow guide
+  - Starting work (opencode launcher)
+  - File editing flow
+  - Session management
+  - Ending work (pause, cleanup)
+- [ ] Document optimization tips
+  - Hash collision why it matters
+  - Mutagen ignore patterns
+  - Sync performance
+- [ ] Create example projects
+  - Node.js project setup
+  - Python project setup
+  - Rust project setup
+- [ ] Document troubleshooting patterns
+  - Sync issues
+  - Network drops
+  - Session corruption
+  - VPS resource limits
+
+### Phase 10: Testing & Validation
+**Status:** Pending
+**Goal:** Ensure solution works for others
+
+- [ ] Test complete Windows flow
+  - Fresh machine install
+  - VPS setup
+  - Session launch
+  - File sync
+  - Mobile access
+- [ ] Test complete macOS flow
+  - Same as Windows
+- [ ] Test network resilience
+  - WiFi ↔ 5G handoff
+  - Long-running sessions
+  - Network interruptions
 - [ ] Test collision detection
+  - Same project name, different paths
+  - Verify unique session IDs
+- [ ] Test sync performance
+  - Measure latency
+  - Large files
+  - Many small files
+- [ ] Test plugin interactions
+  - All plugins working together
+  - Session cleanup
+  - History search
 - [ ] Create bug bash checklist
 - [ ] Fix all critical bugs
 
-### Phase 10: Packaging & Distribution
+### Phase 11: Packaging & Distribution
 **Status:** Pending
 **Goal:** Easy installation for all users
 
-- [ ] Create Windows installer (NSIS/Chocolatey)
-- [ ] Create Homebrew tap for macOS
-- [ ] Create npm package for tools
-- [ ] Create Docker images (if applicable)
-- [ ] Set up release automation
-- [ ] Create versioning strategy
-- [ ] Prepare for v1.0.0 release
+- [ ] Create Windows installer (NSIS or Inno Setup)
+  - Bundle launcher
+  - Add to PATH
+  - Create Start Menu shortcuts
+- [ ] Create Chocolatey package
+  - Publish to Chocolatey.org
+  - Auto-update support
+- [ ] Create Homebrew formula (macOS)
+  - Submit to Homebrew
+  - Auto-update support
+- [ ] Create npm package (config scripts, utils)
+- [ ] Set up GitHub release automation
+- [ ] Create versioning strategy (semver)
+- [ ] Write release notes for v1.0.0
 
-### Phase 11: Launch Preparation
+### Phase 12: Documentation Site
 **Status:** Pending
-**Goal:** Ready for public launch
+**Goal:** Comprehensive documentation
 
-- [ ] Write launch announcement
-- [ ] Create demo video
-- [ ] Prepare documentation site
-- [ ] Set up GitHub Issues templates
-- [ ] Create community guidelines
-- [ ] Prepare release notes
-- [ ] Set up monitoring/analytics
+- [ ] Set up documentation platform (Docusaurus)
+- [ ] Create Getting Started
+  - Prerequisites
+  - Quick start (5 min setup)
+  - Detailed installation
+- [ ] Create Reference
+  - Launcher commands
+  - Configuration options
+  - Plugin reference
+  - Troubleshooting
+- [ ] Create Guides
+  - Architecture explanation
+  - Optimization tips
+  - Customization examples
+  - Advanced usage
+- [ ] Create FAQ
+  - Common issues
+  - Solutions
+- [ ] Deploy to GitHub Pages
 
-### Phase 12: v1.0.0 Release
+### Phase 13: Launch & v1.0.0 Release
 **Status:** Pending
-**Goal:** Ship MVP to the world
+**Goal:** Ship to world
 
 - [ ] Final code review
-- [ ] Complete all open issues
+- [ ] Complete critical bugs
 - [ ] Run final integration tests
-- [ ] Create GitHub release
-- [ ] Publish packages
-- [ ] Announce launch
+- [ ] Create GitHub release v1.0.0
+  - Attach installers
+  - Detailed release notes
+  - Architecture explanation
+- [ ] Publish Chocolatey package
+- [ ] Publish Homebrew formula
+- [ ] Publish npm package
+- [ ] Write launch announcement
+  - What this is
+  - Why I built it
+  - Who it's for
+  - How to get started
+- [ ] Post on communities
+  - OpenCode Discord
+  - Tailscale community
+  - r/devops
+  - r/selfhosted
 - [ ] Monitor initial feedback
+- [ ] Fix critical bugs immediately
 
-## Milestone 2: Enhanced Features (Post-v1.0)
+## Milestone 2: Post-v1.0 Enhancements
 
-### Phase 13: GUI Configuration Tool
-- [ ] Electron/Tauri desktop app
-- [ ] Visual configuration editor
-- [ ] VPS provisioning wizard
-- [ ] Session visualizer
+### Phase 14: GUI Configuration Tool
+- Electron/Tauri desktop app
+- Visual VPS configuration
+- Visual session management
+- One-click VPS provisioning
 
-### Phase 14: Multi-VPS Provider Support
-- [ ] AWS integration
-- [ ] GCP integration
-- [ ] Azure integration
-- [ ] DigitalOcean integration
-
-### Phase 15: Team Features
-- [ ] Shared project sessions
-- [ ] Collaborative editing
-- [ ] Role-based access
-- [ ] Audit logging
+### Phase 15: Alternative Tools Support
+- Mosh as alternative to Eternal Terminal
+- Unison as alternative to Mutagen
+- Custom mobile UI alternatives
+- Tool comparison guide
 
 ## Statistics
 

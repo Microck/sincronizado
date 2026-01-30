@@ -126,18 +126,19 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guid
 
 ## Roadmap
 
-- [x] Phase 1: Foundation & Repository Setup
-- [ ] Phase 2: Core Documentation
-- [ ] Phase 3: VPS Setup Automation
-- [ ] Phase 4: Windows Launcher
-- [ ] Phase 5: Tailscale Integration
-- [ ] Phase 6: Mobile UI Integration
-- [ ] Phase 7: Plugin Ecosystem
-- [ ] Phase 8: Session Management
-- [ ] Phase 9: Testing & Validation
-- [ ] Phase 10: Packaging & Distribution
-- [ ] Phase 11: Launch Preparation
-- [ ] Phase 12: v1.0.0 Release
+- [ ] Phase 1: Create Project Structure
+- [ ] Phase 2: VPS Setup Script
+- [ ] Phase 3: Windows Launcher (opencode.ps1)
+- [ ] Phase 4: macOS Launcher (opencode.sh)
+- [ ] Phase 5: Configuration System
+- [ ] Phase 6: Multi-VPS Provider Support
+- [ ] Phase 7: Plugin Documentation
+- [ ] Phase 8: Mobile Access Documentation
+- [ ] Phase 9: Workflow Documentation
+- [ ] Phase 10: Testing & Validation
+- [ ] Phase 11: Packaging & Distribution
+- [ ] Phase 12: Documentation Site
+- [ ] Phase 13: Launch & v1.0.0 Release
 
 See [ROADMAP.md](.planning/ROADMAP.md) for complete details.
 

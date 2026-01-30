@@ -1,79 +1,252 @@
 # Sincronizado
 
-**Hyper-Local Development Stack for the AI-Native Era**
+**Package hyper-local development solution so anyone can recreate it**
 
 ## Vision
 
-A unified development environment that runs your AI coding assistant on remote VPS while keeping file editing instant on your local machine. Zero latency. Maximum AI power. Mobile accessible.
+Package complete solution I've built for local-first development with remote AI execution, so others can implement same workflow on their own infrastructure.
 
-## The Problem
+## The Problem I Solved
 
-Running large AI models locally is expensive and resource-intensive. Running them on cloud VPS requires constant SSH connections and file syncing overhead. Developers want:
-- Local file editing with their favorite tools
-- Remote AI execution with powerful GPUs
-- Instant synchronization
-- Mobile access to check progress
+Running AI coding assistants on local machines is expensive and resource-intensive. Running them on cloud VPS requires:
+- Constant SSH connections (fragile)
+- Manual file syncing (slow, error-prone)
+- No mobile access to monitor progress
+- Complex setup for each project
 
-## The Solution
+## My Solution (From PLAN.md)
 
-**Sincronizado** combines best-in-class tools into a cohesive development stack:
-- **Tailscale**: Secure, zero-config VPN
-- **Eternal Terminal**: Resilient connections (survives network drops)
-- **Mutagen**: Bi-directional file sync in real-time
-- **Agent-OS**: Web-based mobile UI for remote access
-- **OpenCode**: AI coding assistant running on VPS
+I combined best-in-class tools into a cohesive development environment:
 
-## What Makes It Special
+```
+Local Machine (Your PC)       VPS (Your Cloud Server)
+┌─────────────────┐         ┌──────────────────────┐
+│  VS Code/JetBrains│         │  OpenCode AI Agent   │
+│  Your Editor      │◄────────┤  Running on Your VPS │
+│                 │ Mutagen│  (AWS/GCP/Azure/DO)  │
+│  opencode launcher│  Sync   │  Tmux Sessions       │
+└─────────────────┘         └──────────────────────┘
+       ▲                              ▲
+       │   Tailscale (Your VPN)         │
+       │                              │
+       └──────────────────────────────┘
+                 Mobile Phone
+           (Agent-OS Web UI)
+```
 
-- **Local-First**: Edit files on Windows with VS Code, JetBrains, or any editor
-- **Remote Execution**: Heavy AI tasks run on Oracle VPS (Ashburn/Paris)
-- **Zero Latency**: Sync completes in <500ms
-- **Mobile Access**: Check status or chat from your phone via web UI
-- **Collision-Proof**: Hash-based project identification prevents conflicts
+### Key Innovations
+
+1. **Hash-Based Session IDs**
+   - Problem: Project "app" in `D:\Work\` and `C:\Tmp\` collide
+   - Solution: Hash full path → `app-3a5b2c` vs `app-7d8e9f`
+   - Result: Zero collision, even with same project names
+
+2. **Optimized Sync Strategy**
+   - Problem: Syncing `node_modules`, `.venv`, `.git` is slow
+   - Solution: Smart ignore patterns + directory separation
+   - Result: <500ms sync for actual code changes
+
+3. **Persistent Connections**
+   - Problem: SSH drops when switching WiFi/5G
+   - Solution: Eternal Terminal survives network changes
+   - Result: Sessions stay alive through handoffs
+
+4. **Mobile Access**
+   - Problem: Can't check AI progress while commuting
+   - Solution: Agent-OS web UI accessible via Tailscale
+   - Result: Full session access from phone
+
+5. **Plugin Ecosystem**
+   - Problem: VPS headless, agent lacks context
+   - Solution: agentmap provides tree view
+   - Result: Agent "sees" entire codebase structure
+
+## What Sincronizado Packages
+
+Sincronizado packages this COMPLETE solution so you can:
+
+1. **Recreate the architecture** on your infrastructure
+2. **Use the same tools** (Tailscale, Mutagen, et, agent-os, etc.)
+3. **Benefit from my optimizations** (hash collision, sync patterns)
+4. **Customize as needed** (different VPS provider, ports, naming)
+
+### Core Components (All Packaged)
+
+| Component | Tool | Purpose | Status |
+|-----------|------|---------|--------|
+| **Connectivity** | Tailscale | Zero-config VPN | Reference existing |
+| **Persistent Shell** | Eternal Terminal (`et`) | Network resilience | Reference existing |
+| **File Sync** | Mutagen | <500ms bi-directional sync | Reference existing |
+| **Session Launcher** | opencode launcher | Hash-based sessions, smart sync | **NEW - Package my script** |
+| **Mobile UI** | Agent-OS | Web-based remote access | Reference existing |
+| **Session Mgmt** | CCManager | Cleanup orphaned sessions | Reference existing |
+| **Agent Context** | AgentMap | Tree view for headless VPS | Reference existing |
+| **Environment** | OpenCode Direnv | Auto-load .envrc | Reference existing |
+| **Config Sync** | OpenCode Sync | GitHub Gist sync | Reference existing |
+| **History Search** | AI Sessions MCP | Search past sessions | Reference existing |
+
+**NEW** = My innovation that needs packaging
+**Reference existing** = Use official tools/installers
+
+## What Users Get
+
+When you install Sincronizado, you get:
+
+### 1. Infrastructure Setup Scripts
+- One-command VPS setup (Ubuntu/Debian)
+- Firewall configuration
+- All dependencies installed automatically
+- Plugin ecosystem configured
+
+### 2. Local Launchers
+- Windows PowerShell launcher (`opencode.ps1`)
+- macOS Bash launcher (`opencode.sh`)
+- Hash-based session ID generation
+- Smart Mutagen sync configuration
+- Automatic session management
+
+### 3. Configuration System
+- `.opencode.config.json` for customization
+- Your VPS details (NOT my ashburn/paris)
+- Your port preferences
+- Your session naming convention
+- Plugin selection
+
+### 4. Documentation
+- How solution works
+- How to set up your infrastructure
+- How to customize for your needs
+- Troubleshooting common issues
+- Optimization tips
+
+### 5. The Smart Solutions
+- Hash collision detection (reusable)
+- Optimized sync patterns (reusable)
+- Session naming strategy (adaptable)
+- Network resilience (architectural)
+
+## Customization Points (This is NOT my exact setup)
+
+Users can customize:
+
+| Aspect | My Setup | Your Setup | Package Handles It |
+|---------|-----------|------------|-------------------|
+| **VPS Provider** | Oracle | AWS/GCP/Azure/DigitalOcean | ✅ Scripts for all |
+| **VPS Locations** | Ashburn, Paris | Your regions | ✅ Configurable |
+| **Session Prefix** | `mic-` | Your prefix | ✅ Configurable |
+| **Ports** | 2222, 3000 | Your ports | ✅ Configurable |
+| **Local Editor** | VS Code/JetBrains | Any editor | ✅ Works with all |
+| **Network** | Tailscale | Tailscale or any VPN | ⚠️ Tailscale recommended |
+
+**What's FIXED (the smart solutions):**
+- Hash collision logic
+- Sync strategy and patterns
+- Session management workflow
+- Plugin integration approach
+- Architecture design
 
 ## Target Users
 
-- Developers using AI coding assistants (OpenCode, Cursor, etc.)
-- Teams working on large codebases
-- Developers needing mobile access to their dev environment
-- Those with limited local GPU resources
+1. **Developers using AI coding assistants**
+   - Need more power than local GPU provides
+   - Want local editing experience
+   - Use OpenCode, Cursor, or similar tools
+
+2. **Remote development teams**
+   - Want fast file editing
+   - Need centralized AI execution
+   - Require mobile monitoring
+
+3. **Solopreneurs with limited resources**
+   - Can't run big models locally
+   - Want maximum efficiency
+   - Need mobile access for productivity
 
 ## Success Metrics
 
-- Time to set up: <15 minutes from scratch
-- File sync latency: <500ms
-- Session reliability: 99%+ uptime through network changes
-- Mobile UX: Full feature parity with desktop
-- Documentation: Zero manual setup required
-
-## Core Requirements
-
-### Must Have (v1.0)
-- Automated VPS setup script (Ubuntu/Debian)
-- Windows installer/launcher script
-- Mutagen configuration generator
-- Project hash collision detection
-- Mobile web UI integration
-- Complete documentation
-
-### Should Have (v1.0)
-- Tailscale auto-configuration
-- Session management (ccmanager integration)
-- Environment variable isolation (direnv)
-- Codebase context visualization (agentmap)
-- Configuration sync across VPS instances
-
-### Could Have (v2.0)
-- GUI configuration tool
-- Multiple VPS provider support
-- Team collaboration features
-- Analytics/telemetry
-- Plugin marketplace
+- [ ] Anyone can set up VPS in <15 minutes
+- [ ] Anyone can start dev session with one command
+- [ ] File sync achieves <500ms latency
+- [ ] Sessions survive network changes (WiFi ↔ 5G)
+- [ ] Mobile access works out of box
+- [ ] Zero collision even with duplicate project names
 
 ## Technical Constraints
 
-- VPS: Ubuntu 20.04+ or Debian 11+
-- Local: Windows 10+ or macOS 12+
-- Network: Tailscale account required
-- VPS: Root access or sudo privileges
-- Local: Git for version control
+### Must Support
+- VPS OS: Ubuntu 20.04+, Debian 11+
+- Local OS: Windows 10+, macOS 12+
+- VPN: Tailscale (recommended) or compatible
+- Sync: Mutagen (required for performance)
+- Shell: Eternal Terminal (recommended) or compatible
+
+### Architecture Requirements
+- Hash-based session IDs (collision-proof)
+- Smart sync ignore patterns
+- Plugin ecosystem integration
+- Mobile web UI (Agent-OS)
+
+## Version 1.0 Scope
+
+**Must Have (Complete Solution):**
+- VPS setup script (Ubuntu/Debian, supports multiple providers)
+- Windows launcher (my opencode.ps1 logic, customizable)
+- macOS launcher (Bash equivalent)
+- Configuration system (.opencode.config.json)
+- Plugin ecosystem integration (all from PLAN.md)
+- Complete documentation
+- Troubleshooting guide
+
+**Should Have (Enhanced Experience):**
+- Pre-flight validation (check dependencies)
+- Session management commands (list, kill, cleanup)
+- Multi-VPS support (switch between servers)
+- Configuration wizard (interactive setup)
+
+**Could Have (Nice to Have):**
+- GUI configuration tool
+- Alternative VPN support
+- Alternative sync tools
+- Advanced analytics
+
+## Reuse Strategy
+
+### DO NOT Reinvent (Reference Existing Tools)
+- Tailscale → Use official installer
+- Mutagen → Use official installer
+- Eternal Terminal → Reference official docs
+- Agent-OS → Reference existing repo
+- All plugins → Reference and integrate
+
+### DO Package (My Innovations)
+- opencode launcher (hash collision logic, smart sync)
+- VPS setup script (orchestration of existing tools)
+- Configuration system (unification of all settings)
+- Optimization patterns (sync strategy, session naming)
+
+### DO Document (Integrations)
+- How each plugin integrates
+- My workflow and optimizations
+- Troubleshooting solutions I've discovered
+- Best practices from my experience
+
+---
+
+## Questions for v1.0
+
+1. **VPS Provider Scope**
+   - Package scripts for just Oracle (my tested setup)?
+   - Add AWS/GCP/Azure for v1.0?
+
+2. **Configuration Format**
+   - JSON file (.opencode.config.json)?
+   - YAML?
+   - Environment variables?
+
+3. **macOS Support**
+   - Include macOS launcher in v1.0?
+   - Defer to v1.1?
+
+4. **Session Naming**
+   - Default prefix: `sync-` (neutral)?
+   - Let user choose during setup?
