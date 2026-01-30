@@ -12,6 +12,7 @@ exec 1> >(tee -a "$LOG_FILE")
 exec 2> >(tee -a "$LOG_FILE" >&2)
 
 MODE="standard"
+AGENT="opencode"
 WITH_KIMAKI=false
 WITH_LUNAROUTE=false
 WITH_WORKTREE_SESSION=false
@@ -20,6 +21,7 @@ WITH_AGENT_OF_EMPIRES=false
 WITH_CCMANAGER=true
 WITH_AGENT_OS=true
 WITH_PLUGINS=true
+WITH_MCP=false
 
 log_info() { echo -e "${BLUE}[INFO]${NC} $1"; }
 log_success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
@@ -32,30 +34,35 @@ Sincronizado VPS Setup
 
 Usage: sudo ./setup-vps.sh [OPTIONS]
 
+AI Agent Selection:
+  --agent=opencode        Install OpenCode (default)
+  --agent=claude          Install Claude Code
+
 Installation Modes:
-  --mode=minimal          Core only: ET, OpenCode, UFW
-  --mode=standard         Recommended: + Agent-OS, ccmanager, plugins (DEFAULT)
-  --mode=full            Everything: + kimaki, session-handoff, worktree-session
+  --mode=minimal          Core only: ET, AI agent, UFW
+  --mode=standard         Recommended: + mobile tools, plugins (DEFAULT)
+  --mode=full            Everything: + Discord bot, AI proxy, etc
   --mode=custom          Pick components with --with-* flags
 
 Component Flags (for custom mode):
   --with-kimaki          Install Discord bot (kimaki)
   --with-lunaroute       Install AI proxy (lunaroute)
-  --with-worktree-session Install git worktree plugin
-  --with-session-handoff  Install session handoff plugin
-  --with-agent-of-empires Install agent-of-empires (alternative to ccmanager)
-  --no-agent-os          Skip Agent-OS installation
-  --no-ccmanager         Skip ccmanager (use agent-of-empires instead)
+  --with-mcp             Install MCP servers (Claude Code only)
+  --with-worktree-session Install git worktree plugin (OpenCode only)
+  --with-session-handoff  Install session handoff plugin (OpenCode only)
+  --with-agent-of-empires Install agent-of-empires (OpenCode only)
+  --no-agent-os          Skip Agent-OS installation (OpenCode only)
+  --no-ccmanager         Skip ccmanager (OpenCode only)
   --no-plugins           Skip OpenCode plugins
 
 Other Options:
   --help, -h             Show this help message
 
 Examples:
-  sudo ./setup-vps.sh                    # Standard mode (default)
-  sudo ./setup-vps.sh --mode=minimal     # Minimal install
-  sudo ./setup-vps.sh --mode=full        # Full install with all extras
-  sudo ./setup-vps.sh --mode=custom --with-kimaki --with-lunaroute
+  sudo ./setup-vps.sh --agent=claude        # Install Claude Code
+  sudo ./setup-vps.sh --agent=opencode      # Install OpenCode (default)
+  sudo ./setup-vps.sh --mode=minimal        # Minimal install
+  sudo ./setup-vps.sh --mode=full --agent=claude  # Full Claude setup
 
 EOF
 }
@@ -63,6 +70,10 @@ EOF
 parse_flags() {
     while [[ $# -gt 0 ]]; do
         case $1 in
+            --agent=*)
+                AGENT="${1#*=}"
+                shift
+                ;;
             --mode=*)
                 MODE="${1#*=}"
                 shift
@@ -75,17 +86,33 @@ parse_flags() {
                 WITH_LUNAROUTE=true
                 shift
                 ;;
+            --with-mcp)
+                WITH_MCP=true
+                shift
+                ;;
             --with-worktree-session)
-                WITH_WORKTREE_SESSION=true
+                if [[ "$AGENT" == "claude" ]]; then
+                    log_warning "worktree-session is OpenCode-only, skipping"
+                else
+                    WITH_WORKTREE_SESSION=true
+                fi
                 shift
                 ;;
             --with-session-handoff)
-                WITH_SESSION_HANDOFF=true
+                if [[ "$AGENT" == "claude" ]]; then
+                    log_warning "session-handoff is OpenCode-only, skipping"
+                else
+                    WITH_SESSION_HANDOFF=true
+                fi
                 shift
                 ;;
             --with-agent-of-empires)
-                WITH_AGENT_OF_EMPIRES=true
-                WITH_CCMANAGER=false
+                if [[ "$AGENT" == "claude" ]]; then
+                    log_warning "agent-of-empires is OpenCode-only, skipping"
+                else
+                    WITH_AGENT_OF_EMPIRES=true
+                    WITH_CCMANAGER=false
+                fi
                 shift
                 ;;
             --no-agent-os)
@@ -112,6 +139,16 @@ parse_flags() {
         esac
     done
 
+    # Validate agent
+    case $AGENT in
+        opencode|claude)
+            ;;
+        *)
+            log_error "Invalid agent: $AGENT (must be opencode or claude)"
+            exit 1
+            ;;
+    esac
+
     # Validate mode
     case $MODE in
         minimal|standard|full|custom)
@@ -122,20 +159,37 @@ parse_flags() {
             ;;
     esac
 
+    # Auto-disable OpenCode-specific features for Claude
+    if [[ "$AGENT" == "claude" ]]; then
+        WITH_AGENT_OS=false
+        WITH_CCMANAGER=false
+        WITH_WORKTREE_SESSION=false
+        WITH_SESSION_HANDOFF=false
+        WITH_AGENT_OF_EMPIRES=false
+        log_info "Claude Code selected: OpenCode-specific features auto-disabled"
+    fi
+
     # Auto-enable flags for full mode
     if [[ "$MODE" == "full" ]]; then
         WITH_KIMAKI=true
-        WITH_WORKTREE_SESSION=true
-        WITH_SESSION_HANDOFF=true
+        if [[ "$AGENT" == "opencode" ]]; then
+            WITH_WORKTREE_SESSION=true
+            WITH_SESSION_HANDOFF=true
+        fi
+        if [[ "$AGENT" == "claude" ]]; then
+            WITH_MCP=true
+        fi
     fi
 
     # Log configuration
+    log_info "AI Agent: $AGENT"
     log_info "Installation mode: $MODE"
     log_info "Agent-OS: $WITH_AGENT_OS"
     log_info "ccmanager: $WITH_CCMANAGER"
     log_info "Plugins: $WITH_PLUGINS"
     log_info "Kimaki: $WITH_KIMAKI"
     log_info "LunaRoute: $WITH_LUNAROUTE"
+    log_info "MCP servers: $WITH_MCP"
     log_info "Worktree-session: $WITH_WORKTREE_SESSION"
     log_info "Session-handoff: $WITH_SESSION_HANDOFF"
     log_info "Agent-of-empires: $WITH_AGENT_OF_EMPIRES"
@@ -205,6 +259,20 @@ install_opencode() {
     log_success "OpenCode installed"
 }
 
+install_claude_code() {
+    log_info "Installing Claude Code..."
+    
+    if command -v claude &> /dev/null; then
+        log_warning "Claude Code already installed"
+        return 0
+    fi
+
+    npm install -g @anthropic-ai/claude-code
+    
+    log_success "Claude Code installed"
+    log_info "Configure with: claude config set key value"
+}
+
 install_eternal_terminal() {
     log_info "Installing Eternal Terminal..."
     
@@ -251,6 +319,11 @@ install_et_from_source() {
 }
 
 install_agent_os() {
+    if [[ "$AGENT" == "claude" ]]; then
+        log_info "Agent-OS is OpenCode-only, skipping for Claude Code"
+        return 0
+    fi
+
     if [[ "$WITH_AGENT_OS" != "true" ]]; then
         log_info "Skipping Agent-OS (--no-agent-os specified)"
         return 0
@@ -289,6 +362,11 @@ EOF
 }
 
 install_opencode_plugins() {
+    if [[ "$AGENT" == "claude" ]]; then
+        log_info "OpenCode plugins not applicable to Claude Code"
+        return 0
+    fi
+
     if [[ "$WITH_PLUGINS" != "true" ]]; then
         log_info "Skipping OpenCode plugins (--no-plugins specified)"
         return 0
@@ -317,7 +395,45 @@ install_opencode_plugins() {
     log_success "OpenCode plugins installed"
 }
 
+install_mcp_servers() {
+    if [[ "$AGENT" == "opencode" ]]; then
+        log_info "MCP servers are Claude Code-only, skipping for OpenCode"
+        return 0
+    fi
+
+    if [[ "$WITH_MCP" != "true" ]]; then
+        log_info "Skipping MCP servers installation"
+        return 0
+    fi
+
+    log_info "Installing MCP servers for Claude Code..."
+    
+    # Install commonly used MCP servers
+    log_info "Installing @anthropic-ai/mcp-server-filesystem..."
+    npm install -g @anthropic-ai/mcp-server-filesystem || {
+        log_warning "filesystem MCP server install failed"
+    }
+    
+    log_info "Installing @anthropic-ai/mcp-server-git..."
+    npm install -g @anthropic-ai/mcp-server-git || {
+        log_warning "git MCP server install failed"
+    }
+    
+    log_info "Installing @anthropic-ai/mcp-server-fetch..."
+    npm install -g @anthropic-ai/mcp-server-fetch || {
+        log_warning "fetch MCP server install failed"
+    }
+    
+    log_info "MCP servers installed"
+    log_info "Configure in ~/.config/claude/settings.json"
+}
+
 install_ccmanager() {
+    if [[ "$AGENT" == "claude" ]]; then
+        log_info "ccmanager is OpenCode-only, skipping for Claude Code"
+        return 0
+    fi
+
     if [[ "$WITH_CCMANAGER" != "true" ]]; then
         log_info "Skipping ccmanager (--no-ccmanager or --with-agent-of-empires specified)"
         return 0
@@ -335,6 +451,11 @@ install_ccmanager() {
 }
 
 install_agent_of_empires() {
+    if [[ "$AGENT" == "claude" ]]; then
+        log_info "agent-of-empires is OpenCode-only, skipping for Claude Code"
+        return 0
+    fi
+
     if [[ "$WITH_AGENT_OF_EMPIRES" != "true" ]]; then
         return 0
     fi
@@ -371,7 +492,6 @@ install_kimaki() {
         return 0
     }
     
-    # Create systemd service
     cat > /etc/systemd/system/kimaki.service << 'EOF'
 [Unit]
 Description=Kimaki Discord Bot
@@ -435,6 +555,11 @@ install_lunaroute() {
 }
 
 install_worktree_session() {
+    if [[ "$AGENT" == "claude" ]]; then
+        log_info "opencode-worktree-session is OpenCode-only, skipping for Claude Code"
+        return 0
+    fi
+
     if [[ "$WITH_WORKTREE_SESSION" != "true" ]]; then
         return 0
     fi
@@ -450,13 +575,17 @@ install_worktree_session() {
 }
 
 install_session_handoff() {
+    if [[ "$AGENT" == "claude" ]]; then
+        log_info "opencode-session-handoff is OpenCode-only, skipping for Claude Code"
+        return 0
+    fi
+
     if [[ "$WITH_SESSION_HANDOFF" != "true" ]]; then
         return 0
     fi
 
     log_info "Installing opencode-session-handoff plugin..."
     
-    # This is an OpenCode plugin, configure in opencode.json
     log_info "opencode-session-handoff is an OpenCode plugin"
     log_info "Add to opencode.json: {\"plugin\": [\"opencode-session-handoff\"]}"
     log_success "opencode-session-handoff configuration noted"
@@ -472,7 +601,6 @@ configure_firewall() {
     ufw allow 2222/tcp
     ufw allow 3000/tcp
     
-    # LunaRoute web UI port
     if [[ "$WITH_LUNAROUTE" == "true" ]]; then
         ufw allow 8082/tcp
     fi
@@ -495,29 +623,31 @@ validate_installation() {
         fi
     }
     
-    # Core (always required)
     check_command "git"
     check_command "npm"
     check_command "direnv"
     check_command "tmux"
     check_command "et"
-    check_command "opencode"
     
-    # Standard mode components
+    if [[ "$AGENT" == "opencode" ]]; then
+        check_command "opencode"
+    else
+        check_command "claude"
+    fi
+    
     if [[ "$MODE" != "minimal" ]]; then
-        if [[ "$WITH_AGENT_OS" == "true" ]]; then
+        if [[ "$AGENT" == "opencode" && "$WITH_AGENT_OS" == "true" ]]; then
             check_command "agent-os"
             if ! systemctl is-active --quiet agent-os; then
                 log_warning "Agent-OS service not running"
             fi
         fi
         
-        if [[ "$WITH_CCMANAGER" == "true" ]]; then
+        if [[ "$AGENT" == "opencode" && "$WITH_CCMANAGER" == "true" ]]; then
             check_command "ccmanager"
         fi
     fi
     
-    # Full/custom mode components
     if [[ "$WITH_KIMAKI" == "true" ]]; then
         check_command "kimaki"
     fi
@@ -526,7 +656,6 @@ validate_installation() {
         check_command "lunaroute-server"
     fi
     
-    # Firewall
     if ! ufw status | grep -q "Status: active"; then
         log_error "Firewall not active"
         ((errors++))
@@ -547,22 +676,34 @@ print_summary() {
     echo ""
     echo "========================================="
     echo "  Sincronizado VPS Setup Complete"
+    echo "  Agent: $AGENT"
     echo "  Mode: $MODE"
     echo "========================================="
     echo ""
     echo "Core Components:"
     echo "  ✓ Base dependencies (git, npm, direnv, tmux)"
-    echo "  ✓ OpenCode AI agent"
+    if [[ "$AGENT" == "opencode" ]]; then
+        echo "  ✓ OpenCode AI agent"
+    else
+        echo "  ✓ Claude Code AI agent"
+    fi
     echo "  ✓ Eternal Terminal (port 2222)"
     echo "  ✓ Firewall (UFW)"
     
-    if [[ "$MODE" != "minimal" ]]; then
+    if [[ "$MODE" != "minimal" && "$AGENT" == "opencode" ]]; then
         echo ""
-        echo "Standard Components:"
+        echo "OpenCode Components:"
         [[ "$WITH_AGENT_OS" == "true" ]] && echo "  ✓ Agent-OS Web UI (port 3000)"
         [[ "$WITH_PLUGINS" == "true" ]] && echo "  ✓ OpenCode plugins"
         [[ "$WITH_CCMANAGER" == "true" ]] && echo "  ✓ ccmanager"
         [[ "$WITH_AGENT_OF_EMPIRES" == "true" ]] && echo "  ✓ agent-of-empires"
+    fi
+    
+    if [[ "$MODE" != "minimal" && "$AGENT" == "claude" ]]; then
+        echo ""
+        echo "Claude Code Components:"
+        [[ "$WITH_MCP" == "true" ]] && echo "  ✓ MCP servers (filesystem, git, fetch)"
+        echo "  ✓ direnv (environment variables)"
     fi
     
     if [[ "$MODE" == "full" ]] || [[ "$WITH_KIMAKI" == "true" ]] || [[ "$WITH_LUNAROUTE" == "true" ]]; then
@@ -570,29 +711,51 @@ print_summary() {
         echo "Extra Features:"
         [[ "$WITH_KIMAKI" == "true" ]] && echo "  ✓ Kimaki Discord bot"
         [[ "$WITH_LUNAROUTE" == "true" ]] && echo "  ✓ LunaRoute AI proxy (port 8082)"
-        [[ "$WITH_WORKTREE_SESSION" == "true" ]] && echo "  ✓ Worktree session plugin"
-        [[ "$WITH_SESSION_HANDOFF" == "true" ]] && echo "  ✓ Session handoff plugin"
+        if [[ "$AGENT" == "opencode" ]]; then
+            [[ "$WITH_WORKTREE_SESSION" == "true" ]] && echo "  ✓ Worktree session plugin"
+            [[ "$WITH_SESSION_HANDOFF" == "true" ]] && echo "  ✓ Session handoff plugin"
+        fi
     fi
     
     echo ""
     echo "Access Points:"
-    [[ "$WITH_AGENT_OS" == "true" ]] && echo "  Agent-OS: http://${ip}:3000"
+    if [[ "$AGENT" == "opencode" && "$WITH_AGENT_OS" == "true" ]]; then
+        echo "  Agent-OS: http://${ip}:3000"
+    fi
     [[ "$WITH_LUNAROUTE" == "true" ]] && echo "  LunaRoute: http://${ip}:8082"
     echo "  Log: ${LOG_FILE}"
     echo ""
     
+    if [[ "$AGENT" == "opencode" ]]; then
+        echo "Launcher Usage:"
+        echo "  Windows: .\\launcher\\opencode.ps1"
+        echo "  macOS/Linux: ./launcher/opencode.sh"
+    else
+        echo "Launcher Usage:"
+        echo "  Windows: .\\launcher\\claude.ps1"
+        echo "  macOS/Linux: ./launcher/claude.sh"
+    fi
+    
     if [[ "$WITH_KIMAKI" == "true" ]]; then
-        echo "Next Steps:"
+        echo ""
+        echo "Kimaki Setup:"
         echo "  1. Run 'npx kimaki' to configure Discord bot"
         echo "  2. Run 'systemctl start kimaki' to start bot"
+    fi
+    
+    if [[ "$AGENT" == "claude" ]]; then
         echo ""
+        echo "Claude Code Tips:"
+        echo "  - Use /file to see project structure"
+        echo "  - Use /history to see conversation history"
+        echo "  - Configure MCP servers in ~/.config/claude/settings.json"
     fi
 }
 
 main() {
     echo "========================================="
     echo "  Sincronizado VPS Setup"
-    echo "  v1.1.0"
+    echo "  v1.2.0"
     echo "========================================="
     echo ""
     
@@ -600,22 +763,31 @@ main() {
     check_root
     detect_os
     install_base_deps
-    install_opencode
+    
+    if [[ "$AGENT" == "opencode" ]]; then
+        install_opencode
+    else
+        install_claude_code
+        if [[ "$WITH_MCP" == "true" ]]; then
+            install_mcp_servers || log_warning "Some MCP servers failed to install"
+        fi
+    fi
+    
     install_eternal_terminal
     
-    # Standard mode components
     if [[ "$MODE" != "minimal" ]]; then
         install_agent_os
         install_opencode_plugins
         
-        if [[ "$WITH_AGENT_OF_EMPIRES" == "true" ]]; then
-            install_agent_of_empires
-        else
-            install_ccmanager
+        if [[ "$AGENT" == "opencode" ]]; then
+            if [[ "$WITH_AGENT_OF_EMPIRES" == "true" ]]; then
+                install_agent_of_empires
+            else
+                install_ccmanager
+            fi
         fi
     fi
     
-    # Full/custom mode components
     if [[ "$MODE" == "full" ]] || [[ "$MODE" == "custom" ]]; then
         install_kimaki || log_warning "kimaki installation failed"
         install_lunaroute || log_warning "lunaroute installation failed"
@@ -624,7 +796,7 @@ main() {
     fi
     
     configure_firewall
-    validate_installation || true  # Don't fail on validation errors
+    validate_installation || true
     print_summary
 }
 
