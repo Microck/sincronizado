@@ -5,6 +5,10 @@
   "framework": "docusaurus",
   "rewrites": [
     {
+      "source": "/",
+      "destination": "/docs/intro"
+    },
+    {
       "source": "/install.sh",
       "destination": "https://raw.githubusercontent.com/microck/sincronizado/main/scripts/setup-vps.sh"
     },
