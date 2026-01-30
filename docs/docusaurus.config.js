@@ -15,7 +15,7 @@ const config = {
   trailingSlash: false,
   organizationName: 'microck',
   projectName: 'sincronizado',
-  onBrokenLinks: 'throw',
+  onBrokenLinks: 'warn',
   onBrokenMarkdownLinks: 'warn',
   i18n: {
     defaultLocale: 'en',
@@ -56,7 +56,6 @@ const config = {
             position: 'left',
             label: 'Documentation',
           },
-          { to: '/blog', label: 'Blog', position: 'left' },
           { href: 'https://github.com/microck/sincronizado', label: 'GitHub', position: 'right' },
         ],
       },

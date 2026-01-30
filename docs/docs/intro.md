@@ -14,7 +14,7 @@ Sincronizado packages the complete solution for local-first development with rem
 
 - **Local-First Development**: Edit files on your local machine with your favorite tools
 - **Remote AI Execution**: Heavy AI tasks run on your VPS
-- **Zero Latency Sync**: File sync completes in <500ms via Mutagen
+- **Zero Latency Sync**: File sync completes in &lt;500ms via Mutagen
 - **Mobile Access**: Monitor progress from your phone via Agent-OS Web UI or Discord
 - **Interactive Installer**: TUI-based setup with component selection
 - **Tiered Installation**: Choose Minimal, Standard, Full, or Custom modes

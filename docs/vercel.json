@@ -9,7 +9,11 @@
       "destination": "https://raw.githubusercontent.com/microck/sincronizado/main/scripts/setup-vps.sh"
     },
     {
-      "source": "/launcher/:file",
+      "source": "/install.ps1",
+      "destination": "https://raw.githubusercontent.com/microck/sincronizado/main/scripts/install.ps1"
+    },
+    {
+      "source": "/launcher/:file(.+)",
       "destination": "https://raw.githubusercontent.com/microck/sincronizado/main/launcher/:file"
     }
   ],
@@ -24,7 +28,16 @@
       ]
     },
     {
-      "source": "/launcher/*",
+      "source": "/install.ps1",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/plain"
+        }
+      ]
+    },
+    {
+      "source": "/launcher/(.*)",
       "headers": [
         {
           "key": "Content-Type",

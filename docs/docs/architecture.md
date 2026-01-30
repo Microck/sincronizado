@@ -17,7 +17,7 @@ graph TB
 
     subgraph Network["Secure Network Layer"]
         TS[Tailscale VPN<br/>WireGuard]
-        Mut[Mutagen Sync<br/><500ms latency]
+        Mut[Mutagen Sync<br/>&lt;500ms latency]
         ET[Eternal Terminal<br/>resilient SSH]
     end
 
@@ -89,7 +89,7 @@ Pick individual components via TUI or flags.
 ### 1. File Sync (Mutagen)
 
 - **Purpose**: Real-time bidirectional sync
-- **Performance**: <500ms latency
+- **Performance**: &lt;500ms latency
 - **Smart Ignores**: node_modules, .venv, .git excluded
 - **Conflict Resolution**: Local wins by default
 
@@ -147,7 +147,7 @@ graph LR
 - **Purpose**: Proxy and monitor AI API calls
 - **Features**: Token tracking, session recording, cost analysis
 - **Web UI**: Debug dashboard at port 8082
-- **Performance**: <0.5ms overhead
+- **Performance**: &lt;0.5ms overhead
 
 ### 8. Git Worktree Sessions
 
@@ -166,7 +166,7 @@ sequenceDiagram
     participant Remote as Remote Execution
 
     Local->>Mut: Save file
-    Mut->>VPS: Sync changes (<500ms)
+    Mut->>VPS: Sync changes (&lt;500ms)
     VPS->>Remote: Execute command
     Remote->>VPS: Return results
     VPS->>Mut: File changes
@@ -174,7 +174,7 @@ sequenceDiagram
 ```
 
 1. **Local Edit** → Mutagen detects change
-2. **Sync** → File pushed to VPS in <500ms
+2. **Sync** → File pushed to VPS in &lt;500ms
 3. **Agent Notices** → AI sees updated code
 4. **Remote Execution** → Heavy work runs on VPS
 5. **Results Sync** → Output files return locally
@@ -188,12 +188,12 @@ sequenceDiagram
 
 ## Performance
 
-| Metric          | Target   | Achieved |
-| --------------- | -------- | -------- |
-| File Sync       | <500ms   | ✓        |
-| Session Connect | <2s      | ✓        |
-| Network Handoff | Seamless | ✓        |
-| Mobile Access   | <1s      | ✓        |
+| Metric          | Target    | Achieved |
+| --------------- | --------- | -------- |
+| File Sync       | &lt;500ms | ✓        |
+| Session Connect | &lt;2s    | ✓        |
+| Network Handoff | Seamless  | ✓        |
+| Mobile Access   | &lt;1s    | ✓        |
 
 ## Troubleshooting
 

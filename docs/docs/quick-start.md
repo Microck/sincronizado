@@ -149,7 +149,7 @@ Add these flags to customize your installation:
 
 ## Verify Installation
 
-1. **Check sync**: Edit a file locally, verify it appears on VPS in <500ms
+1. **Check sync**: Edit a file locally, verify it appears on VPS in &lt;500ms
 2. **Test resilience**: Switch WiFi networks, session stays alive
 3. **Mobile access**: Open `http://your-vps:3000` in browser
 4. **Optional - Discord**: If you installed Kimaki, check Discord bot status

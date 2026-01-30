@@ -41,6 +41,8 @@ graph TB
 
 ## installation modes
 
+### linux / macos (bash)
+
 ```bash
 # minimal - core only (et, opencode, ufw)
 curl -fsSL https://sincronizado.micr.dev/install.sh | bash -s -- --mode=minimal
@@ -50,8 +52,24 @@ curl -fsSL https://sincronizado.micr.dev/install.sh | bash
 
 # full - everything (+ kimaki discord bot, lunaroute proxy, etc)
 curl -fsSL https://sincronizado.micr.dev/install.sh | bash -s -- --mode=full
+```
 
-# tui installer (interactive)
+### windows (powershell)
+
+```powershell
+# minimal - core only
+iex "& { $(irm https://sincronizado.micr.dev/install.ps1) } -Mode minimal"
+
+# standard - recommended (default)
+iex "& { $(irm https://sincronizado.micr.dev/install.ps1) }"
+
+# full - everything
+iex "& { $(irm https://sincronizado.micr.dev/install.ps1) } -Mode full"
+```
+
+### tui installer (interactive)
+
+```bash
 bunx sincronizado
 ```
 
