@@ -1,0 +1,97 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Build outputs
+dist/
+build/
+out/
+.next/
+.nuxt/
+.cache/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Environment
+.env
+.env.local
+.env.*.local
+*.pem
+
+# Testing
+coverage/
+.nyc_output/
+*.lcov
+
+# Mutagen
+.mutagen/
+
+# Tailscale
+tailscale.state
+
+# Temporary
+tmp/
+temp/
+*.tmp
+
+# Backup
+*.bak
+*.backup
+*.old
+
+# Documentation builds
+docs/.docusaurus/
+docs/build/
+
+# Package manager locks (optional - commit these if you prefer)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+.pytest_cache/
+
+# Rust
+target/
+Cargo.lock
+
+# Go
+*.test
+*.prof
+vendor/
