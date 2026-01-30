@@ -1,0 +1,45 @@
+{
+  "vps": {
+    "default": "oracle-ashburn",
+    "hosts": {
+      "oracle-ashburn": {
+        "hostname": "ashburn",
+        "user": "ubuntu",
+        "port": 2222,
+        "provider": "oracle"
+      },
+      "oracle-paris": {
+        "hostname": "paris",
+        "user": "ubuntu",
+        "port": 2222,
+        "provider": "oracle"
+      }
+    }
+  },
+  "sync": {
+    "ignore": [
+      "node_modules",
+      ".venv",
+      "venv",
+      ".git",
+      "dist",
+      "build",
+      "__pycache__",
+      ".pytest_cache",
+      "*.log"
+    ]
+  },
+  "session": {
+    "prefix": "sync-",
+    "default_editor": "code"
+  },
+  "plugins": {
+    "enabled": [
+      "opencode-direnv",
+      "agentmap",
+      "opencode-sync",
+      "ai-sessions-mcp",
+      "ccmanager"
+    ]
+  }
+}
