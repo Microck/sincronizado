@@ -1,0 +1,49 @@
+{
+  "name": "sincronizado",
+  "version": "1.1.0",
+  "description": "Interactive TUI installer for Sincronizado development environment",
+  "type": "module",
+  "bin": {
+    "sincronizado": "./dist/index.js"
+  },
+  "scripts": {
+    "dev": "bun run src/index.tsx",
+    "build": "bun build src/index.tsx --outfile=dist/index.js --target=node",
+    "compile": "bun build src/index.tsx --compile --outfile=dist/sincronizado",
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write src/"
+  },
+  "dependencies": {
+    "@opentui/core": "^0.1.75",
+    "@opentui/react": "^0.1.75",
+    "react": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/react": "^18.3.12",
+    "bun-types": "latest",
+    "prettier": "^3.2.0",
+    "typescript": "^5.3.3"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "keywords": [
+    "sincronizado",
+    "opencode",
+    "tui",
+    "installer",
+    "vps",
+    "development-environment"
+  ],
+  "author": "Microck",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/microck/sincronizado.git",
+    "directory": "installer"
+  },
+  "engines": {
+    "bun": ">=1.0.0"
+  }
+}
