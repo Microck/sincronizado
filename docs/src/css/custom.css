@@ -1,17 +1,182 @@
 /* Custom CSS for Sincronizado documentation */
 
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap');
+
 :root {
-  --ifm-color-primary: #2e8555;
-  --ifm-color-primary-dark: #29784c;
-  --ifm-color-primary-darker: #277148;
-  --ifm-color-primary-darkest: #205d3b;
-  --ifm-color-primary-light: #33925d;
-  --ifm-color-primary-lighter: #359962;
-  --ifm-color-primary-lightest: #3cad6e;
+  --ifm-font-family-base:
+    'Google Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --ifm-heading-font-family:
+    'Google Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Light yellow color palette based on #FFFFC5 */
+  --ifm-color-primary: #d4c96e;
+  --ifm-color-primary-dark: #c4b95e;
+  --ifm-color-primary-darker: #b4a94e;
+  --ifm-color-primary-darkest: #a4993e;
+  --ifm-color-primary-light: #e4d97e;
+  --ifm-color-primary-lighter: #f4e98e;
+  --ifm-color-primary-lightest: #ffffc5;
+
+  /* Background colors */
+  --ifm-background-color: #fefefe;
+  --ifm-background-surface-color: #fffef8;
+
+  /* Text colors */
+  --ifm-font-color-base: #2d2d2d;
+  --ifm-heading-color: #1a1a1a;
+
+  /* Link colors */
+  --ifm-link-color: #b4a94e;
+  --ifm-link-hover-color: #8b7d2e;
+
   --ifm-code-font-size: 95%;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+  --docusaurus-highlighted-code-line-bg: rgba(255, 255, 197, 0.3);
 }
 
 [data-theme='dark'] {
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+  --ifm-color-primary: #ffffc5;
+  --ifm-color-primary-dark: #e4d97e;
+  --ifm-color-primary-darker: #d4c96e;
+  --ifm-color-primary-darkest: #c4b95e;
+  --ifm-color-primary-light: #ffffd5;
+  --ifm-color-primary-lighter: #ffffe5;
+  --ifm-color-primary-lightest: #ffffff;
+
+  --ifm-background-color: #1a1a1a;
+  --ifm-background-surface-color: #2d2d2d;
+  --ifm-font-color-base: #e0e0e0;
+  --ifm-heading-color: #ffffc5;
+
+  --docusaurus-highlighted-code-line-bg: rgba(255, 255, 197, 0.2);
+}
+
+/* Navbar styling */
+.navbar {
+  background: linear-gradient(135deg, #ffffc5 0%, #f4e98e 100%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.navbar__title {
+  font-weight: 700;
+  color: #2d2d2d;
+}
+
+.navbar__link {
+  font-weight: 500;
+  color: #2d2d2d;
+}
+
+.navbar__link:hover {
+  color: #8b7d2e;
+}
+
+/* Sidebar styling */
+.theme-doc-sidebar-menu {
+  font-weight: 500;
+}
+
+.theme-doc-sidebar-item-link:hover {
+  background-color: rgba(255, 255, 197, 0.3);
+}
+
+/* Main content styling */
+.markdown h1 {
+  font-weight: 700;
+  color: var(--ifm-heading-color);
+}
+
+.markdown h2 {
+  font-weight: 600;
+  border-bottom: 2px solid #ffffc5;
+  padding-bottom: 0.3em;
+}
+
+.markdown h3 {
+  font-weight: 600;
+  color: var(--ifm-color-primary-darkest);
+}
+
+/* Code blocks */
+pre {
+  background-color: #2d2d2d !important;
+  border-radius: 8px;
+}
+
+code {
+  background-color: rgba(255, 255, 197, 0.3);
+  color: #8b7d2e;
+  border-radius: 4px;
+  padding: 0.2em 0.4em;
+}
+
+/* Tables */
+table {
+  border-collapse: collapse;
+  margin: 1em 0;
+}
+
+th {
+  background-color: rgba(255, 255, 197, 0.5);
+  font-weight: 600;
+}
+
+tr:nth-child(even) {
+  background-color: rgba(255, 255, 197, 0.1);
+}
+
+/* Footer */
+.footer {
+  background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
+  color: #ffffc5;
+}
+
+.footer__link-item {
+  color: #e4d97e;
+}
+
+.footer__link-item:hover {
+  color: #ffffc5;
+}
+
+/* Buttons */
+.button--primary {
+  background: linear-gradient(135deg, #d4c96e 0%, #b4a94e 100%);
+  border: none;
+  color: #2d2d2d;
+  font-weight: 600;
+}
+
+.button--primary:hover {
+  background: linear-gradient(135deg, #e4d97e 0%, #c4b95e 100%);
+}
+
+/* Admonitions/Callouts */
+.alert--info {
+  background-color: rgba(212, 201, 110, 0.1);
+  border-left: 4px solid #d4c96e;
+}
+
+.alert--success {
+  background-color: rgba(180, 169, 78, 0.1);
+  border-left: 4px solid #b4a94e;
+}
+
+.alert--warning {
+  background-color: rgba(244, 233, 142, 0.3);
+  border-left: 4px solid #f4e98e;
+}
+
+/* Mermaid diagrams */
+.mermaid {
+  background: transparent !important;
+}
+
+/* Pagination */
+.pagination-nav__link {
+  border-color: #d4c96e;
+}
+
+.pagination-nav__link:hover {
+  background-color: rgba(255, 255, 197, 0.2);
+  border-color: #b4a94e;
 }

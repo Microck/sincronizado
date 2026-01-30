@@ -1,13 +1,9 @@
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "npm run build",
   "outputDirectory": "build",
-  "framework": "docusaurus",
+  "installCommand": "npm install",
+  "framework": null,
   "rewrites": [
-    {
-      "source": "/",
-      "destination": "/docs/intro"
-    },
     {
       "source": "/install.sh",
       "destination": "https://raw.githubusercontent.com/microck/sincronizado/main/scripts/setup-vps.sh"
@@ -19,6 +15,13 @@
     {
       "source": "/launcher/:file(.+)",
       "destination": "https://raw.githubusercontent.com/microck/sincronizado/main/launcher/:file"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/docs/intro",
+      "permanent": true
     }
   ],
   "headers": [
@@ -49,5 +52,8 @@
         }
       ]
     }
-  ]
+  ],
+  "github": {
+    "enabled": false
+  }
 }

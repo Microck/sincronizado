@@ -12,7 +12,7 @@ const config = {
   favicon: 'img/favicon.ico',
   url: 'https://sincronizado.micr.dev',
   baseUrl: '/',
-  trailingSlash: false,
+  trailingSlash: true,
   organizationName: 'microck',
   projectName: 'sincronizado',
   onBrokenLinks: 'warn',
@@ -21,6 +21,10 @@ const config = {
     defaultLocale: 'en',
     locales: ['en'],
   },
+  markdown: {
+    mermaid: true,
+  },
+  themes: ['@docusaurus/theme-mermaid'],
   presets: [
     [
       'classic',
@@ -87,6 +91,19 @@ const config = {
         copyright: `Copyright © ${new Date().getFullYear()} Sincronizado. Built with Docusaurus.`,
       },
       prism: { theme: prismThemes.github, darkTheme: prismThemes.dracula },
+      mermaid: {
+        theme: { light: 'neutral', dark: 'dark' },
+        options: {
+          themeVariables: {
+            primaryColor: '#ffffc5',
+            primaryTextColor: '#2d2d2d',
+            primaryBorderColor: '#d4c96e',
+            lineColor: '#8b7d2e',
+            secondaryColor: '#f4e98e',
+            tertiaryColor: '#e4d97e',
+          },
+        },
+      },
     }),
 };
 
