@@ -1,0 +1,42 @@
+{
+  "name": "sincronizado",
+  "version": "0.1.0",
+  "description": "Hyper-local development stack with remote AI execution",
+  "private": true,
+  "scripts": {
+    "lint": "eslint . --ext .js,.ts,.tsx",
+    "lint:fix": "eslint . --ext .js,.ts,.tsx --fix",
+    "format": "prettier --write \"**/*.{js,ts,tsx,json,md,yml,yaml}\"",
+    "format:check": "prettier --check \"**/*.{js,ts,tsx,json,md,yml,yaml}\"",
+    "docs:start": "cd docs && npm start",
+    "docs:build": "cd docs && npm run build",
+    "docs:deploy": "cd docs && npm run deploy",
+    "test": "echo \"Tests not yet implemented - Phase 10\" && exit 0"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "prettier": "^3.2.5"
+  },
+  "engines": {
+    "node": ">=18.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/microck/sincronizado.git"
+  },
+  "keywords": [
+    "development",
+    "ai",
+    "remote",
+    "sync",
+    "mutagen",
+    "tailscale",
+    "opencode"
+  ],
+  "author": "Microck",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/microck/sincronizado/issues"
+  },
+  "homepage": "https://github.com/microck/sincronizado#readme"
+}
