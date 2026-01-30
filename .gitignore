@@ -100,3 +100,6 @@ Cargo.lock
 *.test
 *.prof
 vendor/
+
+.vercel
+nul
