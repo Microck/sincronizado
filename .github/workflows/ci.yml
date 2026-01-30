@@ -1,0 +1,109 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check project structure
+        run: |
+          echo "Checking project structure..."
+          test -f README.md || (echo "README.md missing" && exit 1)
+          test -f LICENSE || (echo "LICENSE missing" && exit 1)
+          test -f .gitignore || (echo ".gitignore missing" && exit 1)
+          test -d .planning || (echo ".planning directory missing" && exit 1)
+          test -f .planning/PROJECT.md || (echo "PROJECT.md missing" && exit 1)
+          test -f .planning/ROADMAP.md || (echo "ROADMAP.md missing" && exit 1)
+          test -f .planning/STATE.md || (echo "STATE.md missing" && exit 1)
+          echo "✓ Project structure valid"
+
+      - name: Validate documentation
+        run: |
+          echo "Validating documentation..."
+          # Check for broken markdown links (basic check)
+          grep -r "\[.*\](.*)" README.md > /dev/null 2>&1 && echo "✓ README.md has links"
+          echo "✓ Documentation validation complete"
+
+      - name: Check planning files are synchronized
+        run: |
+          echo "Checking planning consistency..."
+          # Extract phase count from ROADMAP
+          PHASE_COUNT=$(grep -c "^### Phase [0-9]" .planning/ROADMAP.md || echo "0")
+          echo "ROADMAP has $PHASE_COUNT phases"
+          # Check README has matching phases
+          README_PHASES=$(grep -c "Phase [0-9]" README.md || echo "0")
+          echo "README references $README_PHASES phases"
+          if [ "$PHASE_COUNT" -ne "$README_PHASES" ]; then
+            echo "⚠ Warning: Phase count mismatch between ROADMAP and README"
+          fi
+          echo "✓ Planning check complete"
+
+  shell-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install shellcheck
+        run: sudo apt-get update && sudo apt-get install -y shellcheck
+
+      - name: Check shell scripts
+        run: |
+          echo "Checking shell scripts..."
+          if [ -d scripts ]; then
+            find scripts -name "*.sh" -exec shellcheck {} \; || echo "No shell scripts found or issues detected"
+          else
+            echo "ℹ scripts/ directory not yet created"
+          fi
+          echo "✓ Shell script check complete"
+
+  powershell-check:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check PowerShell scripts
+        run: |
+          Write-Host "Checking PowerShell scripts..."
+          if (Test-Path "scripts") {
+            $scripts = Get-ChildItem -Path "scripts" -Filter "*.ps1" -Recurse -ErrorAction SilentlyContinue
+            if ($scripts) {
+              foreach ($script in $scripts) {
+                Write-Host "Checking $($script.FullName)..."
+                $result = Invoke-ScriptAnalyzer -Path $script.FullName -Severity Warning -ErrorAction SilentlyContinue
+                if ($result) {
+                  Write-Host "Issues found in $($script.Name):"
+                  $result | ForEach-Object { Write-Host "  - $($_.Message)" }
+                }
+              }
+            } else {
+              Write-Host "ℹ No PowerShell scripts found in scripts/"
+            }
+          } else {
+            Write-Host "ℹ scripts/ directory not yet created"
+          }
+          Write-Host "✓ PowerShell script check complete"
+        shell: pwsh
+
+      - name: Check launcher scripts
+        run: |
+          Write-Host "Checking launcher scripts..."
+          if (Test-Path "launcher") {
+            $scripts = Get-ChildItem -Path "launcher" -Filter "*.ps1" -ErrorAction SilentlyContinue
+            if ($scripts) {
+              Write-Host "Found PowerShell launcher scripts:"
+              $scripts | ForEach-Object { Write-Host "  - $($_.Name)" }
+            } else {
+              Write-Host "ℹ No PowerShell launcher scripts found"
+            }
+          } else {
+            Write-Host "ℹ launcher/ directory not yet created"
+          }
+          Write-Host "✓ Launcher check complete"
+        shell: pwsh

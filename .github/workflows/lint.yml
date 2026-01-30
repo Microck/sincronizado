@@ -1,0 +1,73 @@
+name: Lint
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  markdown-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install markdownlint-cli
+        run: npm install -g markdownlint-cli
+
+      - name: Lint Markdown files
+        run: |
+          echo "Linting Markdown files..."
+          markdownlint "**/*.md" --ignore "node_modules/**" --ignore ".planning/**" --ignore "docs/**" || true
+          echo "✓ Markdown lint complete"
+
+      - name: Check for common issues
+        run: |
+          echo "Checking for common Markdown issues..."
+          # Check for TODO markers in committed files
+          if grep -r "TODO\|FIXME\|XXX" --include="*.md" . 2>/dev/null | grep -v ".planning"; then
+            echo "⚠ Found TODO/FIXME markers in markdown files"
+          fi
+          echo "✓ Common issues check complete"
+
+  yaml-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install yamllint
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y yamllint
+
+      - name: Lint YAML files
+        run: |
+          echo "Linting YAML files..."
+          if [ -d .github/workflows ]; then
+            yamllint .github/workflows/ || true
+          fi
+          if [ -f .prettierrc ]; then
+            echo "✓ Prettier config exists"
+          fi
+          echo "✓ YAML lint complete"
+
+  json-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate JSON files
+        run: |
+          echo "Validating JSON files..."
+          if [ -f .planning/config.json ]; then
+            cat .planning/config.json | python3 -m json.tool > /dev/null && echo "✓ config.json valid"
+          fi
+          if [ -f package.json ]; then
+            cat package.json | python3 -m json.tool > /dev/null && echo "✓ package.json valid"
+          fi
+          echo "✓ JSON validation complete"

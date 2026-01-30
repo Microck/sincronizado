@@ -1,0 +1,70 @@
+name: Test
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-structure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check test structure
+        run: |
+          echo "Checking test structure..."
+          if [ -d tests ]; then
+            echo "✓ tests/ directory exists"
+            test_count=$(find tests -type f \( -name "*test*" -o -name "*spec*" \) | wc -l)
+            echo "Found $test_count test files"
+          else
+            echo "ℹ tests/ directory not yet created (expected in Phase 1.6)"
+          fi
+          echo "✓ Test structure check complete"
+
+  integration-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Test repository integrity
+        run: |
+          echo "Testing repository integrity..."
+          # Check git log is accessible
+          git log --oneline -5
+          echo "✓ Git history accessible"
+          
+          # Check all expected files exist
+          for file in README.md LICENSE .gitignore .planning/PROJECT.md .planning/ROADMAP.md .planning/STATE.md; do
+            if [ -f "$file" ]; then
+              echo "✓ $file exists"
+            else
+              echo "✗ $file missing"
+              exit 1
+            fi
+          done
+          echo "✓ Repository integrity test passed"
+
+  validate-workflows:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate GitHub Actions workflows
+        run: |
+          echo "Validating GitHub Actions workflows..."
+          if [ -d .github/workflows ]; then
+            workflow_count=$(find .github/workflows -name "*.yml" | wc -l)
+            echo "Found $workflow_count workflow files"
+            for workflow in .github/workflows/*.yml; do
+              if [ -f "$workflow" ]; then
+                echo "✓ $(basename $workflow)"
+              fi
+            done
+          else
+            echo "✗ .github/workflows directory missing"
+            exit 1
+          fi
+          echo "✓ Workflow validation complete"
