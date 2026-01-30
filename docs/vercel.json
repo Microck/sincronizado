@@ -20,7 +20,7 @@
   "redirects": [
     {
       "source": "/",
-      "destination": "/docs/intro",
+      "destination": "/docs/",
       "permanent": true
     }
   ],
