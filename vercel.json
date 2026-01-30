@@ -1,0 +1,68 @@
+{
+  "framework": null,
+  "rewrites": [
+    {
+      "source": "/install.sh",
+      "destination": "https://raw.githubusercontent.com/microck/sincronizado/main/scripts/setup-vps.sh"
+    },
+    {
+      "source": "/install.ps1",
+      "destination": "https://raw.githubusercontent.com/microck/sincronizado/main/scripts/install.ps1"
+    },
+    {
+      "source": "/launcher/:path*",
+      "destination": "https://raw.githubusercontent.com/microck/sincronizado/main/launcher/:path*"
+    },
+
+    {
+      "source": "/_mintlify/:path*",
+      "destination": "https://REPLACE_ME.mintlify.app/_mintlify/:path*"
+    },
+    {
+      "source": "/api/request",
+      "destination": "https://REPLACE_ME.mintlify.app/_mintlify/api/request"
+    },
+    {
+      "source": "/mintlify-assets/:path+",
+      "destination": "https://REPLACE_ME.mintlify.app/mintlify-assets/:path+"
+    },
+    {
+      "source": "/llms.txt",
+      "destination": "https://REPLACE_ME.mintlify.app/llms.txt"
+    },
+    {
+      "source": "/llms-full.txt",
+      "destination": "https://REPLACE_ME.mintlify.app/llms-full.txt"
+    },
+    {
+      "source": "/sitemap.xml",
+      "destination": "https://REPLACE_ME.mintlify.app/sitemap.xml"
+    },
+    {
+      "source": "/robots.txt",
+      "destination": "https://REPLACE_ME.mintlify.app/robots.txt"
+    },
+    {
+      "source": "/mcp",
+      "destination": "https://REPLACE_ME.mintlify.app/mcp"
+    },
+    {
+      "source": "/:path*",
+      "destination": "https://REPLACE_ME.mintlify.app/:path*"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/install.sh",
+      "headers": [{ "key": "Content-Type", "value": "text/plain" }]
+    },
+    {
+      "source": "/install.ps1",
+      "headers": [{ "key": "Content-Type", "value": "text/plain" }]
+    },
+    {
+      "source": "/launcher/(.*)",
+      "headers": [{ "key": "Content-Type", "value": "text/plain" }]
+    }
+  ]
+}

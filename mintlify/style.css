@@ -1,0 +1,22 @@
+:root {
+  --sinc-yellow: #ffffc5;
+  --sinc-yellow-ink: #8b7d2e;
+  --sinc-yellow-mid: #d4c96e;
+}
+
+#navbar {
+  background: linear-gradient(135deg, var(--sinc-yellow) 0%, #f4e98e 100%);
+}
+
+.mdx-content code {
+  background: rgba(255, 255, 197, 0.35);
+  color: var(--sinc-yellow-ink);
+}
+
+.mdx-content table thead th {
+  background: rgba(255, 255, 197, 0.55);
+}
+
+.mermaid {
+  background: transparent;
+}
