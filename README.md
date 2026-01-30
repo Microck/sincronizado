@@ -126,7 +126,7 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guid
 
 ## Roadmap
 
-- [ ] Phase 1: Create Project Structure
+- [x] Phase 1: Create Project Structure
 - [ ] Phase 2: VPS Setup Script
 - [ ] Phase 3: Windows Launcher (opencode.ps1)
 - [ ] Phase 4: macOS Launcher (opencode.sh)
