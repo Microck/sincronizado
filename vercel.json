@@ -1,4 +1,5 @@
 {
+  "buildCommand": "echo 'No build needed - proxy only'",
   "framework": null,
   "rewrites": [
     {
