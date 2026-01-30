@@ -10,24 +10,33 @@ local machines have great editors but weak gpus. cloud vps has compute but terri
 
 ## architecture
 
-```
-┌─────────────────┐         ┌──────────────────────┐
-│   local dev     │         │    oracle vps        │
-│   machine       │         │                      │
-│  ┌───────────┐  │ mutagen│  ┌────────────────┐  │
-│  │ vscode    │◄─┼────────┼─►│ opencode ai    │  │
-│  │ jetbrains │  │  sync  │  │ agent          │  │
-│  └───────────┘  │         │  └────────────────┘  │
-│                 │         │  ┌────────────────┐  │
-│  launcher       │◄───────┼─►│ tmux sessions  │  │
-│  (hash-based)   │tailscale│  └────────────────┘  │
-└─────────────────┘         └──────────────────────┘
-       ▲                              ▲
-       │                              │
-   dev workflow              http://vps:3000
-       │                              │
-       └──────────────────────────────┘
-            mobile access (agent-os)
+```mermaid
+graph TB
+    subgraph Local["Local Dev Machine"]
+        VS[VS Code / JetBrains]
+        Launcher[Launcher<br/>hash-based sessions]
+    end
+
+    subgraph Network["Secure Network"]
+        TS[Tailscale VPN]
+        Mut[Mutagen Sync<br/><500ms]
+    end
+
+    subgraph VPS["Oracle VPS"]
+        AI[AI Agent<br/>OpenCode or Claude]
+        TM[Tmux Sessions]
+        AO[Agent-OS<br/>port 3000]
+    end
+
+    subgraph Mobile["Mobile Access"]
+        Phone[Phone Browser]
+    end
+
+    VS <-->|Mut| AI
+    Launcher <-->|ET SSH| TM
+    TS -.->|encrypts| VS
+    TS -.->|encrypts| VPS
+    Phone -->|http| AO
 ```
 
 ## installation modes

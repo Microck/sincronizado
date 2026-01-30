@@ -6,32 +6,42 @@ Understanding how Sincronizado works.
 
 Sincronizado creates a seamless bridge between your local development environment and a remote VPS running AI agents.
 
-```
-┌─────────────────┐         ┌──────────────────────┐
-│   Local PC      │         │    Remote VPS        │
-│  (Windows/Mac)  │◄───────►│  (Ubuntu/Debian)     │
-│                 │ Mutagen │                      │
-│  ┌───────────┐  │  Sync   │  ┌────────────────┐  │
-│  │VS Code    │◄─┼────────┼─►│ OpenCode AI    │  │
-│  └───────────┘  │         │  └────────────────┘  │
-│                 │         │  ┌────────────────┐  │
-│  ┌───────────┐  │ Tailscale│  │ Tmux Sessions  │  │
-│  │opencode   │◄─┼────────┼─►│                │  │
-│  │launcher   │  │         │  └────────────────┘  │
-│  └───────────┘  │         │  ┌────────────────┐  │
-│                 │         │  │ Agent-OS       │  │
-│ TUI Installer   │         │  │ (Port 3000)    │  │
-│ (Optional)      │         │  └────────────────┘  │
-└─────────────────┘         │  ┌────────────────┐  │
-       ▲                    │  │ Kimaki         │  │
-       │                    │  │ Discord Bot    │  │
-   Discord              │  └────────────────┘  │
-   (Optional)              │  ┌────────────────┐  │
-       │                    │  │ LunaRoute      │  │
-       └────────────────────┴─►│ (Port 8082)    │  │
-                               └────────────────┘  │
-                               └──────────────────────┘
-```
+````mermaid
+graph TB
+    subgraph Local["Local Dev Machine"]
+        direction TB
+        Editors[VS Code / JetBrains]
+        Launchers[Launcher Scripts]
+        TUI[TUI Installer]
+    end
+
+    subgraph Network["Secure Network Layer"]
+        TS[Tailscale VPN<br/>WireGuard]
+        Mut[Mutagen Sync<br/><500ms latency]
+        ET[Eternal Terminal<br/>resilient SSH]
+    end
+
+    subgraph VPS["Remote VPS<br/>Ubuntu/Debian"]
+        direction TB
+        AI[AI Agent<br/>OpenCode or Claude Code]
+        TM[Tmux Sessions]
+        AO[Agent-OS<br/>Web UI Port 3000]
+        KR[Kimaki<br/>Discord Bot]
+        LR[LunaRoute<br/>Port 8082]
+    end
+
+    subgraph Mobile["Mobile Access"]
+        Phone[Phone/Tablet]
+        Discord[Discord App]
+    end
+
+    Editors <-->|file sync| Mut
+    Mut <-->|sync| AI
+    Launchers <-->|ET SSH| TM
+    TUI -.->|install| VPS
+    TS -.->|encrypts all| Network
+    Phone -->|browser| AO
+    Discord <-->|commands| KR
 
 ## Installation Tiers
 
@@ -101,10 +111,14 @@ Pick individual components via TUI or flags.
 
 **Hash-Based IDs:**
 
-```
-Project "app" in D:\Work\ → sync-app-3a5b2c
-Project "app" in C:\Tmp\  → sync-app-7d8e9f
-```
+```mermaid
+graph LR
+    P1["Project 'app'<br/>D:\\Work\\app"] -->|SHA256| H1["sync-app-3a5b2c"]
+    P2["Project 'app'<br/>C:\\Tmp\\app"] -->|SHA256| H2["sync-app-7d8e9f"]
+
+    style H1 fill:#4CAF50
+    style H2 fill:#2196F3
+````
 
 **Benefits:**
 
@@ -144,6 +158,21 @@ Project "app" in C:\Tmp\  → sync-app-7d8e9f
 
 ## Data Flow
 
+```mermaid
+sequenceDiagram
+    participant Local as Local Editor
+    participant Mut as Mutagen
+    participant VPS as VPS AI Agent
+    participant Remote as Remote Execution
+
+    Local->>Mut: Save file
+    Mut->>VPS: Sync changes (<500ms)
+    VPS->>Remote: Execute command
+    Remote->>VPS: Return results
+    VPS->>Mut: File changes
+    Mut->>Local: Sync back
+```
+
 1. **Local Edit** → Mutagen detects change
 2. **Sync** → File pushed to VPS in <500ms
 3. **Agent Notices** → AI sees updated code
@@ -169,3 +198,7 @@ Project "app" in C:\Tmp\  → sync-app-7d8e9f
 ## Troubleshooting
 
 See the [Troubleshooting Guide](./troubleshooting.md) for common issues.
+
+```
+
+```
