@@ -6,7 +6,7 @@ sincronizado runs your ai coding assistant on a vps while you edit files locally
 
 ## why
 
-local machines have great editors but weak gpus. cloud vps has compute but terrible latency for editing. sincronizado bridges this: edit locally, execute remotely.
+local machines have great editors but limited resources. running multiple ai instances locally is intensive and hard to manage while doing other work. cloud vps has compute but terrible latency for editing. sincronizado bridges this: edit locally, execute remotely.
 
 ## architecture
 
@@ -241,4 +241,4 @@ see [.planning/ROADMAP.md](.planning/ROADMAP.md) for details.
 
 ## license
 
-mit
+mit ᕙ(⇀‸↼‶)ᕗ
