@@ -1,160 +1,235 @@
-# Sincronizado
+# sincronizado
 
-> **Hyper-local development stack with remote AI execution**
+> hyper-local dev with remote ai execution
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![CI Status](https://github.com/microck/sincronizado/workflows/CI/badge.svg)](https://github.com/microck/sincronizado/actions)
-[![Documentation](https://img.shields.io/badge/docs-docusaurus-blue.svg)](https://microck.github.io/sincronizado/)
+sincronizado runs your ai coding assistant on a vps while you edit files locally. zero latency. maximum compute. mobile accessible.
 
-**Sincronizado** combines best-in-class tools into a cohesive development environment where you edit files locally while your AI coding assistant runs on a remote VPS. Zero latency. Maximum AI power. Mobile accessible.
+## why
 
-## What It Does
+local machines have great editors but weak gpus. cloud vps has compute but terrible latency for editing. sincronizado bridges this: edit locally, execute remotely.
 
-- **Local-First**: Edit files on Windows in VS Code, JetBrains, or any editor
-- **Remote Execution**: Heavy AI tasks run on your Oracle VPS (Ashburn/Paris)
-- **Zero Latency**: File sync completes in <500ms via Mutagen
-- **Mobile Access**: Check status or chat from your phone via Agent-OS Web UI
-- **Collision-Proof**: Hash-based project identification prevents conflicts
-
-## Quick Start
-
-```powershell
-# 1. Install on Windows (PowerShell)
-winget install Mutagen.Mutagen
-# Or: choco install mutagen
-
-# 2. Clone and run setup
-git clone https://github.com/microck/sincronizado.git
-cd sincronizado
-.\scripts\setup.ps1
-
-# 3. Start development
-.\launcher\opencode.ps1
-```
-
-Your VPS session is now running! Edit files locally and watch them sync instantly.
-
-## Architecture
+## architecture
 
 ```
 ┌─────────────────┐         ┌──────────────────────┐
-│   Windows PC    │         │    Oracle VPS        │
-│                 │         │                      │
-│  ┌───────────┐  │ Mutagen│  ┌────────────────┐ │
-│  │VS Code    │◄─┼────────┼─►│ OpenCode AI   │ │
-│  └───────────┘  │   Sync  │  │ Agent          │ │
-│                 │         │  └────────────────┘ │
-│  ┌───────────┐  │         │  ┌────────────────┐ │
-│  │opencode.ps1│◄─┼────Tailscale─►│ Tmux Sessions │ │
-│  └───────────┘  │         │  └────────────────┘ │
-│                 │         │                      │
+│   local dev     │         │    oracle vps        │
+│   machine       │         │                      │
+│  ┌───────────┐  │ mutagen│  ┌────────────────┐  │
+│  │ vscode    │◄─┼────────┼─►│ opencode ai    │  │
+│  │ jetbrains │  │  sync  │  │ agent          │  │
+│  └───────────┘  │         │  └────────────────┘  │
+│                 │         │  ┌────────────────┐  │
+│  launcher       │◄───────┼─►│ tmux sessions  │  │
+│  (hash-based)   │tailscale│  └────────────────┘  │
 └─────────────────┘         └──────────────────────┘
        ▲                              ▲
        │                              │
-   Keyboard                  http://vps:3000
+   dev workflow              http://vps:3000
        │                              │
        └──────────────────────────────┘
-               Mobile Phone
+            mobile access (agent-os)
 ```
 
-## Key Components
-
-| Component | Purpose |
-|-----------|---------|
-| **Tailscale** | Secure, zero-config VPN |
-| **Eternal Terminal** | Resilient connections (survives network drops) |
-| **Mutagen** | Bi-directional file sync in real-time |
-| **Agent-OS** | Web-based mobile UI for remote access |
-| **OpenCode** | AI coding assistant running on VPS |
-
-## Documentation
-
-- 📖 [Full Documentation](https://microck.github.io/sincronizado/)
-- 🚀 [Quick Start Guide](https://microck.github.io/sincronizado/docs/quick-start)
-- 🏗️ [Architecture](https://microck.github.io/sincronizado/docs/architecture)
-- 🤖 [Configuration Guide](https://microck.github.io/sincronizado/docs/configuration)
-
-## Use Cases
-
-### Local Development
-Edit files on your powerful Windows machine with your favorite tools while the AI agent handles heavy lifting on the VPS.
-
-### Mobile Monitoring
-Check your development progress from your phone while commuting or traveling. Full access to sessions via web UI.
-
-### Network Resilience
-Eternal Terminal keeps your session alive even when switching between WiFi and 5G. No more SSH disconnections.
-
-### Team Collaboration
-Share project sessions with team members. Collaborate in real-time while maintaining local development speed.
-
-## Installation
-
-### Prerequisites
-
-- Windows 10+ or macOS 12+
-- VPS with Ubuntu 20.04+ or Debian 11+
-- Tailscale account
-- Git
-
-### Windows
-
-```powershell
-# Using winget
-winget install Mutagen.Mutagen
-
-# Using Chocolatey
-choco install mutagen
-
-# Run setup script
-.\scripts\setup.ps1
-```
-
-### macOS
+## installation modes
 
 ```bash
-# Using Homebrew
-brew install mutagen
+# minimal - core only (et, opencode, ufw)
+curl -fsSL https://sincronizado.dev/install.sh | bash -s -- --mode=minimal
 
-# Run setup script
-./scripts/setup.sh
+# standard - recommended (+ agent-os, ccmanager, plugins)
+curl -fsSL https://sincronizado.dev/install.sh | bash
+
+# full - everything (+ kimaki discord bot, lunaroute proxy, etc)
+curl -fsSL https://sincronizado.dev/install.sh | bash -s -- --mode=full
+
+# tui installer (interactive)
+bunx sincronizado
 ```
 
-## Contributing
+## quick start
 
-We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+### 1. vps setup (one-time)
 
-## Roadmap
+```bash
+ssh ubuntu@your-vps-ip
+sudo ./setup-vps.sh --mode=standard
+```
 
-- [x] Phase 1: Create Project Structure
-- [x] Phase 2: VPS Setup Script
-- [x] Phase 3: Windows Launcher (opencode.ps1)
-- [x] Phase 4: macOS Launcher (opencode.sh)
-- [x] Phase 5: Configuration System
-- [x] Phase 6: Multi-VPS Provider Support
-- [x] Phase 7: Plugin Documentation
-- [x] Phase 8: Mobile Access Documentation
-- [x] Phase 9: Workflow Documentation
-- [x] Phase 10: Testing & Validation
-- [x] Phase 11: Packaging & Distribution
-- [ ] Phase 12: Documentation Site (Deploy to GitHub Pages)
-- [ ] Phase 13: v1.0.0 Release
+### 2. local setup
 
-See [ROADMAP.md](.planning/ROADMAP.md) for complete details.
+```powershell
+# windows
+winget install Mutagen.Mutagen
+.\launcher\opencode.ps1 -Project myapp
 
-## License
+# macos/linux
+brew install mutagen
+./launcher/opencode.sh -p myapp
+```
 
-MIT © 2026 Sincronizado
+### 3. done
 
-## Acknowledgments
+- editor syncs via mutagen (<500ms)
+- ai runs on vps via eternal terminal
+- check status on phone at http://vps:3000
 
-Built with:
-- [Tailscale](https://tailscale.com/)
-- [Eternal Terminal](https://eternalterminal.dev/)
-- [Mutagen](https://mutagen.io/)
-- [Agent-OS](https://github.com/saadnvd1/agent-os)
-- [OpenCode](https://github.com/opencode-org/opencode)
+## tiered installation
 
----
+| mode         | components                            | use case                |
+| ------------ | ------------------------------------- | ----------------------- |
+| **minimal**  | et, opencode, ufw                     | headless servers, ci/cd |
+| **standard** | + agent-os, ccmanager, plugins        | **recommended**         |
+| **full**     | + kimaki, lunaroute, worktree-session | power users             |
+| **custom**   | pick components                       | specific needs          |
 
-**Made with ❤️ for developers who need power and flexibility**
+### optional components
+
+```bash
+--with-kimaki              # discord bot for voice/text control
+--with-lunaroute           # ai proxy with token tracking
+--with-worktree-session    # git worktree per session
+--with-session-handoff     # context continuation
+--with-agent-of-empires    # alt to ccmanager (tmux+worktree)
+
+--no-agent-os              # skip web ui
+--no-ccmanager             # skip session manager
+--no-plugins               # skip opencode plugins
+```
+
+## tui installer
+
+```bash
+# interactive mode selection
+bunx sincronizado
+
+# or install globally
+npm install -g sincronizado
+sincronizado
+```
+
+8-screen flow:
+
+1. welcome
+2. mode select (minimal/standard/full/custom)
+3. addons (checkboxes)
+4. vps provider (oracle/hetzner/do/aws)
+5. config (hostname, user, root)
+6. confirm
+7. install (real-time ssh progress)
+8. complete
+
+## core components
+
+| tool                 | purpose            | why it matters                        |
+| -------------------- | ------------------ | ------------------------------------- |
+| **tailscale**        | zero-config vpn    | no port forwarding, secure by default |
+| **eternal terminal** | resilient ssh      | survives wifi/5g handoffs             |
+| **mutagen**          | bidirectional sync | <500ms file sync                      |
+| **opencode**         | ai agent           | the actual ai doing work              |
+| **agent-os**         | web ui             | mobile access, session browser        |
+
+## advanced features
+
+### kimaki (discord integration)
+
+```bash
+# install
+sudo ./setup-vps.sh --with-kimaki
+
+# configure
+npx kimaki  # interactive discord bot setup
+systemctl start kimaki
+```
+
+text your codebase from discord. voice messages transcribed via gemini. each project = channel, each session = thread.
+
+### lunaroute (ai debugging)
+
+```bash
+# install
+sudo ./setup-vps.sh --with-lunaroute
+
+# run
+eval $(lunaroute-server env)
+```
+
+proxy all ai calls. track token usage. debug conversations. web ui at port 8082.
+
+### worktree sessions
+
+```bash
+# install
+sudo ./setup-vps.sh --with-worktree-session
+
+# usage
+opencode  # prompts for branch suffix, auto-creates worktree
+```
+
+each task gets isolated git worktree. auto-commits on exit. no main branch pollution.
+
+### session handoff
+
+say "handoff" in opencode → new session starts with compact continuation prompt. critical for long sessions on mobile.
+
+## configuration
+
+```json
+// .opencode.config.json
+{
+  "vps": {
+    "host": "oracle.tail1234.ts.net",
+    "user": "ubuntu",
+    "port": 2222
+  },
+  "sync": {
+    "alpha": ".",
+    "beta": "~/projects/myapp",
+    "ignore": [".git", "node_modules", ".next"]
+  }
+}
+```
+
+see [docs/configuration.md](docs/docs/configuration.md)
+
+## mobile access
+
+agent-os runs on vps port 3000. access via tailscale or expose through nginx.
+
+```bash
+# status
+systemctl status agent-os
+
+# logs
+journalctl -u agent-os -f
+```
+
+## troubleshooting
+
+| issue             | fix                              |
+| ----------------- | -------------------------------- |
+| sync slow         | check `mutagen sync list`        |
+| et disconnects    | restart: `systemctl restart et`  |
+| agent-os 502      | opencode not running, check logs |
+| kimaki offline    | `systemctl restart kimaki`       |
+| port 3000 blocked | `ufw allow 3000/tcp`             |
+
+## project structure
+
+```
+sincronizado/
+├── launcher/          # windows (ps1) + mac/linux (sh)
+├── scripts/           # vps setup, rollback
+├── installer/         # opentui-based tui
+├── config/            # templates
+└── docs/              # docusaurus site
+```
+
+## status
+
+phases 1-15 complete. v1.1.0 ready.
+
+see [.planning/ROADMAP.md](.planning/ROADMAP.md) for details.
+
+## license
+
+mit
