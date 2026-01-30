@@ -167,12 +167,54 @@
 - [ ] Publish packages
 - [ ] Announcement
 
+### Phase 14: Add Extra Features
+**Status:** ✅ Complete
+**Goal:** Integrate external tools to enhance development experience
+**Depends on:** Phase 13
+**Plan:** [.planning/phases/14-add-extra-features/14-01-PLAN.md](./phases/14-add-extra-features/14-01-PLAN.md)
+
+Scope:
+- [x] Evaluate external ecosystem tools
+- [x] Refactor setup-vps.sh with tiered flags
+- [x] Add kimaki install function with systemd service
+- [x] Add lunaroute install function
+- [x] Add worktree-session install function
+- [x] Add session-handoff configuration
+
+Key Additions:
+- `--mode=minimal/standard/full/custom` - Tiered installation
+- `--with-kimaki` - Discord bot for mobile control + voice messages
+- `--with-lunaroute` - AI proxy for debugging
+- `--with-worktree-session` - Git worktree per task
+- `--with-session-handoff` - Seamless context handoffs
+
+### Phase 15: TUI Installer
+**Status:** ✅ Complete
+**Goal:** Interactive terminal installer using OpenTUI
+**Depends on:** Phase 14 (tiered install flags)
+**Plan:** [.planning/phases/15-tui-installer/15-01-PLAN.md](./phases/15-tui-installer/15-01-PLAN.md)
+
+Scope:
+- [x] Phase 15.1: Project scaffold with OpenTUI
+- [x] Phase 15.2: Core UI components (6 components)
+- [x] Phase 15.3: Screen flow (8 screens)
+- [x] Phase 15.4: State management with navigation
+- [x] Phase 15.5: SSH integration for remote install
+- [x] Phase 15.6: Distribution structure (npm package ready)
+
+Key Features:
+- 8-screen interactive flow (Welcome → Mode → Addons → Provider → Config → Confirm → Install → Complete)
+- Radio/Checkbox components for selection
+- Real-time SSH progress with progress bars
+- `bunx sincronizado` or `npm install -g sincronizado`
+
 ## Statistics
 
-- **Total Phases:** 13
+- **Total Phases:** 15
 - **Completed:** 11
 - **Ready for Release:** 2 (require manual steps)
-- **Overall Progress:** 95%
+- **Planned:** 2 (Phase 14, 15)
+- **Overall Progress:** 87%
 
 ## Deliverables
 

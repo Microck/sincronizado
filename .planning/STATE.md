@@ -17,7 +17,7 @@ Sincronizado is a hyper-local development stack that combines:
 ## Current Position
 
 ### What We Have
-- ✅ All 13 phases completed
+- ✅ 13 phases completed, 1 pending
 - ✅ Windows launcher (opencode.ps1, 430+ lines)
 - ✅ macOS/Linux launcher (opencode.sh, 270+ lines)
 - ✅ VPS setup script with rollback
@@ -94,6 +94,8 @@ sincronizado/
 - ✅ Phase 11: Packaging & Distribution - Complete
 - ✅ Phase 12: Documentation Site - Complete
 - ✅ Phase 13: v1.0.0 Release - Ready
+- ✅ Phase 14: Add Extra Features - Complete
+- ✅ Phase 15: TUI Installer - Complete
 
 ### Testing Status
 - All validation tests passed
@@ -113,9 +115,16 @@ sincronizado/
    - Decision: After v1.0 launch
 
 3. **Mobile Features Scope for v1.0:**
-   - Basic viewing: YES
-   - Interactive chat: YES
-   - Push notifications: MAYBE (Phase 8)
+    - Basic viewing: YES
+    - Interactive chat: YES
+    - Push notifications: MAYBE (Phase 8)
+
+---
+
+## Accumulated Context
+
+### Roadmap Evolution
+- Phase 14 added: Add Extra Features
 
 ---
 
