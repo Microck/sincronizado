@@ -1,0 +1,220 @@
+---
+title: Plugins
+description: OpenCode plugin guide.
+---
+
+Complete guide to installing and using OpenCode plugins with Sincronizado.
+
+## Core plugins (standard mode)
+
+These plugins are installed by default in standard mode and higher.
+
+### opencode-direnv (simonwjackson)
+
+Purpose: auto-load env vars from `.envrc` when entering directories.
+
+Install:
+
+```bash
+# included in VPS setup script
+# or install manually:
+git clone https://github.com/simonwjackson/opencode-direnv.git ~/.config/opencode/plugins/direnv
+```
+
+Usage:
+
+1. Create `.envrc` in project root:
+
+```bash
+export API_KEY=example
+export DATABASE_URL=postgres://localhost/db
+```
+
+2. Run `direnv allow`
+3. Variables auto-load when you enter the directory
+
+### agentmap (remorses)
+
+Purpose: tree view of codebase for better context in headless VPS environments.
+
+Install:
+
+```bash
+# included in VPS setup script
+git clone https://github.com/remorses/agentmap.git ~/.config/opencode/plugins/agentmap
+```
+
+Usage:
+
+- Type `map` or `tree` in OpenCode to see project structure
+- Helps AI understand full codebase layout
+
+### opencode-sync (tctinh)
+
+Purpose: sync OpenCode settings and history across machines via GitHub Gist.
+
+Install:
+
+```bash
+# included in VPS setup script
+git clone https://github.com/tctinh/opencode-sync.git ~/.config/opencode/plugins/sync
+```
+
+Setup:
+
+1. Create GitHub PAT with `gist` scope
+2. Run `opencode sync login` and enter token
+3. Push: `opencode sync push`
+4. On new machine: `opencode sync pull`
+
+### ai-sessions-mcp (yoavf)
+
+Purpose: search and reference past OpenCode sessions.
+
+Install:
+
+```bash
+# included in VPS setup script
+git clone https://github.com/yoavf/ai-sessions-mcp.git ~/.config/opencode/plugins/ai-sessions
+```
+
+Usage:
+
+- `search "previous work on auth"` - find relevant past sessions
+- `session:last` - reference last session context
+
+## Session management
+
+### ccmanager (kbwo)
+
+Purpose: visual session manager with real-time status indicators.
+
+Install:
+
+```bash
+# included in VPS setup (unless --no-ccmanager)
+npm install -g @kbwo/ccmanager
+```
+
+Usage:
+
+- `ccmanager` - launch interactive TUI
+- `ccmanager list` - list all sessions
+- Shows status: busy / waiting / idle per session
+
+### agent-of-empires (njbrake)
+
+Purpose: alt session manager using tmux + git worktrees.
+
+Install:
+
+```bash
+# install via VPS setup
+sudo ./scripts/setup-vps.sh --with-agent-of-empires
+
+# or manually
+curl -fsSL https://raw.githubusercontent.com/njbrake/agent-of-empires/main/install.sh | bash
+```
+
+Note: mutually exclusive with ccmanager. Use `--with-agent-of-empires --no-ccmanager` to switch.
+
+## Optional plugins (full/custom)
+
+### opencode-worktree-session (felixAnhalt)
+
+Purpose: automatic git worktree per OpenCode session with auto-cleanup.
+
+Install:
+
+```bash
+# included in VPS setup with --with-worktree-session
+npm install -g @tmegit/opencode-worktree-session
+```
+
+Configure in `opencode.json`:
+
+```json
+{
+  "plugin": ["@tmegit/opencode-worktree-session"]
+}
+```
+
+Flow:
+
+1. Run `opencode`
+2. Prompt asks for branch suffix (example: `feature-auth`)
+3. Plugin creates `opencode/feature-auth` branch + worktree
+4. AI works in isolated env
+5. On exit: auto-commits, pushes branch, removes worktree
+
+Benefits:
+
+- No main branch pollution
+- Each task in isolated branch
+- Auto cleanup
+- Refuses to run on main (safety)
+
+### opencode-session-handoff
+
+Purpose: compact continuation when sessions hit context limit.
+
+Configure in `opencode.json`:
+
+```json
+{
+  "plugin": ["opencode-session-handoff"]
+}
+```
+
+Usage:
+
+1. Session fills up
+2. Say `handoff`
+3. New session starts with continuation prompt
+
+## Plugin configuration
+
+Edit `.opencode.config.json` to enable/disable plugins:
+
+```json
+{
+  "plugins": {
+    "enabled": ["opencode-direnv", "agentmap", "opencode-sync", "ai-sessions-mcp", "ccmanager"]
+  }
+}
+```
+
+For npm-based plugins (worktree-session, session-handoff), add to `opencode.json` instead.
+
+## Troubleshooting
+
+### Plugin not loading
+
+1. Check plugin exists in `~/.config/opencode/plugins/`
+2. Verify plugin name matches enabled list
+3. Restart OpenCode session
+4. For npm plugins: verify global install with `npm list -g`
+
+### sync plugin auth fails
+
+1. Regenerate GitHub token with `gist` scope
+2. Run `opencode sync login` again
+3. Check token not expired
+
+### direnv not loading
+
+1. Ensure `.envrc` exists
+2. Run `direnv allow` after changes
+3. Check `.envrc` syntax
+
+### worktree-session not activating
+
+1. Verify install: `npm list -g @tmegit/opencode-worktree-session`
+2. Check `opencode.json` plugin entry
+3. Ensure you are not on main (plugin refuses)
+
+### session-handoff not working
+
+1. Verify `opencode.json` config
+2. Say `handoff` (exact)
+3. Confirm context actually filled

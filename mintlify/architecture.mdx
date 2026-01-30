@@ -1,0 +1,211 @@
+---
+title: Architecture
+description: How sincronizado fits together.
+---
+
+Understanding how Sincronizado works.
+
+Sincronizado creates a seamless bridge between your local development environment and a remote VPS running AI agents.
+
+## Overview
+
+```mermaid
+graph TB
+    subgraph Local["Local Dev Machine"]
+        direction TB
+        Editors["VS Code / JetBrains"]
+        Launchers["Launcher Scripts"]
+        TUI["TUI Installer"]
+    end
+
+    subgraph Network["Secure Network Layer"]
+        TS["Tailscale VPN<br/>WireGuard"]
+        Mut["Mutagen Sync<br/><500ms latency"]
+        ET["Eternal Terminal<br/>resilient SSH"]
+    end
+
+    subgraph VPS["Remote VPS<br/>Ubuntu/Debian"]
+        direction TB
+        AI["AI Agent<br/>OpenCode or Claude Code"]
+        TM["Tmux Sessions"]
+        AO["Agent-OS<br/>Web UI Port 3000"]
+        KR["Kimaki<br/>Discord Bot"]
+        LR["LunaRoute<br/>Port 8082"]
+    end
+
+    subgraph Mobile["Mobile Access"]
+        Phone["Phone/Tablet"]
+        Discord["Discord App"]
+    end
+
+    Editors <-->|"file sync"| Mut
+    Mut <-->|"sync"| AI
+    Launchers <-->|"ET SSH"| TM
+    TUI -.->|"install"| VPS
+
+    TS -.->|"connects"| Local
+    TS -.->|"connects"| VPS
+
+    Phone -->|"browser"| AO
+    Discord <-->|"commands"| KR
+```
+
+## Installation tiers
+
+Sincronizado supports tiered installation to match your needs.
+
+### Minimal mode
+
+Core only:
+
+- Eternal Terminal (resilient SSH)
+- OpenCode (AI agent)
+- UFW (firewall)
+
+Use case: headless servers, CI/CD, resource-constrained VPS.
+
+### Standard mode (recommended)
+
+Adds convenience:
+
+- Agent-OS (web UI for mobile access)
+- ccmanager (session management TUI)
+- OpenCode plugins (direnv, agentmap, sync, ai-sessions)
+
+Use case: daily dev with mobile monitoring.
+
+### Full mode
+
+Adds advanced:
+
+- Kimaki (Discord bot with voice support)
+- LunaRoute (AI proxy for debugging)
+- Worktree-session (git worktree per task)
+- Session-handoff (context continuation)
+
+Use case: power users, team collaboration.
+
+### Custom mode
+
+Pick components via TUI or flags.
+
+Use case: specific requirements, testing new features.
+
+## Components
+
+### File sync (Mutagen)
+
+- Purpose: real-time bidirectional sync
+- Performance: &lt;500ms latency
+- Ignores: node_modules, .venv, .git
+- Conflict resolution: local wins by default
+
+### Network (Tailscale)
+
+- Purpose: zero-config VPN
+- Security: WireGuard
+- DNS: MagicDNS for easy hostname access
+- Mobile: iOS/Android apps
+
+### Persistent shell (Eternal Terminal)
+
+- Purpose: survive network changes
+- Reconnect: automatic
+- Compatibility: drop-in SSH replacement
+
+### Session management
+
+Hash-based IDs:
+
+```mermaid
+graph LR
+    P1["Project 'app'<br/>D:\\Work\\app"] -->|SHA256| H1["sync-app-3a5b2c"]
+    P2["Project 'app'<br/>C:\\Tmp\\app"] -->|SHA256| H2["sync-app-7d8e9f"]
+
+    style H1 fill:#4CAF50
+    style H2 fill:#2196F3
+```
+
+Benefits:
+
+- Zero collision even with duplicate project names
+- Deterministic based on full path
+- 6-char hash for readability
+
+### Mobile (Agent-OS)
+
+- Web UI: port 3000
+- View output, manage sessions
+
+## Optional components (full mode)
+
+### Kimaki (Discord)
+
+- Purpose: control agents via Discord
+- Features: text commands, voice transcription, file attachments
+- Security: role-based access ("Kimaki" role)
+
+### LunaRoute
+
+- Purpose: proxy and monitor AI API calls
+- Features: token tracking, session recording, cost analysis
+- Web UI: port 8082
+- Perf: &lt;0.5ms overhead
+
+### Git worktree sessions
+
+- Purpose: isolated development per task
+- Features: auto-creates worktree per session, auto-commits on exit
+- Safety: refuses to run on main
+- Cleanup: removes worktree after session ends
+
+## Data flow
+
+```mermaid
+sequenceDiagram
+    participant Local as Local Editor
+    participant Mut as Mutagen
+    participant VPS as VPS AI Agent
+    participant Remote as Remote Execution
+
+    Local->>Mut: Save file
+    Mut->>VPS: Sync changes (<500ms)
+    VPS->>Remote: Execute command
+    Remote->>VPS: Return results
+    VPS->>Mut: File changes
+    Mut->>Local: Sync back
+```
+
+1. Local edit -> Mutagen detects change
+2. Sync -> file pushed to VPS in &lt;500ms
+3. Agent notices -> AI sees updated code
+4. Remote execution -> heavy work runs on VPS
+5. Results sync -> output files return locally
+
+## Security
+
+- VPN: all traffic encrypted via Tailscale
+- No open ports: access via VPN by default
+- Session isolation: each project in separate tmux session
+- No secrets in repo: config stored locally only
+
+## Performance
+
+| Metric          | Target    | Achieved |
+| --------------- | --------- | -------- |
+| File Sync       | &lt;500ms | yes      |
+| Session Connect | &lt;2s    | yes      |
+| Network Handoff | seamless  | yes      |
+| Mobile Access   | &lt;1s    | yes      |
+
+## Performance targets
+
+| Metric          | Target    |
+| --------------- | --------- |
+| File Sync       | &lt;500ms |
+| Session Connect | &lt;2s    |
+| Mobile Access   | &lt;1s    |
+
+## Troubleshooting
+
+See [Troubleshooting](/troubleshooting).

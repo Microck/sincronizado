@@ -1,0 +1,175 @@
+---
+title: Quick start
+description: Get up and running in minutes.
+---
+
+Get up and running with Sincronizado in 5 minutes.
+
+## Prereqs
+
+- Windows 10+ or macOS 12+
+- VPS: Ubuntu 20.04+ or Debian 11+
+- Tailscale account
+- Git
+
+## Install
+
+### Option 1: TUI installer (recommended)
+
+The interactive installer guides you through component selection.
+
+```bash
+# bunx (fastest)
+bunx sincronizado
+
+# npx
+npx sincronizado
+
+# global
+npm install -g sincronizado
+sincronizado
+```
+
+TUI provides:
+
+- Mode selection (minimal / standard / full / custom)
+- Component checkboxes
+- VPS provider templates
+- Real-time installation progress
+
+### Option 2: One-liner script
+
+Standard mode (recommended):
+
+```bash
+curl -fsSL https://sincronizado.micr.dev/install.sh | bash
+```
+
+Windows (PowerShell):
+
+```powershell
+iex "& { $(irm https://sincronizado.micr.dev/install.ps1) }"
+```
+
+Minimal mode (core only):
+
+```bash
+curl -fsSL https://sincronizado.micr.dev/install.sh | bash -s -- --mode=minimal
+```
+
+```powershell
+iex "& { $(irm https://sincronizado.micr.dev/install.ps1) } -Mode minimal"
+```
+
+Full mode (all features):
+
+```bash
+curl -fsSL https://sincronizado.micr.dev/install.sh | bash -s -- --mode=full
+```
+
+```powershell
+iex "& { $(irm https://sincronizado.micr.dev/install.ps1) } -Mode full"
+```
+
+### Option 3: Manual setup
+
+### 1) deps
+
+Windows (PowerShell):
+
+```powershell
+winget install Mutagen.Mutagen
+```
+
+macOS:
+
+```bash
+brew install mutagen
+```
+
+### 2) clone
+
+```bash
+git clone https://github.com/microck/sincronizado.git
+cd sincronizado
+```
+
+### 3) vps setup
+
+```bash
+# Standard mode (recommended)
+sudo ./scripts/setup-vps.sh
+
+# Or with specific components
+sudo ./scripts/setup-vps.sh --mode=custom --with-kimaki --with-lunaroute
+```
+
+### 4) config
+
+```json
+{
+  "vps": {
+    "host": "your-vps-ip",
+    "user": "your-username",
+    "port": 2222
+  },
+  "sync": {
+    "alpha": ".",
+    "beta": "~/projects/myapp",
+    "ignore": [".git", "node_modules"]
+  }
+}
+```
+
+### 5) start
+
+Windows:
+
+```powershell
+.\launcher\opencode.ps1
+```
+
+macOS/Linux:
+
+```bash
+./launcher/opencode.sh
+```
+
+## Verify
+
+1. Check sync: edit a file locally, verify it appears on VPS in &lt;500ms
+2. Test resilience: switch networks, session stays alive
+3. Mobile access: open `http://your-vps:3000`
+4. Optional (Discord): if you installed Kimaki, verify bot is online
+
+## Installation modes
+
+| mode     | components                            | use case                |
+| -------- | ------------------------------------- | ----------------------- |
+| minimal  | ET, OpenCode, UFW                     | headless servers, CI/CD |
+| standard | + Agent-OS, ccmanager, plugins        | recommended             |
+| full     | + Kimaki, LunaRoute, worktree-session | power users             |
+| custom   | pick components                       | specific needs          |
+
+### Optional components
+
+Add flags to customize install:
+
+```bash
+--with-kimaki              # discord bot for voice/text control
+--with-lunaroute           # ai proxy with token tracking
+--with-worktree-session    # git worktree per session
+--with-session-handoff     # context continuation
+--with-agent-of-empires    # alternative session manager
+
+--no-agent-os              # skip web ui
+--no-ccmanager             # skip session manager
+--no-plugins               # skip opencode plugins
+```
+
+## Next
+
+- [Architecture](/architecture)
+- [Configuration](/configuration)
+- [Plugins](/plugins)
+- [Mobile access](/mobile-access)

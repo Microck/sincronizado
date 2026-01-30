@@ -1,0 +1,82 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "maple",
+  "name": "sincronizado",
+  "description": "hyper-local dev with remote ai execution",
+  "colors": {
+    "primary": "#D4C96E",
+    "light": "#FFFFC5",
+    "dark": "#8B7D2E"
+  },
+  "fonts": {
+    "heading": {
+      "family": "Google Sans",
+      "weight": 700
+    },
+    "body": {
+      "family": "Google Sans",
+      "weight": 400
+    }
+  },
+  "background": {
+    "decoration": "grid",
+    "color": {
+      "light": "#FFFFF2",
+      "dark": "#141414"
+    }
+  },
+  "styling": {
+    "eyebrows": "breadcrumbs",
+    "codeblocks": {
+      "theme": {
+        "light": "github-light",
+        "dark": "github-dark"
+      }
+    }
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "GitHub",
+        "href": "https://github.com/microck/sincronizado",
+        "icon": "github"
+      }
+    ],
+    "primary": {
+      "type": "github",
+      "href": "https://github.com/microck/sincronizado"
+    }
+  },
+  "footer": {
+    "socials": {
+      "github": "https://github.com/microck/sincronizado",
+      "discord": "https://discord.gg/opencode"
+    }
+  },
+  "navigation": {
+    "groups": [
+      {
+        "group": "Getting started",
+        "icon": "play",
+        "pages": ["index", "quick-start"]
+      },
+      {
+        "group": "Guides",
+        "icon": "book-open",
+        "pages": ["architecture", "workflow", "mobile-access"]
+      },
+      {
+        "group": "Reference",
+        "icon": "wrench",
+        "pages": ["configuration", "plugins", "troubleshooting"]
+      }
+    ]
+  },
+  "redirects": [
+    { "source": "/docs", "destination": "/" },
+    { "source": "/docs/", "destination": "/" },
+    { "source": "/docs/intro", "destination": "/" },
+    { "source": "/docs/:slug*", "destination": "/:slug*" },
+    { "source": "/index", "destination": "/" }
+  ]
+}
