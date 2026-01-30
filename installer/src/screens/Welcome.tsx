@@ -11,7 +11,7 @@ export function Welcome({ onContinue, onExit }: WelcomeProps) {
   return (
     <Box flexDirection="column" paddingTop={1}>
       <Box paddingBottom={1}>
-        <Text color="cyan">{'    ᕙ(⇀‸↼‶)ᕗ    '}</Text>
+        <Text color="#FFFFC5">{'    ᕙ(⇀‸↼‶)ᕗ    '}</Text>
       </Box>
       <Box paddingBottom={1}>
         <Text>

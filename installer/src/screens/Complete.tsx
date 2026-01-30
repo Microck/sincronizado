@@ -56,7 +56,7 @@ export function Complete({ config, onExit }: CompleteProps) {
       </Box>
 
       <Box paddingTop={2}>
-        <Text color="cyan" dimColor>
+        <Text color="#FFFFC5" dimColor>
           {'    ᕙ(⇀‸↼‶)ᕗ    '}
         </Text>
       </Box>

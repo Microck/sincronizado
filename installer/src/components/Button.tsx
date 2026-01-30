@@ -1,13 +1,13 @@
-import React from "react";
-import { Box, Text, useInput } from "@opentui/react";
+import React from 'react';
+import { Box, Text, useInput } from '@opentui/react';
 
 interface ButtonProps {
   label: string;
   onClick: () => void;
-  variant?: "primary" | "secondary" | "danger";
+  variant?: 'primary' | 'secondary' | 'danger';
 }
 
-export function Button({ label, onClick, variant = "primary" }: ButtonProps) {
+export function Button({ label, onClick, variant = 'primary' }: ButtonProps) {
   const [isFocused, setIsFocused] = React.useState(false);
 
   useInput((_, key) => {
@@ -16,10 +16,10 @@ export function Button({ label, onClick, variant = "primary" }: ButtonProps) {
     }
   });
 
-  const color = variant === "danger" ? "red" : variant === "secondary" ? "gray" : "cyan";
+  const color = variant === 'danger' ? 'red' : variant === 'secondary' ? 'gray' : '#FFFFC5';
 
   return (
-    <Box borderStyle={isFocused ? "double" : "single"} paddingX={2}>
+    <Box borderStyle={isFocused ? 'double' : 'single'} paddingX={2}>
       <Text color={isFocused ? color : undefined} bold={isFocused}>
         {label}
       </Text>
@@ -28,7 +28,7 @@ export function Button({ label, onClick, variant = "primary" }: ButtonProps) {
 }
 
 interface ButtonGroupProps {
-  buttons: { label: string; onClick: () => void; variant?: "primary" | "secondary" | "danger" }[];
+  buttons: { label: string; onClick: () => void; variant?: 'primary' | 'secondary' | 'danger' }[];
 }
 
 export function ButtonGroup({ buttons }: ButtonGroupProps) {
@@ -47,9 +47,15 @@ export function ButtonGroup({ buttons }: ButtonGroupProps) {
   return (
     <Box gap={2}>
       {buttons.map((button, index) => (
-        <Box key={index} borderStyle={index === selectedIndex ? "double" : "single"} paddingX={2}>
+        <Box key={index} borderStyle={index === selectedIndex ? 'double' : 'single'} paddingX={2}>
           <Text
-            color={index === selectedIndex ? (button.variant === "danger" ? "red" : "cyan") : undefined}
+            color={
+              index === selectedIndex
+                ? button.variant === 'danger'
+                  ? 'red'
+                  : '#FFFFC5'
+                : undefined
+            }
             bold={index === selectedIndex}
           >
             {button.label}

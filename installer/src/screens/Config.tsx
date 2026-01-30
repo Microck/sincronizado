@@ -1,7 +1,7 @@
-import React from "react";
-import { Box, Text } from "@opentui/react";
-import { ButtonGroup } from "../components/Button.js";
-import type { InstallConfig } from "../App.js";
+import React from 'react';
+import { Box, Text } from '@opentui/react';
+import { ButtonGroup } from '../components/Button.js';
+import type { InstallConfig } from '../App.js';
 
 interface ConfigProps {
   config: InstallConfig;
@@ -18,15 +18,15 @@ export function Config({ config, onChange, onContinue, onBack }: ConfigProps) {
       </Box>
       <Box paddingBottom={1}>
         <Text>Hostname/IP: </Text>
-        <Text color="cyan">{config.hostname || "<not set>"}</Text>
+        <Text color="#FFFFC5">{config.hostname || '<not set>'}</Text>
       </Box>
       <Box paddingBottom={1}>
         <Text>SSH User: </Text>
-        <Text color="cyan">{config.sshUser}</Text>
+        <Text color="#FFFFC5">{config.sshUser}</Text>
       </Box>
       <Box paddingBottom={1}>
         <Text>Project Root: </Text>
-        <Text color="cyan">{config.projectRoot}</Text>
+        <Text color="#FFFFC5">{config.projectRoot}</Text>
       </Box>
       <Box paddingTop={2}>
         <Text dimColor>
@@ -39,8 +39,8 @@ export function Config({ config, onChange, onContinue, onBack }: ConfigProps) {
       <Box paddingTop={3}>
         <ButtonGroup
           buttons={[
-            { label: "Continue", onClick: onContinue, variant: "primary" },
-            { label: "Back", onClick: onBack, variant: "secondary" },
+            { label: 'Continue', onClick: onContinue, variant: 'primary' },
+            { label: 'Back', onClick: onBack, variant: 'secondary' },
           ]}
         />
       </Box>
