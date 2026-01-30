@@ -1,0 +1,54 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "name": "Sincronizado",
+  "logo": {
+    "dark": "#ffffff",
+    "light": "#000000"
+  },
+  "favicon": "/favicon.svg",
+  "colors": {
+    "primary": "#0F172A",
+    "light": "#334155",
+    "dark": "#0F172A",
+    "anchors": {
+      "from": "#0F172A",
+      "to": "#334155"
+    }
+  },
+  "topbarLinks": [
+    {
+      "name": "GitHub",
+      "url": "https://github.com/microck/sincronizado"
+    }
+  ],
+  "topbarCtaButton": {
+    "name": "Get Started",
+    "url": "https://github.com/microck/sincronizado#quick-start"
+  },
+  "tabs": [
+    {
+      "name": "Documentation",
+      "url": ""
+    }
+  ],
+  "anchors": [],
+  "navigation": [
+    {
+      "group": "Getting Started",
+      "pages": ["index", "quick-start", "architecture"]
+    },
+    {
+      "group": "Configuration",
+      "pages": ["configuration", "plugins", "mobile-access"]
+    },
+    {
+      "group": "Reference",
+      "pages": ["workflow", "troubleshooting"]
+    }
+  ],
+  "footerSocials": {
+    "github": "https://github.com/microck/sincronizado",
+    "discord": "https://discord.gg/opencode"
+  },
+  "analytics": {}
+}
