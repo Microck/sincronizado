@@ -67,13 +67,15 @@ temp/
 *.old
 
 # Documentation builds
-# Ignore old Docusaurus docs
-docs/
-docs-old/
+# Ignore old Docusaurus builds in docs/
+docs/.docusaurus/
+docs/build/
+docs/node_modules/
+docs/blog/
+docs/.vercel/
 
-# New Mintlify docs
-mintlify/.next/
-mintlify/node_modules/
+# Ignore old mintlify folder
+mintlify/
 
 # Package manager locks (optional - commit these if you prefer)
 # package-lock.json

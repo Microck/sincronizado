@@ -1,0 +1,277 @@
+---
+title: Mobile access
+description: Agent-OS web UI + Kimaki Discord bot.
+---
+
+Access your development sessions from anywhere using Agent-OS web UI or Kimaki Discord bot.
+
+## Agent-OS web UI
+
+Agent-OS provides a web UI to monitor and interact with OpenCode sessions running on your VPS.
+
+### Setup
+
+Agent-OS is installed by the VPS setup script (standard mode or higher). It runs as a systemd service on port 3000.
+
+### Accessing Agent-OS
+
+1. Via Tailscale (recommended)
+   - Install Tailscale on your mobile device
+   - Connect to your tailnet
+   - Open `http://your-vps-hostname:3000`
+
+2. Direct IP (if firewall allows)
+   - Open `http://your-vps-ip:3000`
+   - Only works if you are on same network or have port forwarding
+
+3. Tailscale Funnel (external access)
+
+```bash
+tailscale funnel 3000
+```
+
+Creates a public HTTPS URL.
+
+### Features
+
+Session monitoring:
+
+- View active OpenCode sessions
+- See real-time AI output
+- Monitor file sync status
+
+Session control:
+
+- Start new sessions
+- Stop existing sessions
+- Send commands to running sessions
+
+Mobile-friendly:
+
+- Responsive on phones/tablets
+- Touch-friendly
+
+## Kimaki Discord integration
+
+Kimaki adds Discord-based control for your OpenCode sessions, including voice message support.
+
+### Installation
+
+Install Kimaki during VPS setup:
+
+```bash
+# via TUI
+bunx sincronizado
+# select full mode, or check "Kimaki" in custom mode
+
+# or via CLI
+sudo ./scripts/setup-vps.sh --with-kimaki
+```
+
+### Setup
+
+1. Create Discord bot
+
+```bash
+# on your VPS
+npx kimaki
+```
+
+Wizard guides you through:
+
+- Discord bot creation at discord.com/developers
+- Required intents
+- Invite link
+- Stores config in `~/.kimaki/`
+
+2. Start Kimaki service
+
+```bash
+sudo systemctl start kimaki
+sudo systemctl enable kimaki
+```
+
+3. Invite bot to your server
+
+- Use invite link from setup wizard
+- Create a dedicated Discord server for dev
+- Bot creates channels per project
+
+### Usage
+
+Text messages:
+
+Send a message in a project channel to start an OpenCode session. Kimaki creates a thread and starts the agent.
+
+Voice messages:
+
+Record a voice message in Discord. Kimaki transcribes it (Gemini) and processes it as text.
+
+Slash commands:
+
+- `/session <prompt>` - start new session
+- `/resume <session>` - resume previous session
+- `/abort` - stop current session
+- `/add-project <project>` - create channels for existing project
+- `/queue <message>` - queue a follow-up message
+- `/model` - change AI model for channel
+
+File attachments:
+
+Attach images/code/files to include them in session context.
+
+### Architecture
+
+Each Discord channel maps to a project directory on your VPS. Each Discord thread maps to an OpenCode session.
+
+```
+Discord Server
+|- #project-a (maps to ~/projects/project-a)
+|  `- Thread: "Fix auth bug" (OpenCode session)
+|- #project-b (maps to ~/projects/project-b)
+|  `- Thread: "Add tests" (OpenCode session)
+`- #general (admin/commands)
+```
+
+### CI integration
+
+Trigger Kimaki sessions from GitHub Actions:
+
+```yaml
+# .github/workflows/investigate.yml
+name: Investigate Issues
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  investigate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Start Kimaki Session
+        env:
+          KIMAKI_BOT_TOKEN: ${{ secrets.KIMAKI_BOT_TOKEN }}
+        run: |
+          npx -y kimaki send \
+            --channel "1234567890123456789" \
+            --prompt "Investigate issue ${{ github.event.issue.html_url }}" \
+            --name "Issue #${{ github.event.issue.number }}"
+```
+
+### Multi-machine support
+
+Run multiple Kimaki instances (one per VPS):
+
+```bash
+# VPS 1
+data-dir: ~/.kimaki
+
+# VPS 2
+data-dir: ~/work-bot
+```
+
+Each has separate Discord bot + config.
+
+## Security considerations
+
+- Prefer Tailscale when possible (encrypted, private)
+- Enable auth if exposing to internet
+- Use strong VPS passwords or SSH keys
+- Keep Agent-OS updated: `npm update -g agent-os`
+- Kimaki permissions: only trusted users can trigger sessions
+- Optional: create a "no-kimaki" role to block specific users
+
+## Troubleshooting
+
+### Agent-OS issues
+
+Cannot connect:
+
+1. Verify Agent-OS is running:
+
+```bash
+sudo systemctl status agent-os
+```
+
+2. Check firewall allows port 3000:
+
+```bash
+sudo ufw status
+```
+
+3. Verify Tailscale connection:
+
+```bash
+tailscale status
+```
+
+Agent-OS not starting:
+
+1. Check logs:
+
+```bash
+sudo journalctl -u agent-os -f
+```
+
+2. Reinstall if needed:
+
+```bash
+sudo npm install -g agent-os
+sudo systemctl restart agent-os
+```
+
+### Kimaki issues
+
+Bot not responding:
+
+1. Check Kimaki service status:
+
+```bash
+sudo systemctl status kimaki
+```
+
+2. View logs:
+
+```bash
+sudo journalctl -u kimaki -f
+```
+
+3. Verify bot token is configured:
+
+```bash
+ls ~/.kimaki/
+```
+
+4. Restart Kimaki:
+
+```bash
+sudo systemctl restart kimaki
+```
+
+Voice messages not transcribing:
+
+1. Ensure Gemini API key configured during `npx kimaki` setup
+2. Check file size
+3. Verify Kimaki has voice permissions in Discord channel
+
+Slow performance on mobile:
+
+1. Reduce sync scope in Mutagen (ignore big dirs)
+2. Close unnecessary tabs
+3. Use WiFi when possible
+4. For Kimaki: Discord caches images, clear cache if needed
+
+## Tips
+
+Agent-OS:
+
+- Bookmark the URL
+- Add to home screen (app-like)
+- Use split-screen on tablets
+
+Kimaki:
+
+- Use a dedicated Discord server for dev
+- Use voice messages for hands-free workflows
+- Send long prompts as file attachments (Discord limits)
+- Use `/queue` to chain tasks
