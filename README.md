@@ -43,13 +43,13 @@ graph TB
 
 ```bash
 # minimal - core only (et, opencode, ufw)
-curl -fsSL https://sincronizado.dev/install.sh | bash -s -- --mode=minimal
+curl -fsSL https://sincronizado.micr.dev/install.sh | bash -s -- --mode=minimal
 
 # standard - recommended (+ agent-os, ccmanager, plugins)
-curl -fsSL https://sincronizado.dev/install.sh | bash
+curl -fsSL https://sincronizado.micr.dev/install.sh | bash
 
 # full - everything (+ kimaki discord bot, lunaroute proxy, etc)
-curl -fsSL https://sincronizado.dev/install.sh | bash -s -- --mode=full
+curl -fsSL https://sincronizado.micr.dev/install.sh | bash -s -- --mode=full
 
 # tui installer (interactive)
 bunx sincronizado

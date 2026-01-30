@@ -3,15 +3,16 @@
 // (when paired with `@ts-check`).
 // See: https://docusaurus.io/docs/api/docusaurus-config
 
-import {themes as prismThemes} from 'prism-react-renderer';
+import { themes as prismThemes } from 'prism-react-renderer';
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'Sincronizado',
   tagline: 'Hyper-local development stack with remote AI execution',
   favicon: 'img/favicon.ico',
-  url: 'https://microck.github.io',
-  baseUrl: '/sincronizado/',
+  url: 'https://sincronizado.micr.dev',
+  baseUrl: '/',
+  trailingSlash: false,
   organizationName: 'microck',
   projectName: 'sincronizado',
   onBrokenLinks: 'throw',
@@ -49,7 +50,12 @@ const config = {
         title: 'Sincronizado',
         logo: { alt: 'Sincronizado Logo', src: 'img/logo.svg' },
         items: [
-          { type: 'docSidebar', sidebarId: 'tutorialSidebar', position: 'left', label: 'Documentation' },
+          {
+            type: 'docSidebar',
+            sidebarId: 'tutorialSidebar',
+            position: 'left',
+            label: 'Documentation',
+          },
           { to: '/blog', label: 'Blog', position: 'left' },
           { href: 'https://github.com/microck/sincronizado', label: 'GitHub', position: 'right' },
         ],
