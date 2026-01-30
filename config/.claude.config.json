@@ -1,0 +1,23 @@
+{
+  "vps": {
+    "host": "your-vps.tailnet.ts.net",
+    "user": "ubuntu",
+    "port": 2222
+  },
+  "sync": {
+    "alpha": ".",
+    "beta": "~/projects",
+    "ignore": [".git", "node_modules", ".next", "dist", "build"]
+  },
+  "session_prefix": "sync-",
+  "mcp_servers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@anthropic-ai/mcp-server-filesystem", "/path/to/project"]
+    },
+    "git": {
+      "command": "npx",
+      "args": ["-y", "@anthropic-ai/mcp-server-git"]
+    }
+  }
+}
