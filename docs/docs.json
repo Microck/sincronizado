@@ -1,6 +1,7 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "name": "Sincronizado",
+  "theme": "mint",
   "logo": {
     "dark": "#ffffff",
     "light": "#000000"
