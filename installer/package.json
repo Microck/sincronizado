@@ -11,7 +11,8 @@
     "build": "bun build src/index.tsx --outfile=dist/index.js --target=node",
     "compile": "bun build src/index.tsx --compile --outfile=dist/sincronizado",
     "typecheck": "tsc --noEmit",
-    "format": "prettier --write src/"
+    "format": "prettier --write src/",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "@opentui/core": "^0.1.75",
