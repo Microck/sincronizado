@@ -1,7 +1,7 @@
-import React from "react";
-import { Box, Text } from "@opentui/react";
-import { ButtonGroup } from "../components/Button.js";
-import type { InstallConfig } from "../App.js";
+import React from 'react';
+import { Box, Text } from '@opentui/react';
+import { ButtonGroup } from '../components/Button.js';
+import type { InstallConfig } from '../App.js';
 
 interface CompleteProps {
   config: InstallConfig;
@@ -9,7 +9,7 @@ interface CompleteProps {
 }
 
 export function Complete({ config, onExit }: CompleteProps) {
-  const ip = config.hostname || "<hostname>";
+  const ip = config.hostname || '<hostname>';
 
   return (
     <Box flexDirection="column" paddingTop={2}>
@@ -25,7 +25,7 @@ export function Complete({ config, onExit }: CompleteProps) {
 
       <Box paddingLeft={2}>
         <Text>1. Run: ./launcher/opencode.ps1 (Windows)</Text>
-        <Text>   Or:  ./launcher/opencode.sh (macOS/Linux)</Text>
+        <Text> Or: ./launcher/opencode.sh (macOS/Linux)</Text>
       </Box>
 
       {!config.noAgentOS && (
@@ -43,17 +43,22 @@ export function Complete({ config, onExit }: CompleteProps) {
       {config.withKimaki && (
         <Box paddingLeft={2} paddingTop={1}>
           <Text>4. Configure Discord bot:</Text>
-          <Text>   ssh {config.sshUser}@{ip}</Text>
-          <Text>   npx kimaki</Text>
+          <Text>
+            {' '}
+            ssh {config.sshUser}@{ip}
+          </Text>
+          <Text> npx kimaki</Text>
         </Box>
       )}
 
       <Box paddingTop={3}>
-        <ButtonGroup
-          buttons={[
-            { label: "Exit", onClick: onExit, variant: "primary" },
-          ]}
-        />
+        <ButtonGroup buttons={[{ label: 'Exit', onClick: onExit, variant: 'primary' }]} />
+      </Box>
+
+      <Box paddingTop={2}>
+        <Text color="cyan" dimColor>
+          {'    ᕙ(⇀‸↼‶)ᕗ    '}
+        </Text>
       </Box>
     </Box>
   );
