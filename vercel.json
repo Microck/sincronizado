@@ -1,50 +1,35 @@
 {
   "version": 2,
-  "builds": [
+  "rewrites": [
     {
-      "src": "index.html",
-      "use": "@vercel/static"
+      "source": "/install.sh",
+      "destination": "https://raw.githubusercontent.com/microck/sincronizado/main/scripts/setup-vps.sh"
+    },
+    {
+      "source": "/install.ps1",
+      "destination": "https://raw.githubusercontent.com/microck/sincronizado/main/scripts/install.ps1"
+    },
+    {
+      "source": "/launcher/:path*",
+      "destination": "https://raw.githubusercontent.com/microck/sincronizado/main/launcher/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "https://micrtde.mintlify.app/:path*"
     }
   ],
-  "routes": [
+  "headers": [
     {
-      "src": "/install.sh",
-      "dest": "https://raw.githubusercontent.com/microck/sincronizado/main/scripts/setup-vps.sh",
-      "headers": {
-        "Content-Type": "text/plain"
-      }
+      "source": "/install.sh",
+      "headers": [{ "key": "Content-Type", "value": "text/plain" }]
     },
     {
-      "src": "/install.ps1",
-      "dest": "https://raw.githubusercontent.com/microck/sincronizado/main/scripts/install.ps1",
-      "headers": {
-        "Content-Type": "text/plain"
-      }
+      "source": "/install.ps1",
+      "headers": [{ "key": "Content-Type", "value": "text/plain" }]
     },
     {
-      "src": "/launcher/(.*)",
-      "dest": "https://raw.githubusercontent.com/microck/sincronizado/main/launcher/$1",
-      "headers": {
-        "Content-Type": "text/plain"
-      }
-    },
-    {
-      "src": "/docs",
-      "status": 301,
-      "headers": {
-        "Location": "https://micrtde.mintlify.app/"
-      }
-    },
-    {
-      "src": "/docs/(.*)",
-      "status": 301,
-      "headers": {
-        "Location": "https://micrtde.mintlify.app/$1"
-      }
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
+      "source": "/launcher/(.*)",
+      "headers": [{ "key": "Content-Type", "value": "text/plain" }]
     }
   ]
 }

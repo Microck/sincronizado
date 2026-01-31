@@ -6,7 +6,6 @@
 
 <p align="center">sincronizado is a hyper-local development stack that runs your AI coding assistant on a VPS for zero friction.</p>
 
-
 <p align="center">
   <a href="LICENSE"><img alt="license" src="https://img.shields.io/badge/license-MIT-blue.svg" /></a>
   <a href="https://bun.sh/"><img alt="bun" src="https://img.shields.io/badge/bun-1.0+-yellow.svg" /></a>
@@ -53,7 +52,25 @@ graph TB
 
 ## installation
 
-### quick install (one-liner)
+### tui installer (recommended)
+
+interactive 8-screen installer:
+
+```bash
+bunx sincronizado
+```
+
+**features:**
+
+- mode selection (minimal / standard / full / custom)
+- ai agent selection (opencode or claude)
+- component checkboxes
+- vps provider templates
+- real-time installation progress
+
+### one-liner scripts
+
+for automated setup without interaction:
 
 **linux / macos:**
 
@@ -76,21 +93,11 @@ install and configure sincronizado by following instructions here:
 https://raw.githubusercontent.com/microck/sincronizado/main/INSTALL.md
 ```
 
-the llm-friendly install guide includes:
+see [INSTALL.md](./INSTALL.md) for detailed setup options including:
 
-- step-by-step setup for ai agents
-- ssh mcp server configuration
-- automated verification steps
-- troubleshooting for common errors
-
-### manual install
-
-see [INSTALL.md](./INSTALL.md) for detailed options including:
-
-- tui installer: `bunx sincronizado`
-- agent selection: `--agent=opencode` or `--agent=claude`
-- installation modes: minimal / standard / full / custom
 - ssh mcp server for ai-powered vps management
+- manual installation steps
+- troubleshooting guide
 
 ## quick start
 
