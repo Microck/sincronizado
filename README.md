@@ -4,9 +4,8 @@
   </a>
 </p>
 
-<p align="center">*sincronizado* is a hyper-local development stack that runs your AI coding assistant on a VPS for zero friction.</p>
+<p align="center">sincronizado is a hyper-local development stack that runs your AI coding assistant on a VPS for zero friction.</p>
 
-<p align="center"><a href="./INSTALL.md">📖 LLM Installation Guide</a> | <a href="https://sincronizado.micr.dev">📚 Full Documentation</a></p>
 
 <p align="center">
   <a href="LICENSE"><img alt="license" src="https://img.shields.io/badge/license-MIT-blue.svg" /></a>
