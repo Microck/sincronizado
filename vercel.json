@@ -7,15 +7,17 @@
     },
     {
       "source": "/install.ps1",
-      "destination": "https://raw.githubusercontent.com/Microck/sincronizado/main/scripts/install.ps1"
+      "destination": "https://raw.githubusercontent.com/Microck/sincronizado/main/scripts/install.ps1",
+      "headers": [{ "key": "Content-Type", "value": "text/plain; charset=utf-8" }]
     },
     {
       "source": "/launcher/(.*)",
       "destination": "https://raw.githubusercontent.com/Microck/sincronizado/main/launcher/:match"
     },
     {
-      "source": "/(.*)",
-      "destination": "https://micrtde.mintlify.app/:path*"
+      "source": "/launcher/(.*)",
+      "destination": "https://raw.githubusercontent.com/Microck/sincronizado/main/launcher/:match",
+      "headers": [{ "key": "Content-Type", "value": "text/plain; charset=utf-8" }]
     }
   ],
   "headers": [
