@@ -6,56 +6,45 @@
       "use": "@vercel/static"
     }
   ],
-  "rewrites": [
+  "routes": [
     {
-      "source": "/install.sh",
-      "destination": "https://raw.githubusercontent.com/microck/sincronizado/main/scripts/setup-vps.sh"
+      "src": "/install.sh",
+      "dest": "https://raw.githubusercontent.com/microck/sincronizado/main/scripts/setup-vps.sh",
+      "headers": {
+        "Content-Type": "text/plain"
+      }
     },
     {
-      "source": "/install.ps1",
-      "destination": "https://raw.githubusercontent.com/microck/sincronizado/main/scripts/install.ps1"
+      "src": "/install.ps1",
+      "dest": "https://raw.githubusercontent.com/microck/sincronizado/main/scripts/install.ps1",
+      "headers": {
+        "Content-Type": "text/plain"
+      }
     },
     {
-      "source": "/launcher/:path*",
-      "destination": "https://raw.githubusercontent.com/microck/sincronizado/main/launcher/:path*"
+      "src": "/launcher/(.*)",
+      "dest": "https://raw.githubusercontent.com/microck/sincronizado/main/launcher/$1",
+      "headers": {
+        "Content-Type": "text/plain"
+      }
     },
     {
-      "source": "/llms.txt",
-      "destination": "https://micrtde.mintlify.app/llms.txt"
+      "src": "/docs",
+      "status": 301,
+      "headers": {
+        "Location": "https://micrtde.mintlify.app/"
+      }
     },
     {
-      "source": "/llms-full.txt",
-      "destination": "https://micrtde.mintlify.app/llms-full.txt"
+      "src": "/docs/(.*)",
+      "status": 301,
+      "headers": {
+        "Location": "https://micrtde.mintlify.app/$1"
+      }
     },
     {
-      "source": "/sitemap.xml",
-      "destination": "https://micrtde.mintlify.app/sitemap.xml"
-    },
-    {
-      "source": "/robots.txt",
-      "destination": "https://micrtde.mintlify.app/robots.txt"
-    },
-    {
-      "source": "/mcp",
-      "destination": "https://micrtde.mintlify.app/mcp"
-    },
-    {
-      "source": "/:path*",
-      "destination": "https://micrtde.mintlify.app/:path*"
-    }
-  ],
-  "headers": [
-    {
-      "source": "/install.sh",
-      "headers": [{ "key": "Content-Type", "value": "text/plain" }]
-    },
-    {
-      "source": "/install.ps1",
-      "headers": [{ "key": "Content-Type", "value": "text/plain" }]
-    },
-    {
-      "source": "/launcher/(.*)",
-      "headers": [{ "key": "Content-Type", "value": "text/plain" }]
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
   ]
 }

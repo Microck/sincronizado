@@ -1,10 +1,304 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
-    <meta http-equiv="refresh" content="0; url=https://sincronizado.micr.dev/" />
-    <title>sincronizado</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>sincronizado - Hyper-local dev with remote AI execution</title>
+    <meta
+      name="description"
+      content="sincronizado runs your AI coding assistant on a VPS while you edit files locally. Zero latency. Maximum compute. Mobile accessible."
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
+          sans-serif;
+        background: #0a0a0a;
+        color: #fff;
+        line-height: 1.6;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+      }
+
+      .container {
+        max-width: 800px;
+        text-align: center;
+      }
+
+      .logo {
+        width: 120px;
+        height: 120px;
+        margin-bottom: 2rem;
+        filter: drop-shadow(0 0 20px rgba(212, 201, 110, 0.3));
+      }
+
+      h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, #d4c96e 0%, #f5f0c4 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .tagline {
+        font-size: 1.25rem;
+        color: #888;
+        margin-bottom: 2rem;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-bottom: 3rem;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.875rem 1.5rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        border: 2px solid transparent;
+      }
+
+      .btn-primary {
+        background: #d4c96e;
+        color: #0a0a0a;
+      }
+
+      .btn-primary:hover {
+        background: #f5f0c4;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(212, 201, 110, 0.3);
+      }
+
+      .btn-secondary {
+        background: transparent;
+        color: #d4c96e;
+        border-color: #d4c96e;
+      }
+
+      .btn-secondary:hover {
+        background: rgba(212, 201, 110, 0.1);
+        transform: translateY(-2px);
+      }
+
+      .features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+        margin-top: 3rem;
+        text-align: left;
+      }
+
+      .feature {
+        padding: 1.5rem;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .feature h3 {
+        color: #d4c96e;
+        margin-bottom: 0.5rem;
+        font-size: 1.1rem;
+      }
+
+      .feature p {
+        color: #888;
+        font-size: 0.9rem;
+      }
+
+      .footer {
+        margin-top: 4rem;
+        padding-top: 2rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        color: #666;
+        font-size: 0.875rem;
+      }
+
+      .footer a {
+        color: #d4c96e;
+        text-decoration: none;
+      }
+
+      .footer a:hover {
+        text-decoration: underline;
+      }
+
+      .badges {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: center;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+      }
+
+      .badges img {
+        height: 20px;
+      }
+
+      code {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 0.2rem 0.4rem;
+        border-radius: 4px;
+        font-family: 'Monaco', 'Menlo', monospace;
+        font-size: 0.9em;
+      }
+
+      .install-command {
+        background: rgba(0, 0, 0, 0.5);
+        border: 1px solid rgba(212, 201, 110, 0.3);
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 1rem 0;
+        font-family: 'Monaco', 'Menlo', monospace;
+        font-size: 0.9rem;
+        color: #f5f0c4;
+        overflow-x: auto;
+      }
+
+      @media (max-width: 600px) {
+        h1 {
+          font-size: 2rem;
+        }
+
+        .tagline {
+          font-size: 1rem;
+        }
+
+        .buttons {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .btn {
+          width: 100%;
+          max-width: 300px;
+          justify-content: center;
+        }
+      }
+    </style>
   </head>
   <body>
-    <p>Redirecting to <a href="https://sincronizado.micr.dev/">sincronizado.micr.dev</a>...</p>
+    <div class="container">
+      <img
+        src="https://raw.githubusercontent.com/microck/sincronizado/main/assets/logo/logosmall.png"
+        alt="sincronizado logo"
+        class="logo"
+      />
+
+      <h1>*sincronizado*</h1>
+
+      <div class="badges">
+        <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License" />
+        <img src="https://img.shields.io/badge/bun-1.0+-yellow.svg" alt="Bun" />
+        <img src="https://img.shields.io/badge/node-18+-green.svg" alt="Node.js" />
+        <img src="https://img.shields.io/badge/OpenCode-supported-7289da.svg" alt="OpenCode" />
+        <img
+          src="https://img.shields.io/badge/Claude%20Code-supported-orange.svg"
+          alt="Claude Code"
+        />
+      </div>
+
+      <p class="tagline">
+        Hyper-local development stack that runs your AI coding assistant on a VPS while you edit
+        files locally. Zero latency. Maximum compute. Mobile accessible.
+      </p>
+
+      <div class="install-command">curl -fsSL https://sincronizado.micr.dev/install.sh | bash</div>
+
+      <div class="buttons">
+        <a href="https://micrtde.mintlify.app/" class="btn btn-primary">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+            />
+          </svg>
+          Documentation
+        </a>
+        <a
+          href="https://raw.githubusercontent.com/microck/sincronizado/main/INSTALL.md"
+          class="btn btn-secondary"
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+            />
+          </svg>
+          LLM Install Guide
+        </a>
+        <a href="https://github.com/microck/sincronizado" class="btn btn-secondary">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"
+            />
+          </svg>
+          GitHub
+        </a>
+      </div>
+
+      <div class="features">
+        <div class="feature">
+          <h3>⚡ Zero Latency</h3>
+          <p>Edit locally with your favorite IDE. Files sync to VPS in &lt;500ms via Mutagen.</p>
+        </div>
+        <div class="feature">
+          <h3>🤖 AI Agents</h3>
+          <p>Choose OpenCode or Claude Code. Both run remotely with full MCP support.</p>
+        </div>
+        <div class="feature">
+          <h3>📱 Mobile Access</h3>
+          <p>Monitor sessions and agent output from your phone via Agent-OS web UI.</p>
+        </div>
+        <div class="feature">
+          <h3>🔒 Secure by Default</h3>
+          <p>All traffic encrypted via Tailscale VPN. No exposed ports. SSH key auth.</p>
+        </div>
+      </div>
+
+      <div class="footer">
+        <p>
+          MIT License • <a href="https://github.com/microck/sincronizado">GitHub</a> •
+          <a href="https://discord.gg/opencode">Discord</a> •
+          <a href="https://micrtde.mintlify.app/">Docs</a>
+        </p>
+        <p style="margin-top: 1rem; font-size: 0.75rem">ᕙ(⇀‸↼‶)ᕗ</p>
+      </div>
+    </div>
   </body>
 </html>
