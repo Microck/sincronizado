@@ -57,10 +57,14 @@ graph TB
 interactive 8-screen installer:
 
 ```bash
-bunx sincronizado
+# install globally first
+npm install -g sincronizado
+
+# then run
+sincronizado
 ```
 
-**features:**
+\*\*features:
 
 - mode selection (minimal / standard / full / custom)
 - ai agent selection (opencode or claude)
