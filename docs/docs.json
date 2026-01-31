@@ -4,9 +4,9 @@
   "theme": "maple",
   "description": "Hyper-local development stack with remote AI execution",
   "colors": {
-    "primary": "#D4C96E",
-    "light": "#F5F0C4",
-    "dark": "#8B7D2E"
+    "primary": "#60614E",
+    "light": "#7A7B63",
+    "dark": "#4A4B3A"
   },
   "logo": {
     "dark": "/logo.png",
