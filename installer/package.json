@@ -15,8 +15,8 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@opentui/core": "^0.1.75",
-    "@opentui/react": "^0.1.75",
+    "@opentui/core": "0.1.60",
+    "@opentui/react": "0.1.60",
     "react": "^18.3.1"
   },
   "devDependencies": {
