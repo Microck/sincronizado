@@ -9,12 +9,12 @@
 }
 
 .mdx-content code {
-  background: rgba(255, 255, 197, 0.35);
+  background: rgba(96, 97, 78, 0.15);
   color: var(--sinc-yellow-ink);
 }
 
 .mdx-content table thead th {
-  background: rgba(255, 255, 197, 0.55);
+  background: rgba(96, 97, 78, 0.25);
 }
 
 .mermaid {
