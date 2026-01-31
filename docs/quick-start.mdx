@@ -16,18 +16,16 @@ Get up and running with sincronizado in 5 minutes.
 
 ### Option 1: TUI installer (recommended)
 
-The interactive installer guides you through component selection.
+The interactive installer guides you through component selection. Requires [Bun](https://bun.sh).
 
 ```bash
-# bunx (fastest)
-bunx sincronizado
+# Clone repo
+git clone https://github.com/microck/sincronizado.git
+cd sincronizado/installer
 
-# npx
-npx sincronizado
-
-# global
-npm install -g sincronizado
-sincronizado
+# Install dependencies and run
+bun install
+bun run src/index.tsx
 ```
 
 TUI provides:

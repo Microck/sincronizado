@@ -29,9 +29,16 @@ iex "& { $(irm https://sincronizado.micr.dev/install.ps1) } -Agent claude"
 
 ### TUI Installer (Interactive)
 
+Requires [Bun](https://bun.sh).
+
 ```bash
-bunx sincronizado
-# Follow prompts to select VPS provider, AI agent, and components
+# Clone repo
+git clone https://github.com/microck/sincronizado.git
+cd sincronizado/installer
+
+# Install and run
+bun install
+bun run src/index.tsx
 ```
 
 ---
@@ -133,15 +140,16 @@ curl -fsSL https://sincronizado.micr.dev/install.sh | bash -s -- --mode=full
 
 #### Option 2: TUI Installer (Recommended)
 
-The TUI installer provides a frictionless setup experience with one-click options:
+The TUI installer provides a frictionless setup experience with one-click options. Requires [Bun](https://bun.sh).
 
 ```bash
-# Run interactive installer
-bunx sincronizado
+# Clone repo
+git clone https://github.com/microck/sincronizado.git
+cd sincronizado/installer
 
-# Or install globally first
-npm install -g sincronizado
-sincronizado
+# Install and run
+bun install
+bun run src/index.tsx
 ```
 
 **TUI Features:**
