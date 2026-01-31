@@ -4,20 +4,17 @@
   "description": "Interactive TUI installer for Sincronizado development environment - REQUIRES BUN",
   "type": "module",
   "scripts": {
-    "dev": "bun run src/index.tsx",
+    "dev": "bun run src/index.ts",
     "build": "echo 'No build step required'",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "@opentui/core": "0.1.60",
-    "@opentui/react": "0.1.60",
-    "react": "19",
-    "react-dom": "19"
+    "@clack/prompts": "^0.7.0",
+    "picocolors": "^1.0.0"
   },
   "devDependencies": {
     "@types/node": "^20.10.0",
-    "@types/react": "^18.3.12",
     "bun-types": "latest",
     "prettier": "^3.2.0",
     "typescript": "^5.3.3"
