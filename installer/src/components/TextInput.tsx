@@ -29,12 +29,12 @@ export function TextInput({ label, value, onChange, placeholder }: TextInputProp
       return;
     }
 
-    if (key.name === 'leftArrow') {
+    if (key.name === 'left') {
       setCursorPosition((p) => Math.max(0, p - 1));
       return;
     }
 
-    if (key.name === 'rightArrow') {
+    if (key.name === 'right') {
       setCursorPosition((p) => Math.min(value.length, p + 1));
       return;
     }

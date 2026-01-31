@@ -12,10 +12,10 @@ export function ProgressBar({ progress, label, status = 'pending' }: ProgressBar
   const empty = width - filled;
 
   const statusIcon = {
-    pending: '○',
-    running: '●',
-    complete: '✓',
-    error: '✗',
+    pending: 'o',
+    running: '*',
+    complete: 'v',
+    error: 'x',
   }[status];
 
   const statusColor = {

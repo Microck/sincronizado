@@ -70,15 +70,7 @@ curl -fsSL https://sincronizado.micr.dev/install.sh | bash
 irm https://sincronizado.micr.dev/install.ps1 | iex
 ```
 
-**vps setup + installer:**
-
-```bash
-# Setup VPS then run TUI
-curl -fsSL https://sincronizado.micr.dev/install.sh | bash -s -- remote your-vps-ip
-
-# Or TUI only (if VPS already set up)
-curl -fsSL https://sincronizado.micr.dev/install.sh | bash
-```
+note: do not use `npx sincronizado` / `bunx sincronizado` (node cannot run opentui).
 
 **manual:**
 
@@ -99,22 +91,6 @@ bun run src/index.tsx
 - vps provider templates
 - real-time installation progress
 
-### one-liner scripts
-
-for automated setup without interaction:
-
-**linux / macos:**
-
-```bash
-curl -fsSL https://sincronizado.micr.dev/install.sh | bash
-```
-
-**windows (powershell admin):**
-
-```powershell
-iex "& { $(irm https://sincronizado.micr.dev/install.ps1) }"
-```
-
 ### llm agent install
 
 paste this into your ai agent session:
@@ -134,9 +110,18 @@ see [INSTALL.md](./INSTALL.md) for detailed setup options including:
 
 ### 1. vps setup (one-time)
 
+recommended (runs TUI):
+
+```bash
+curl -fsSL https://sincronizado.micr.dev/install.sh | bash
+```
+
+manual:
+
 ```bash
 ssh ubuntu@your-vps-ip
-sudo ./setup-vps.sh --mode=standard
+cd ~/sincronizado
+sudo ./scripts/setup-vps.sh --mode=standard
 ```
 
 ### 2. local setup

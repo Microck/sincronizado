@@ -39,9 +39,9 @@ export function ButtonGroup({ buttons }: ButtonGroupProps) {
   const [selectedIndex, setSelectedIndex] = React.useState(0);
 
   useKeyboard((key) => {
-    if (key.name === 'leftArrow') {
+    if (key.name === 'left') {
       setSelectedIndex((i) => Math.max(0, i - 1));
-    } else if (key.name === 'rightArrow') {
+    } else if (key.name === 'right') {
       setSelectedIndex((i) => Math.min(buttons.length - 1, i + 1));
     } else if (key.name === 'return') {
       buttons[selectedIndex].onClick();

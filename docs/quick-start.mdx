@@ -16,28 +16,9 @@ Get up and running with sincronizado in 5 minutes.
 
 ### Option 1: TUI installer (recommended)
 
-The interactive installer guides you through component selection. Requires [Bun](https://bun.sh).
+The interactive installer guides you through component selection.
 
-```bash
-# Clone repo
-git clone https://github.com/microck/sincronizado.git
-cd sincronizado/installer
-
-# Install dependencies and run
-bun install
-bun run src/index.tsx
-```
-
-TUI provides:
-
-- Mode selection (minimal / standard / full / custom)
-- Component checkboxes
-- VPS provider templates
-- Real-time installation progress
-
-### Option 2: One-liner script
-
-Standard mode (recommended):
+Linux / macOS:
 
 ```bash
 curl -fsSL https://sincronizado.micr.dev/install.sh | bash
@@ -46,27 +27,25 @@ curl -fsSL https://sincronizado.micr.dev/install.sh | bash
 Windows (PowerShell):
 
 ```powershell
-iex "& { $(irm https://sincronizado.micr.dev/install.ps1) }"
+irm https://sincronizado.micr.dev/install.ps1 | iex
 ```
 
-Minimal mode (core only):
+Note: do not use `npx sincronizado` / `bunx sincronizado` (Node can't run OpenTUI).
+
+TUI provides:
+
+- Mode selection (minimal / standard / full / custom)
+- Component checkboxes
+- VPS provider templates
+- Real-time installation progress
+
+### Option 2: Run TUI from source
 
 ```bash
-curl -fsSL https://sincronizado.micr.dev/install.sh | bash -s -- --mode=minimal
-```
-
-```powershell
-iex "& { $(irm https://sincronizado.micr.dev/install.ps1) } -Mode minimal"
-```
-
-Full mode (all features):
-
-```bash
-curl -fsSL https://sincronizado.micr.dev/install.sh | bash -s -- --mode=full
-```
-
-```powershell
-iex "& { $(irm https://sincronizado.micr.dev/install.ps1) } -Mode full"
+git clone https://github.com/microck/sincronizado.git
+cd sincronizado/installer
+bun install
+bun run src/index.tsx
 ```
 
 ### Option 3: Manual setup
@@ -170,7 +149,9 @@ macOS/Linux:
 
 ### Optional components
 
-Add flags to customize install:
+TUI installer: pick these in the UI.
+
+Manual VPS setup: `./scripts/setup-vps.sh` supports flags:
 
 ```bash
 --agent=claude             # use Claude Code instead of OpenCode

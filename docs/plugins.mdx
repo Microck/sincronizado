@@ -111,14 +111,17 @@ Purpose: alt session manager using tmux + git worktrees.
 Install:
 
 ```bash
-# install via VPS setup
-sudo ./scripts/setup-vps.sh --with-agent-of-empires
+# via TUI: select it during install
+# (run `curl -fsSL https://sincronizado.micr.dev/install.sh | bash` and pick Custom/Full)
+
+# manual VPS setup:
+sudo ./scripts/setup-vps.sh --with-agent-of-empires --no-ccmanager
 
 # or manually
 curl -fsSL https://raw.githubusercontent.com/njbrake/agent-of-empires/main/install.sh | bash
 ```
 
-Note: mutually exclusive with ccmanager. Use `--with-agent-of-empires --no-ccmanager` to switch.
+Note: mutually exclusive with ccmanager.
 
 ## Optional plugins (full/custom)
 
@@ -129,7 +132,8 @@ Purpose: automatic git worktree per OpenCode session with auto-cleanup.
 Install:
 
 ```bash
-# included in VPS setup with --with-worktree-session
+# installed if selected in TUI (full/custom) or enabled in manual VPS setup:
+# sudo ./scripts/setup-vps.sh --with-worktree-session
 npm install -g @tmegit/opencode-worktree-session
 ```
 
@@ -190,7 +194,7 @@ For npm-based plugins (worktree-session, session-handoff), add to `opencode.json
 
 ## Claude Code MCP Servers
 
-When using Claude Code (`--agent=claude`), the VPS setup installs Anthropic's official MCP servers:
+When using Claude Code (selected in TUI), the VPS setup installs Anthropic's official MCP servers:
 
 ### Included MCP servers
 

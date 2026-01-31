@@ -69,9 +69,9 @@ export function Install({ config, onComplete, onBack }: InstallProps) {
     return new Promise((resolve, reject) => {
       const scriptUrl =
         'https://raw.githubusercontent.com/microck/sincronizado/main/scripts/setup-vps.sh';
-      const command = `ssh ${user}@${hostname} "curl -fsSL ${scriptUrl} | sudo bash -s -- ${flags}"`;
-
-      const proc = spawn('sh', ['-c', command], { stdio: ['pipe', 'pipe', 'pipe'] });
+      const target = `${user}@${hostname}`;
+      const remoteCommand = `curl -fsSL ${scriptUrl} | sudo bash -s -- ${flags}`;
+      const proc = spawn('ssh', [target, remoteCommand], { stdio: ['pipe', 'pipe', 'pipe'] });
 
       proc.stdout?.on('data', (data) => {
         const lines = data.toString().split('\n');
