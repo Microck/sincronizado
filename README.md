@@ -56,18 +56,28 @@ graph TB
 
 interactive 8-screen installer. requires [bun](https://bun.sh):
 
-**one-liner (fastest):**
+**one-liner (fastest - does everything):**
 
 **linux / macos:**
 
 ```bash
-curl -fsSL https://sincronizado.micr.dev/install-tui.sh | bash
+curl -fsSL https://sincronizado.micr.dev/install.sh | bash
 ```
 
 **windows (powershell):**
 
 ```powershell
-iex "& { $(irm https://sincronizado.micr.dev/install-tui.ps1) }"
+irm https://sincronizado.micr.dev/install.ps1 | iex
+```
+
+**vps setup + installer:**
+
+```bash
+# Setup VPS then run TUI
+curl -fsSL https://sincronizado.micr.dev/install.sh | bash -s -- remote your-vps-ip
+
+# Or TUI only (if VPS already set up)
+curl -fsSL https://sincronizado.micr.dev/install.sh | bash
 ```
 
 **manual:**
