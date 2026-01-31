@@ -1,5 +1,4 @@
 import React from 'react';
-import { Box, Text } from '@opentui/react';
 
 interface ProgressBarProps {
   progress: number;
@@ -27,17 +26,17 @@ export function ProgressBar({ progress, label, status = 'pending' }: ProgressBar
   }[status];
 
   return (
-    <Box flexDirection="column">
-      <Box>
-        <Text color={statusColor}>
+    <box flexDirection="column">
+      <box>
+        <text color={statusColor}>
           {statusIcon} {label}
-        </Text>
-      </Box>
-      <Box>
-        <Text color="#FFFFC5">{'█'.repeat(filled)}</Text>
-        <Text dimColor>{'░'.repeat(empty)}</Text>
-        <Text> {Math.round(progress)}%</Text>
-      </Box>
-    </Box>
+        </text>
+      </box>
+      <box>
+        <text color="#FFFFC5">{'█'.repeat(filled)}</text>
+        <text dimColor>{'░'.repeat(empty)}</text>
+        <text> {Math.round(progress)}%</text>
+      </box>
+    </box>
   );
 }

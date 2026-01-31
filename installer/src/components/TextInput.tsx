@@ -1,5 +1,5 @@
-import React from "react";
-import { Box, Text, useInput } from "@opentui/react";
+import React from 'react';
+import { useKeyboard } from '@opentui/react';
 
 interface TextInputProps {
   label: string;
@@ -12,15 +12,15 @@ export function TextInput({ label, value, onChange, placeholder }: TextInputProp
   const [cursorPosition, setCursorPosition] = React.useState(value.length);
   const [isFocused, setIsFocused] = React.useState(false);
 
-  useInput((input, key) => {
+  useKeyboard((key) => {
     if (!isFocused) return;
 
-    if (key.return) {
+    if (key.name === 'return') {
       setIsFocused(false);
       return;
     }
 
-    if (key.backspace || key.delete) {
+    if (key.name === 'backspace' || key.name === 'delete') {
       if (cursorPosition > 0) {
         const newValue = value.slice(0, cursorPosition - 1) + value.slice(cursorPosition);
         onChange(newValue);
@@ -29,29 +29,29 @@ export function TextInput({ label, value, onChange, placeholder }: TextInputProp
       return;
     }
 
-    if (key.leftArrow) {
+    if (key.name === 'leftArrow') {
       setCursorPosition((p) => Math.max(0, p - 1));
       return;
     }
 
-    if (key.rightArrow) {
+    if (key.name === 'rightArrow') {
       setCursorPosition((p) => Math.min(value.length, p + 1));
       return;
     }
 
-    if (input) {
-      const newValue = value.slice(0, cursorPosition) + input + value.slice(cursorPosition);
+    if (key.input) {
+      const newValue = value.slice(0, cursorPosition) + key.input + value.slice(cursorPosition);
       onChange(newValue);
-      setCursorPosition(cursorPosition + input.length);
+      setCursorPosition(cursorPosition + key.input.length);
     }
   });
 
   return (
-    <Box flexDirection="column">
-      <Text>{label}:</Text>
-      <Box borderStyle={isFocused ? "round" : "single"} paddingX={1}>
-        <Text>{value || placeholder || ""}</Text>
-      </Box>
-    </Box>
+    <box flexDirection="column">
+      <text>{label}:</text>
+      <box borderStyle={isFocused ? 'round' : 'single'} paddingX={1}>
+        <text>{value || placeholder || ''}</text>
+      </box>
+    </box>
   );
 }

@@ -1,5 +1,4 @@
 import React from 'react';
-import { Box, Text } from '@opentui/react';
 import type { Screen } from '../App.js';
 
 const screenTitles: Record<Screen, string> = {
@@ -15,34 +14,34 @@ const screenTitles: Record<Screen, string> = {
 
 export function Header({ screen }: { screen: Screen }) {
   return (
-    <Box flexDirection="column" paddingBottom={1}>
-      <Box>
-        <Text bold color="#FFFFC5">
+    <box flexDirection="column" paddingBottom={1}>
+      <box>
+        <text bold color="#FFFFC5">
           ╔══════════════════════════════════════════════════════════╗
-        </Text>
-      </Box>
-      <Box>
-        <Text bold color="#FFFFC5">
+        </text>
+      </box>
+      <box>
+        <text bold color="#FFFFC5">
           ║
-        </Text>
-        <Text bold color="white">
+        </text>
+        <text bold color="white">
           {'           SINCRONIZADO INSTALLER v1.1.0            '}
-        </Text>
-        <Text bold color="#FFFFC5">
+        </text>
+        <text bold color="#FFFFC5">
           ║
-        </Text>
-      </Box>
-      <Box>
-        <Text bold color="#FFFFC5">
+        </text>
+      </box>
+      <box>
+        <text bold color="#FFFFC5">
           ╚══════════════════════════════════════════════════════════╝
-        </Text>
-      </Box>
-      <Box paddingTop={1}>
-        <Text dimColor>
+        </text>
+      </box>
+      <box paddingTop={1}>
+        <text dimColor>
           {'  '}
           {screenTitles[screen]}
-        </Text>
-      </Box>
-    </Box>
+        </text>
+      </box>
+    </box>
   );
 }

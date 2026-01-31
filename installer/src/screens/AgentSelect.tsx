@@ -1,5 +1,4 @@
 import React from 'react';
-import { Box, Text } from '@opentui/react';
 import { RadioGroup } from '../components/RadioGroup.js';
 import { ButtonGroup } from '../components/Button.js';
 import type { InstallConfig, AIAgent } from '../App.js';
@@ -26,25 +25,25 @@ const agents: { value: AIAgent; label: string; description: string }[] = [
 
 export function AgentSelect({ config, onChange, onContinue, onBack }: AgentSelectProps) {
   return (
-    <Box flexDirection="column" paddingTop={2}>
-      <Box paddingBottom={1}>
-        <Text>Select your AI agent:</Text>
-      </Box>
-      <Box paddingBottom={2}>
+    <box flexDirection="column" paddingTop={2}>
+      <box paddingBottom={1}>
+        <text>Select your AI agent:</text>
+      </box>
+      <box paddingBottom={2}>
         <RadioGroup
           options={agents}
           value={config.agent}
           onChange={(agent) => onChange({ agent })}
         />
-      </Box>
-      <Box paddingTop={2}>
+      </box>
+      <box paddingTop={2}>
         <ButtonGroup
           buttons={[
             { label: 'Continue', onClick: onContinue, variant: 'primary' },
             { label: 'Back', onClick: onBack, variant: 'secondary' },
           ]}
         />
-      </Box>
-    </Box>
+      </box>
+    </box>
   );
 }

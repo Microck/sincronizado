@@ -1,5 +1,7 @@
-import React from "react";
-import { render } from "@opentui/react";
-import { App } from "./App.js";
+import React from 'react';
+import { createRoot } from '@opentui/react';
+import { createCliRenderer } from '@opentui/core';
+import { App } from './App.js';
 
-render(<App />);
+const renderer = await createCliRenderer();
+createRoot(renderer).render(<App />);

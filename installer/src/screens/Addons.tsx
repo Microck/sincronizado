@@ -1,5 +1,4 @@
 import React from 'react';
-import { Box, Text } from '@opentui/react';
 import { CheckboxGroup } from '../components/CheckboxGroup.js';
 import { ButtonGroup } from '../components/Button.js';
 import type { InstallConfig } from '../App.js';
@@ -106,31 +105,31 @@ export function Addons({ config, onChange, onContinue, onBack }: AddonsProps) {
   };
 
   return (
-    <Box flexDirection="column" paddingTop={2}>
-      <Box paddingBottom={1}>
-        <Text bold>Add optional features:</Text>
-      </Box>
-      <Box paddingBottom={1}>
+    <box flexDirection="column" paddingTop={2}>
+      <box paddingBottom={1}>
+        <text bold>Add optional features:</text>
+      </box>
+      <box paddingBottom={1}>
         <CheckboxGroup
           options={addonOptions}
           values={selectedAddons}
           onChange={handleAddonChange}
         />
-      </Box>
-      <Box paddingTop={1} paddingBottom={1}>
-        <Text bold>Skip default components:</Text>
-      </Box>
-      <Box paddingBottom={2}>
+      </box>
+      <box paddingTop={1} paddingBottom={1}>
+        <text bold>Skip default components:</text>
+      </box>
+      <box paddingBottom={2}>
         <CheckboxGroup options={skipOptions} values={selectedSkips} onChange={handleSkipChange} />
-      </Box>
-      <Box paddingTop={1}>
+      </box>
+      <box paddingTop={1}>
         <ButtonGroup
           buttons={[
             { label: 'Continue', onClick: onContinue, variant: 'primary' },
             { label: 'Back', onClick: onBack, variant: 'secondary' },
           ]}
         />
-      </Box>
-    </Box>
+      </box>
+    </box>
   );
 }

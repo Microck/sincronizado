@@ -1,5 +1,4 @@
 import React from 'react';
-import { Box, Text } from '@opentui/react';
 import { ButtonGroup } from '../components/Button.js';
 import type { InstallConfig } from '../App.js';
 
@@ -14,92 +13,169 @@ export function Complete({ config, onExit }: CompleteProps) {
   let stepNum = 1;
 
   return (
-    <Box flexDirection="column" paddingTop={2}>
-      <Box paddingBottom={1}>
-        <Text color="green" bold>
+    <box flexDirection="column" paddingTop={2}>
+      <box paddingBottom={1}>
+        <text color="green" bold>
           ✓ Installation complete!
-        </Text>
-      </Box>
+        </text>
+      </box>
 
-      <Box paddingTop={1} paddingBottom={1}>
-        <Text bold>Next steps:</Text>
-      </Box>
+      <box paddingTop={1} paddingBottom={1}>
+        <text bold>Next steps:</text>
+      </box>
 
-      <Box paddingLeft={2}>
-        <Text>{stepNum++}. Run: ./launcher/opencode.ps1 (Windows)</Text>
-        <Text> Or: ./launcher/opencode.sh (macOS/Linux)</Text>
-      </Box>
+      <box paddingLeft={2}>
+        <text>{stepNum++}. Run: ./launcher/opencode.ps1 (Windows)</text>
+        <text> Or: ./launcher/opencode.sh (macOS/Linux)</text>
+      </box>
 
       {config.setupAlias && (
-        <Box paddingLeft={2} paddingTop={1}>
-          <Text>{stepNum++}. Setup shell alias:</Text>
-          <Text> Windows (PowerShell):</Text>
-          <Text> echo "function opencode {{ & \"~/sincronizado/launcher/opencode.ps1\" @args }}" | Add-Content $PROFILE</Text>
-          <Text> macOS/Linux:</Text>
-          <Text> echo 'alias opencode="~/sincronizado/launcher/opencode.sh"' >> ~/.bashrc</Text>
-          <Text> source ~/.bashrc</Text>
-        </Box>
+        <box paddingLeft={2} paddingTop={1}>
+          <text>{stepNum++}. Setup shell alias:</text>
+          <text> Windows (PowerShell):</text>
+          <text>
+            {
+              ' echo "function opencode { & \'~/sincronizado/launcher/opencode.ps1\' $args }" | Add-Content $PROFILE'
+            }
+          </text>
+          <text> macOS/Linux:</text>
+          <text>
+            {' echo \'alias opencode="~/sincronizado/launcher/opencode.sh"\' >> ~/.bashrc'}
+          </text>
+          <text> source ~/.bashrc</text>
+        </box>
       )}
 
       {!config.noAgentOS && (
-        <Box paddingLeft={2} paddingTop={1}>
-          <Text>{stepNum++}. Access mobile UI: http://{ip}:3000</Text>
-        </Box>
+        <box paddingLeft={2} paddingTop={1}>
+          <text>
+            {stepNum++}. Access mobile UI: http://{ip}:3000
+          </text>
+        </box>
       )}
 
       {config.withOpenSync && (
-        <Box paddingLeft={2} paddingTop={1}>
-          <Text>{stepNum++}. Install OpenSync plugin:</Text>
-          <Text> npm install -g opencode-sync-plugin</Text>
-          <Text> opencode-sync login</Text>
-          <Text dimColor> Then add to opencode.json plugins array</Text>
-        </Box>
+        <box paddingLeft={2} paddingTop={1}>
+          <text>{stepNum++}. Install OpenSync plugin:</text>
+          <text> npm install -g opencode-sync-plugin</text>
+          <text> opencode-sync login</text>
+          <text dimColor> Then add to opencode.json plugins array</text>
+        </box>
       )}
 
       {config.withLunaroute && (
-        <Box paddingLeft={2} paddingTop={1}>
-          <Text>{stepNum++}. AI proxy dashboard: http://{ip}:8082</Text>
-        </Box>
+        <box paddingLeft={2} paddingTop={1}>
+          <text>
+            {stepNum++}. AI proxy dashboard: http://{ip}:8082
+          </text>
+        </box>
       )}
 
       {config.withKimaki && (
-        <Box paddingLeft={2} paddingTop={1}>
-          <Text>{stepNum++}. Configure Discord bot:</Text>
-          <Text> ssh {config.sshUser}@{ip}</Text>
-          <Text> npx kimaki</Text>
-        </Box>
+        <box paddingLeft={2} paddingTop={1}>
+          <text>{stepNum++}. Configure Discord bot:</text>
+          <text>
+            {' '}
+            ssh {config.sshUser}@{ip}
+          </text>
+          <text> npx kimaki</text>
+        </box>
       )}
 
-      <Box paddingTop={3}>
+      <box paddingTop={3}>
         <ButtonGroup buttons={[{ label: 'Exit', onClick: onExit, variant: 'primary' }]} />
-      </Box>
+      </box>
 
-      <Box paddingTop={2}>
-        <Text color="#FFFFC5" dimColor>{'                                  ██                                                                                 ██                                  '}</Text>
-        <Text color="#FFFFC5" dimColor>{'                                 ████                                                                ███  ███       █████                                 '}</Text>
-        <Text color="#FFFFC5" dimColor>{'                               █████                                                                 ████ ████       █████                                '}</Text>
-        <Text color="#FFFFC5" dimColor>{'                              ████                                                                    ███  ███         ████                               '}</Text>
-        <Text color="#FFFFC5" dimColor>{'                             ████                        ██                      ███                   ███  ███         ████                              '}</Text>
-        <Text color="#FFFFC5" dimColor>{'             ████████       ████                         ████                  ████                     ██   ██          ████       ████████             '}</Text>
-        <Text color="#FFFFC5" dimColor>{'          ████████████      ████                           ████               ████                                        ███      █████████████         '}</Text>
-        <Text color="#FFFFC5" dimColor>{'      █████████    ████     ███           ██████████████████████            ███████████████████████                       ███     ████    █████████      '}</Text>
-        <Text color="#FFFFC5" dimColor>{'  █████████ ████   ████     ███           ██████████████████████            ███████████████████████                       ███      ███   ████ █████████  '}</Text>
-        <Text color="#FFFFC5" dimColor>{' ████████    █████████      ████                                                                                          ███      ██████████   ████████ '}</Text>
-        <Text color="#FFFFC5" dimColor>{'    █████████ ██████        ████                                                                                         ████        ██████ █████████    '}</Text>
-        <Text color="#FFFFC5" dimColor>{'        ████████             ████                                     █                                                 ████             █████████       '}</Text>
-        <Text color="#FFFFC5" dimColor>{'           █████████          ████                                   ███                                               ████          █████████           '}</Text>
-        <Text color="#FFFFC5" dimColor>{'               ████████        ████                                ██████                                             ████        ████████               '}</Text>
-        <Text color="#FFFFC5" dimColor>{'                   ████         █████                             ███  ███                                          █████         ████                   '}</Text>
-        <Text color="#FFFFC5" dimColor>{'                                   ██                              ██     █                                           ███                                 '}</Text>
-      </Box>
+      <box paddingTop={2}>
+        <text color="#FFFFC5" dimColor>
+          {
+            '                                  ██                                                                                 ██                                  '
+          }
+        </text>
+        <text color="#FFFFC5" dimColor>
+          {
+            '                                 ████                                                                ███  ███       █████                                 '
+          }
+        </text>
+        <text color="#FFFFC5" dimColor>
+          {
+            '                               █████                                                                 ████ ████       █████                                '
+          }
+        </text>
+        <text color="#FFFFC5" dimColor>
+          {
+            '                              ████                                                                    ███  ███         ████                               '
+          }
+        </text>
+        <text color="#FFFFC5" dimColor>
+          {
+            '                             ████                        ██                      ███                   ███  ███         ████                              '
+          }
+        </text>
+        <text color="#FFFFC5" dimColor>
+          {
+            '             ████████       ████                         ████                  ████                     ██   ██          ████       ████████             '
+          }
+        </text>
+        <text color="#FFFFC5" dimColor>
+          {
+            '          ████████████      ████                           ████               ████                                        ███      █████████████         '
+          }
+        </text>
+        <text color="#FFFFC5" dimColor>
+          {
+            '      █████████    ████     ███           ██████████████████████            ███████████████████████                       ███     ████    █████████      '
+          }
+        </text>
+        <text color="#FFFFC5" dimColor>
+          {
+            '  █████████ ████   ████     ███           ██████████████████████            ███████████████████████                       ███      ███   ████ █████████  '
+          }
+        </text>
+        <text color="#FFFFC5" dimColor>
+          {
+            ' ████████    █████████      ████                                                                                          ███      ██████████   ████████ '
+          }
+        </text>
+        <text color="#FFFFC5" dimColor>
+          {
+            '    █████████ ██████        ████                                                                                         ████        ██████ █████████    '
+          }
+        </text>
+        <text color="#FFFFC5" dimColor>
+          {
+            '        ████████             ████                                     █                                                 ████             █████████       '
+          }
+        </text>
+        <text color="#FFFFC5" dimColor>
+          {
+            '           █████████          ████                                   ███                                               ████          █████████           '
+          }
+        </text>
+        <text color="#FFFFC5" dimColor>
+          {
+            '               ████████        ████                                ██████                                             ████        ████████               '
+          }
+        </text>
+        <text color="#FFFFC5" dimColor>
+          {
+            '                   ████         █████                             ███  ███                                          █████         ████                   '
+          }
+        </text>
+        <text color="#FFFFC5" dimColor>
+          {
+            '                                   ██                              ██     █                                           ███                                 '
+          }
+        </text>
+      </box>
 
       {config.withOpenSync && (
-        <Box paddingTop={1}>
-          <Text color="#FFFFC5" dimColor>
+        <box paddingTop={1}>
+          <text color="#FFFFC5" dimColor>
             📊 OpenSync: Track sessions anywhere
-          </Text>
-        </Box>
+          </text>
+        </box>
       )}
-    </Box>
+    </box>
   );
 }

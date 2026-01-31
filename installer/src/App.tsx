@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Box } from '@opentui/react';
 import { Welcome } from './screens/Welcome.js';
 import { AgentSelect } from './screens/AgentSelect.js';
 import { ModeSelect } from './screens/ModeSelect.js';
@@ -91,7 +90,7 @@ export function App() {
   };
 
   return (
-    <Box flexDirection="column" height={24}>
+    <box flexDirection="column" height={24}>
       <Header screen={screen} />
       {screen === 'welcome' && (
         <Welcome onContinue={() => navigateTo('agent')} onExit={() => process.exit(0)} />
@@ -143,6 +142,6 @@ export function App() {
         <Install config={config} onComplete={() => navigateTo('complete')} onBack={goBack} />
       )}
       {screen === 'complete' && <Complete config={config} onExit={() => process.exit(0)} />}
-    </Box>
+    </box>
   );
 }

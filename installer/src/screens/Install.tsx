@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { Box, Text, useInput } from "@opentui/react";
-import { ProgressBar } from "../components/ProgressBar.js";
-import { Button } from "../components/Button.js";
-import type { InstallConfig } from "../App.js";
-import { spawn } from "child_process";
+import React, { useState, useEffect } from 'react';
+import { useKeyboard } from '@opentui/react';
+import { ProgressBar } from '../components/ProgressBar.js';
+import { Button } from '../components/Button.js';
+import type { InstallConfig } from '../App.js';
+import { spawn } from 'child_process';
 
 interface InstallProps {
   config: InstallConfig;
@@ -15,17 +15,17 @@ interface InstallStep {
   name: string;
   command: string;
   progress: number;
-  status: "pending" | "running" | "complete" | "error";
+  status: 'pending' | 'running' | 'complete' | 'error';
 }
 
 export function Install({ config, onComplete, onBack }: InstallProps) {
   const [steps, setSteps] = useState<InstallStep[]>([
-    { name: "Connect to VPS", command: "", progress: 0, status: "pending" },
-    { name: "Install base dependencies", command: "", progress: 0, status: "pending" },
-    { name: "Install Eternal Terminal", command: "", progress: 0, status: "pending" },
-    { name: "Install OpenCode", command: "", progress: 0, status: "pending" },
-    { name: "Install components", command: "", progress: 0, status: "pending" },
-    { name: "Configure firewall", command: "", progress: 0, status: "pending" },
+    { name: 'Connect to VPS', command: '', progress: 0, status: 'pending' },
+    { name: 'Install base dependencies', command: '', progress: 0, status: 'pending' },
+    { name: 'Install Eternal Terminal', command: '', progress: 0, status: 'pending' },
+    { name: 'Install OpenCode', command: '', progress: 0, status: 'pending' },
+    { name: 'Install components', command: '', progress: 0, status: 'pending' },
+    { name: 'Configure firewall', command: '', progress: 0, status: 'pending' },
   ]);
   const [currentStep, setCurrentStep] = useState(0);
   const [isCancelled, setIsCancelled] = useState(false);
@@ -38,19 +38,19 @@ export function Install({ config, onComplete, onBack }: InstallProps) {
 
   const runInstallation = async () => {
     const flags = buildFlags(config);
-    const hostname = config.hostname || "localhost";
+    const hostname = config.hostname || 'localhost';
 
     for (let i = 0; i < steps.length; i++) {
       if (isCancelled) break;
 
       setCurrentStep(i);
-      updateStep(i, { status: "running" });
+      updateStep(i, { status: 'running' });
 
       try {
         await runSSHCommand(hostname, config.sshUser, flags, i);
-        updateStep(i, { status: "complete", progress: 100 });
+        updateStep(i, { status: 'complete', progress: 100 });
       } catch (error) {
-        updateStep(i, { status: "error" });
+        updateStep(i, { status: 'error' });
         break;
       }
     }
@@ -60,26 +60,32 @@ export function Install({ config, onComplete, onBack }: InstallProps) {
     }
   };
 
-  const runSSHCommand = (hostname: string, user: string, flags: string, step: number): Promise<void> => {
+  const runSSHCommand = (
+    hostname: string,
+    user: string,
+    flags: string,
+    step: number,
+  ): Promise<void> => {
     return new Promise((resolve, reject) => {
-      const scriptUrl = "https://raw.githubusercontent.com/microck/sincronizado/main/scripts/setup-vps.sh";
+      const scriptUrl =
+        'https://raw.githubusercontent.com/microck/sincronizado/main/scripts/setup-vps.sh';
       const command = `ssh ${user}@${hostname} "curl -fsSL ${scriptUrl} | sudo bash -s -- ${flags}"`;
 
-      const proc = spawn("sh", ["-c", command], { stdio: ["pipe", "pipe", "pipe"] });
+      const proc = spawn('sh', ['-c', command], { stdio: ['pipe', 'pipe', 'pipe'] });
 
-      proc.stdout?.on("data", (data) => {
-        const lines = data.toString().split("\n");
+      proc.stdout?.on('data', (data) => {
+        const lines = data.toString().split('\n');
         setOutput((prev) => [...prev.slice(-10), ...lines]);
 
-        const progress = estimateProgress(lines.join("\n"), step);
+        const progress = estimateProgress(lines.join('\n'), step);
         updateStep(step, { progress });
       });
 
-      proc.stderr?.on("data", (data) => {
+      proc.stderr?.on('data', (data) => {
         setOutput((prev) => [...prev.slice(-10), data.toString().trim()]);
       });
 
-      proc.on("close", (code) => {
+      proc.on('close', (code) => {
         if (code === 0) {
           resolve();
         } else {
@@ -87,83 +93,77 @@ export function Install({ config, onComplete, onBack }: InstallProps) {
         }
       });
 
-      proc.on("error", reject);
+      proc.on('error', reject);
     });
   };
 
   const estimateProgress = (output: string, step: number): number => {
     const markers: Record<number, string[]> = {
-      0: ["Connecting", "connected"],
-      1: ["Updating packages", "Dependencies installed"],
-      2: ["Installing Eternal Terminal", "Eternal Terminal installed"],
-      3: ["Installing OpenCode", "OpenCode installed"],
-      4: ["Installing", "installed"],
-      5: ["Configuring firewall", "Firewall configured"],
+      0: ['Connecting', 'connected'],
+      1: ['Updating packages', 'Dependencies installed'],
+      2: ['Installing Eternal Terminal', 'Eternal Terminal installed'],
+      3: ['Installing OpenCode', 'OpenCode installed'],
+      4: ['Installing', 'installed'],
+      5: ['Configuring firewall', 'Firewall configured'],
     };
 
     const stepMarkers = markers[step] || [];
-    if (output.includes(stepMarkers[1] || "")) return 100;
-    if (output.includes(stepMarkers[0] || "")) return 50;
+    if (output.includes(stepMarkers[1] || '')) return 100;
+    if (output.includes(stepMarkers[0] || '')) return 50;
     return 25;
   };
 
   const updateStep = (index: number, updates: Partial<InstallStep>) => {
-    setSteps((prev) =>
-      prev.map((step, i) => (i === index ? { ...step, ...updates } : step))
-    );
+    setSteps((prev) => prev.map((step, i) => (i === index ? { ...step, ...updates } : step)));
   };
 
-  useInput((_, key) => {
-    if (key.escape) {
+  useKeyboard((key) => {
+    if (key.name === 'escape') {
       setIsCancelled(true);
     }
   });
 
   return (
-    <Box flexDirection="column" paddingTop={2}>
-      <Box paddingBottom={1}>
-        <Text>Installing on {config.hostname || "VPS"}...</Text>
-        <Text dimColor>Press ESC to cancel</Text>
-      </Box>
+    <box flexDirection="column" paddingTop={2}>
+      <box paddingBottom={1}>
+        <text>Installing on {config.hostname || 'VPS'}...</text>
+        <text dimColor>Press ESC to cancel</text>
+      </box>
 
-      <Box flexDirection="column" paddingBottom={1}>
+      <box flexDirection="column" paddingBottom={1}>
         {steps.map((step, index) => (
-          <Box key={step.name} paddingBottom={1}>
-            <ProgressBar
-              progress={step.progress}
-              label={step.name}
-              status={step.status}
-            />
-          </Box>
+          <box key={step.name} paddingBottom={1}>
+            <ProgressBar progress={step.progress} label={step.name} status={step.status} />
+          </box>
         ))}
-      </Box>
+      </box>
 
       {output.length > 0 && (
-        <Box borderStyle="single" paddingX={1} height={6}>
-          <Text dimColor>{output.slice(-5).join("\n")}</Text>
-        </Box>
+        <box borderStyle="single" paddingX={1} height={6}>
+          <text dimColor>{output.slice(-5).join('\n')}</text>
+        </box>
       )}
 
       {isCancelled && (
-        <Box paddingTop={2}>
+        <box paddingTop={2}>
           <Button label="Back" onClick={onBack} variant="secondary" />
-        </Box>
+        </box>
       )}
-    </Box>
+    </box>
   );
 }
 
 function buildFlags(config: InstallConfig): string {
   const flags: string[] = [`--mode=${config.mode}`];
 
-  if (config.withKimaki) flags.push("--with-kimaki");
-  if (config.withLunaroute) flags.push("--with-lunaroute");
-  if (config.withWorktreeSession) flags.push("--with-worktree-session");
-  if (config.withSessionHandoff) flags.push("--with-session-handoff");
-  if (config.withAgentOfEmpires) flags.push("--with-agent-of-empires");
-  if (config.noAgentOS) flags.push("--no-agent-os");
-  if (config.noCcmanager) flags.push("--no-ccmanager");
-  if (config.noPlugins) flags.push("--no-plugins");
+  if (config.withKimaki) flags.push('--with-kimaki');
+  if (config.withLunaroute) flags.push('--with-lunaroute');
+  if (config.withWorktreeSession) flags.push('--with-worktree-session');
+  if (config.withSessionHandoff) flags.push('--with-session-handoff');
+  if (config.withAgentOfEmpires) flags.push('--with-agent-of-empires');
+  if (config.noAgentOS) flags.push('--no-agent-os');
+  if (config.noCcmanager) flags.push('--no-ccmanager');
+  if (config.noPlugins) flags.push('--no-plugins');
 
-  return flags.join(" ");
+  return flags.join(' ');
 }

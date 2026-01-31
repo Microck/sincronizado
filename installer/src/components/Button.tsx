@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Text, useInput } from '@opentui/react';
+import { useKeyboard } from '@opentui/react';
 
 interface ButtonProps {
   label: string;
@@ -10,8 +10,8 @@ interface ButtonProps {
 export function Button({ label, onClick, variant = 'primary' }: ButtonProps) {
   const [isFocused, setIsFocused] = React.useState(false);
 
-  useInput((_, key) => {
-    if (isFocused && key.return) {
+  useKeyboard((key) => {
+    if (isFocused && key.name === 'return') {
       onClick();
     }
   });
@@ -19,11 +19,11 @@ export function Button({ label, onClick, variant = 'primary' }: ButtonProps) {
   const color = variant === 'danger' ? 'red' : variant === 'secondary' ? 'gray' : '#FFFFC5';
 
   return (
-    <Box borderStyle={isFocused ? 'double' : 'single'} paddingX={2}>
-      <Text color={isFocused ? color : undefined} bold={isFocused}>
+    <box borderStyle={isFocused ? 'double' : 'single'} paddingX={2}>
+      <text color={isFocused ? color : undefined} bold={isFocused}>
         {label}
-      </Text>
-    </Box>
+      </text>
+    </box>
   );
 }
 
@@ -34,21 +34,21 @@ interface ButtonGroupProps {
 export function ButtonGroup({ buttons }: ButtonGroupProps) {
   const [selectedIndex, setSelectedIndex] = React.useState(0);
 
-  useInput((_, key) => {
-    if (key.leftArrow) {
+  useKeyboard((key) => {
+    if (key.name === 'leftArrow') {
       setSelectedIndex((i) => Math.max(0, i - 1));
-    } else if (key.rightArrow) {
+    } else if (key.name === 'rightArrow') {
       setSelectedIndex((i) => Math.min(buttons.length - 1, i + 1));
-    } else if (key.return) {
+    } else if (key.name === 'return') {
       buttons[selectedIndex].onClick();
     }
   });
 
   return (
-    <Box gap={2}>
+    <box gap={2}>
       {buttons.map((button, index) => (
-        <Box key={index} borderStyle={index === selectedIndex ? 'double' : 'single'} paddingX={2}>
-          <Text
+        <box key={index} borderStyle={index === selectedIndex ? 'double' : 'single'} paddingX={2}>
+          <text
             color={
               index === selectedIndex
                 ? button.variant === 'danger'
@@ -59,9 +59,9 @@ export function ButtonGroup({ buttons }: ButtonGroupProps) {
             bold={index === selectedIndex}
           >
             {button.label}
-          </Text>
-        </Box>
+          </text>
+        </box>
       ))}
-    </Box>
+    </box>
   );
 }

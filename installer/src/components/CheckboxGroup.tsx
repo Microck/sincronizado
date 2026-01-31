@@ -1,5 +1,5 @@
-import React from "react";
-import { Box, Text, useInput } from "@opentui/react";
+import React from 'react';
+import { useKeyboard } from '@opentui/react';
 
 interface CheckboxGroupProps {
   options: { value: string; label: string; description?: string }[];
@@ -7,19 +7,15 @@ interface CheckboxGroupProps {
   onChange: (values: string[]) => void;
 }
 
-export function CheckboxGroup({
-  options,
-  values,
-  onChange,
-}: CheckboxGroupProps) {
+export function CheckboxGroup({ options, values, onChange }: CheckboxGroupProps) {
   const [selectedIndex, setSelectedIndex] = React.useState(0);
 
-  useInput((_, key) => {
-    if (key.upArrow) {
+  useKeyboard((key) => {
+    if (key.name === 'upArrow') {
       setSelectedIndex((i) => Math.max(0, i - 1));
-    } else if (key.downArrow) {
+    } else if (key.name === 'downArrow') {
       setSelectedIndex((i) => Math.min(options.length - 1, i + 1));
-    } else if (key.space) {
+    } else if (key.name === 'space') {
       const option = options[selectedIndex];
       if (values.includes(option.value)) {
         onChange(values.filter((v) => v !== option.value));
@@ -30,22 +26,22 @@ export function CheckboxGroup({
   });
 
   return (
-    <Box flexDirection="column">
+    <box flexDirection="column">
       {options.map((option, index) => (
-        <Box key={option.value}>
-          <Text>
-            {index === selectedIndex ? "> " : "  "}
-            {values.includes(option.value) ? "[x] " : "[ ] "}
+        <box key={option.value}>
+          <text>
+            {index === selectedIndex ? '> ' : '  '}
+            {values.includes(option.value) ? '[x] ' : '[ ] '}
             {option.label}
             {index === selectedIndex && option.description && (
-              <Text dimColor> — {option.description}</Text>
+              <text dimColor> — {option.description}</text>
             )}
-          </Text>
-        </Box>
+          </text>
+        </box>
       ))}
-      <Box paddingTop={1}>
-        <Text dimColor>Press space to toggle, arrow keys to navigate</Text>
-      </Box>
-    </Box>
+      <box paddingTop={1}>
+        <text dimColor>Press space to toggle, arrow keys to navigate</text>
+      </box>
+    </box>
   );
 }

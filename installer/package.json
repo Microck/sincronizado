@@ -4,11 +4,11 @@
   "description": "Interactive TUI installer for Sincronizado development environment",
   "type": "module",
   "bin": {
-    "sincronizado": "./dist/index.js"
+    "sincronizado": "./dist/cli.js"
   },
   "scripts": {
     "dev": "bun run src/index.tsx",
-    "build": "bun build src/index.tsx --outfile=dist/index.js --target=node",
+    "build": "bun build ./src/index.tsx --outdir ./dist --target=node",
     "compile": "bun build src/index.tsx --compile --outfile=dist/sincronizado",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write src/",

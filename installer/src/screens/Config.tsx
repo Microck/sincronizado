@@ -1,5 +1,4 @@
 import React from 'react';
-import { Box, Text } from '@opentui/react';
 import { ButtonGroup } from '../components/Button.js';
 import type { InstallConfig } from '../App.js';
 
@@ -12,38 +11,38 @@ interface ConfigProps {
 
 export function Config({ config, onChange, onContinue, onBack }: ConfigProps) {
   return (
-    <Box flexDirection="column" paddingTop={2}>
-      <Box paddingBottom={1}>
-        <Text bold>VPS Connection Details</Text>
-      </Box>
-      <Box paddingBottom={1}>
-        <Text>Hostname/IP: </Text>
-        <Text color="#FFFFC5">{config.hostname || '<not set>'}</Text>
-      </Box>
-      <Box paddingBottom={1}>
-        <Text>SSH User: </Text>
-        <Text color="#FFFFC5">{config.sshUser}</Text>
-      </Box>
-      <Box paddingBottom={1}>
-        <Text>Project Root: </Text>
-        <Text color="#FFFFC5">{config.projectRoot}</Text>
-      </Box>
-      <Box paddingTop={2}>
-        <Text dimColor>
+    <box flexDirection="column" paddingTop={2}>
+      <box paddingBottom={1}>
+        <text bold>VPS Connection Details</text>
+      </box>
+      <box paddingBottom={1}>
+        <text>Hostname/IP: </text>
+        <text color="#FFFFC5">{config.hostname || '<not set>'}</text>
+      </box>
+      <box paddingBottom={1}>
+        <text>SSH User: </text>
+        <text color="#FFFFC5">{config.sshUser}</text>
+      </box>
+      <box paddingBottom={1}>
+        <text>Project Root: </text>
+        <text color="#FFFFC5">{config.projectRoot}</text>
+      </box>
+      <box paddingTop={2}>
+        <text dimColor>
           Configure these in your .opencode.config.json or via environment variables:
-        </Text>
-      </Box>
-      <Box paddingTop={1} paddingLeft={2}>
-        <Text dimColor>SINC_HOSTNAME, SINC_SSH_USER, SINC_PROJECT_ROOT</Text>
-      </Box>
-      <Box paddingTop={3}>
+        </text>
+      </box>
+      <box paddingTop={1} paddingLeft={2}>
+        <text dimColor>SINC_HOSTNAME, SINC_SSH_USER, SINC_PROJECT_ROOT</text>
+      </box>
+      <box paddingTop={3}>
         <ButtonGroup
           buttons={[
             { label: 'Continue', onClick: onContinue, variant: 'primary' },
             { label: 'Back', onClick: onBack, variant: 'secondary' },
           ]}
         />
-      </Box>
-    </Box>
+      </box>
+    </box>
   );
 }

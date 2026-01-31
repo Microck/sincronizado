@@ -1,5 +1,4 @@
 import React from 'react';
-import { Box, Text } from '@opentui/react';
 import { ButtonGroup } from '../components/Button.js';
 
 interface WelcomeProps {
@@ -9,115 +8,115 @@ interface WelcomeProps {
 
 export function Welcome({ onContinue, onExit }: WelcomeProps) {
   return (
-    <Box flexDirection="column" paddingTop={1}>
-      <Box paddingBottom={1}>
-        <Text color="#FFFFC5">
+    <box flexDirection="column" paddingTop={1}>
+      <box paddingBottom={1}>
+        <text color="#FFFFC5">
           {
             '                                  ██                                                                                 ██                                  '
           }
-        </Text>
-        <Text color="#FFFFC5">
+        </text>
+        <text color="#FFFFC5">
           {
             '                                 ████                                                                ███  ███       █████                                 '
           }
-        </Text>
-        <Text color="#FFFFC5">
+        </text>
+        <text color="#FFFFC5">
           {
             '                               █████                                                                 ████ ████       █████                                '
           }
-        </Text>
-        <Text color="#FFFFC5">
+        </text>
+        <text color="#FFFFC5">
           {
             '                              ████                                                                    ███  ███         ████                               '
           }
-        </Text>
-        <Text color="#FFFFC5">
+        </text>
+        <text color="#FFFFC5">
           {
             '                             ████                        ██                      ███                   ███  ███         ████                              '
           }
-        </Text>
-        <Text color="#FFFFC5">
+        </text>
+        <text color="#FFFFC5">
           {
             '             ████████       ████                         ████                  ████                     ██   ██          ████       ████████             '
           }
-        </Text>
-        <Text color="#FFFFC5">
+        </text>
+        <text color="#FFFFC5">
           {
             '          ████████████      ████                           ████               ████                                        ███      █████████████         '
           }
-        </Text>
-        <Text color="#FFFFC5">
+        </text>
+        <text color="#FFFFC5">
           {
             '      █████████    ████     ███           ██████████████████████            ███████████████████████                       ███     ████    █████████      '
           }
-        </Text>
-        <Text color="#FFFFC5">
+        </text>
+        <text color="#FFFFC5">
           {
             '  █████████ ████   ████     ███           ██████████████████████            ███████████████████████                       ███      ███   ████ █████████  '
           }
-        </Text>
-        <Text color="#FFFFC5">
+        </text>
+        <text color="#FFFFC5">
           {
             ' ████████    █████████      ████                                                                                          ███      ██████████   ████████ '
           }
-        </Text>
-        <Text color="#FFFFC5">
+        </text>
+        <text color="#FFFFC5">
           {
             '    █████████ ██████        ████                                                                                         ████        ██████ █████████    '
           }
-        </Text>
-        <Text color="#FFFFC5">
+        </text>
+        <text color="#FFFFC5">
           {
             '        ████████             ████                                     █                                                 ████             █████████       '
           }
-        </Text>
-        <Text color="#FFFFC5">
+        </text>
+        <text color="#FFFFC5">
           {
             '           █████████          ████                                   ███                                               ████          █████████           '
           }
-        </Text>
-        <Text color="#FFFFC5">
+        </text>
+        <text color="#FFFFC5">
           {
             '               ████████        ████                                ██████                                             ████        ████████               '
           }
-        </Text>
-        <Text color="#FFFFC5">
+        </text>
+        <text color="#FFFFC5">
           {
             '                   ████         █████                             ███  ███                                          █████         ████                   '
           }
-        </Text>
-        <Text color="#FFFFC5">
+        </text>
+        <text color="#FFFFC5">
           {
             '                                   ██                              ██     █                                           ███                                 '
           }
-        </Text>
-      </Box>
-      <Box paddingBottom={1}>
-        <Text>
-          This installer will set up your VPS with the sincronizado development environment.
-        </Text>
-      </Box>
-      <Box paddingBottom={1}>
-        <Text dimColor>You will be guided through selecting:</Text>
-      </Box>
-      <Box paddingLeft={2}>
-        <Text dimColor>• Installation mode (Minimal/Standard/Full)</Text>
-        <Text dimColor>• AI agent (OpenCode or Claude Code)</Text>
-        <Text dimColor>• Optional add-ons (Discord bot, AI proxy, OpenSync, etc.)</Text>
-        <Text dimColor>• Shell alias setup (type "opencode" anywhere)</Text>
-        <Text dimColor>• VPS provider and connection details</Text>
-      </Box>
-      <Box paddingTop={2} paddingBottom={1}>
-        <Text>Press tab/shift+tab to navigate, enter to select.</Text>
-      </Box>
-      <Box paddingTop={2}>
+        </text>
+      </box>
+      <box paddingBottom={1}>
+        <text>
+          This installer will set up your VPS with with sincronizado development environment.
+        </text>
+      </box>
+      <box paddingBottom={1}>
+        <text dimColor>You will be guided through selecting:</text>
+      </box>
+      <box paddingLeft={2}>
+        <text dimColor>• Installation mode (Minimal/Standard/Full)</text>
+        <text dimColor>• AI agent (OpenCode or Claude Code)</text>
+        <text dimColor>• Optional add-ons (Discord bot, AI proxy, OpenSync, etc.)</text>
+        <text dimColor>• Shell alias setup (type "opencode" anywhere)</text>
+        <text dimColor>• VPS provider and connection details</text>
+      </box>
+      <box paddingTop={2} paddingBottom={1}>
+        <text>Press tab/shift+tab to navigate, enter to select.</text>
+      </box>
+      <box paddingTop={2}>
         <ButtonGroup
           buttons={[
             { label: 'Continue', onClick: onContinue, variant: 'primary' },
             { label: 'Exit', onClick: onExit, variant: 'secondary' },
           ]}
         />
-      </Box>
-    </Box>
+      </box>
+    </box>
   );
 }
