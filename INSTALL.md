@@ -131,7 +131,9 @@ curl -fsSL https://sincronizado.micr.dev/install.sh | bash
 curl -fsSL https://sincronizado.micr.dev/install.sh | bash -s -- --mode=full
 ```
 
-#### Option 2: TUI Installer
+#### Option 2: TUI Installer (Recommended)
+
+The TUI installer provides a frictionless setup experience with one-click options:
 
 ```bash
 # Run interactive installer
@@ -142,17 +144,19 @@ npm install -g sincronizado
 sincronizado
 ```
 
-**TUI Flow:**
+**TUI Features:**
 
-1. Welcome screen
+1. Welcome screen with ASCII art
 2. Mode selection (minimal/standard/full/custom)
 3. AI agent selection (OpenCode/Claude)
-4. Component checkboxes
-5. VPS provider template selection
-6. Configuration (hostname, user, SSH key)
-7. Installation confirmation
-8. Real-time SSH progress
-9. Completion summary
+4. **One-click shell alias setup** - type "opencode" anywhere
+5. **OpenSync integration** - track sessions and costs
+6. Component checkboxes (Discord bot, AI proxy, worktree sessions)
+7. VPS provider template selection
+8. Configuration (hostname, user, SSH key)
+9. Installation confirmation
+10. Real-time SSH progress
+11. Completion summary with next steps
 
 #### Option 3: Manual Setup
 

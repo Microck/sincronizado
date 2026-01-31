@@ -68,7 +68,9 @@ sincronizado
 
 - mode selection (minimal / standard / full / custom)
 - ai agent selection (opencode or claude)
-- component checkboxes
+- **one-click shell alias setup** - type "opencode" from anywhere
+- **opensync integration** - track sessions and token usage
+- component checkboxes (discord bot, ai proxy, worktree sessions)
 - vps provider templates
 - real-time installation progress
 
