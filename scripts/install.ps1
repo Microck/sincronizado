@@ -1,103 +1,111 @@
-#!/usr/bin/env pwsh
-# Sincronizado Windows VPS Setup Script
-# Usage: iex "& { $(irm https://sincronizado.micr.dev/install.ps1) } [-Mode <minimal|standard|full>]"
+# Sincronizado Installer - PowerShell
+# Usage: irm https://sincronizado.micr.dev/install.ps1 | iex
 
 param(
-    [ValidateSet("minimal", "standard", "full")]
-    [string]$Mode = "standard"
+  [Parameter()]
+  [ValidateSet("local", "remote")]
+  [string]$Mode = "local",
+
+  [Parameter()]
+  [string]$VpsHost = "",
+
+  [Parameter()]
+  [string]$VpsUser = "ubuntu"
 )
 
 $ErrorActionPreference = "Stop"
 
-Write-Host "ᕙ(⇀‸↼‶)ᕗ Sincronizado Windows Setup - Mode: $Mode" -ForegroundColor Cyan
+function Write-Color {
+  param([string]$Message, [string]$Color = "White")
+  Write-Host $Message -ForegroundColor $Color
+}
+
+Write-Color "========================================" "Cyan"
+Write-Color "  SINCRONIZADO INSTALLER" "Cyan"
+Write-Color "========================================" "Cyan"
 Write-Host ""
 
-# Check if running as administrator
-$currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
-if (-not $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-    Write-Warning "This script requires Administrator privileges. Please run as Administrator."
+# Check for Bun
+if (-not (Get-Command bun -ErrorAction SilentlyContinue)) {
+  Write-Color "Bun not found. Installing Bun..." "Yellow"
+  irm bun.sh/install.ps1 | iex
+
+  if (-not (Get-Command bun -ErrorAction SilentlyContinue)) {
+    Write-Color "Error: Failed to install Bun" "Red"
     exit 1
+  }
 }
 
-# Install required tools
-Write-Host "Installing dependencies..." -ForegroundColor Yellow
+Write-Color "✓ Bun installed" "Green"
 
-# Check if winget is available
-if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
-    Write-Error "Windows Package Manager (winget) not found. Please install App Installer from Microsoft Store."
-    exit 1
+# Installation directory
+$installDir = "$env:USERPROFILE\.sincronizado"
+if (-not (Test-Path $installDir)) {
+  New-Item -ItemType Directory -Path $installDir -Force | Out-Null
 }
 
-# Install Git
-if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
-    Write-Host "Installing Git..."
-    winget install --id Git.Git -e --source winget
-}
-
-# Install OpenSSH Client
-$sshFeature = Get-WindowsCapability -Online | Where-Object { $_.Name -like "OpenSSH.Client*" }
-if ($sshFeature.State -ne "Installed") {
-    Write-Host "Installing OpenSSH Client..."
-    Add-WindowsCapability -Online -Name $sshFeature.Name
-}
-
-# Install Mutagen
-if (-not (Get-Command mutagen -ErrorAction SilentlyContinue)) {
-    Write-Host "Installing Mutagen..."
-    winget install --id Mutagen.Mutagen -e --source winget
-}
-
-# Install Eternal Terminal (et)
-if (-not (Get-Command et -ErrorAction SilentlyContinue)) {
-    Write-Host "Installing Eternal Terminal..."
-    # Download and install et for Windows
-    $etUrl = "https://github.com/MisterTea/EternalTerminal/releases/latest/download/et-windows.zip"
-    $etTemp = "$env:TEMP\et-windows.zip"
-    $etDest = "$env:LOCALAPPDATA\Programs\EternalTerminal"
-    
-    Invoke-WebRequest -Uri $etUrl -OutFile $etTemp
-    Expand-Archive -Path $etTemp -DestinationPath $etDest -Force
-    
-    # Add to PATH
-    $currentPath = [Environment]::GetEnvironmentVariable("Path", "User")
-    if (-not $currentPath.Contains($etDest)) {
-        [Environment]::SetEnvironmentVariable("Path", "$currentPath;$etDest", "User")
-        $env:Path = "$env:Path;$etDest"
-    }
-    
-    Remove-Item $etTemp
-}
-
-# Install Tailscale
-if (-not (Get-Command tailscale -ErrorAction SilentlyContinue)) {
-    Write-Host "Installing Tailscale..."
-    winget install --id tailscale.tailscale -e --source winget
-}
-
-# Clone Sincronizado repository
-$sincDir = "$env:USERPROFILE\sincronizado"
-if (-not (Test-Path $sincDir)) {
-    Write-Host "Cloning Sincronizado repository..."
-    git clone https://github.com/microck/sincronizado.git $sincDir
+# Clone or update repo
+if (Test-Path "$installDir\.git")) {
+  Write-Color "Updating sincronizado..." "Yellow"
+  Set-Location $installDir
+  git pull --rebase
 } else {
-    Write-Host "Updating Sincronizado repository..."
-    Set-Location $sincDir
-    git pull
+  Write-Color "Cloning sincronizado..." "Cyan"
+  git clone https://github.com/microck/sincronizado.git $installDir
+  Set-Location $installDir
 }
 
-# Run VPS setup based on mode
-Write-Host ""
-Write-Host "VPS Setup Instructions:" -ForegroundColor Green
-Write-Host "========================" -ForegroundColor Green
-Write-Host ""
-Write-Host "1. SSH into your VPS:"
-Write-Host "   ssh ubuntu@YOUR_VPS_IP" -ForegroundColor Cyan
-Write-Host ""
-Write-Host "2. Download and run setup:"
-Write-Host "   curl -fsSL https://sincronizado.micr.dev/install.sh | sudo bash -s -- --mode=$Mode" -ForegroundColor Cyan
-Write-Host ""
-Write-Host "3. After VPS setup completes, return to Windows and run:"
-Write-Host "   cd $sincDir\launcher" -ForegroundColor Cyan
-Write-Host "   .\opencode.ps1 -Project YOUR_PROJECT" -ForegroundColor Cyan
-Write-Host ""
-Write-Host "ᕙ(⇀‸↼‶)ᕗ Setup complete! Install dependencies on your VPS to continue." -ForegroundColor Cyan
+Write-Color "✓ Repository ready" "Green"
+
+# Run TUI installer for local mode
+if ($Mode -eq "local") {
+  Write-Color "Installing TUI dependencies..." "Cyan"
+  Set-Location "$installDir\installer"
+  bun install --silent
+  Write-Color "✓ Dependencies installed" "Green"
+
+  Write-Host ""
+  Write-Color "Launching TUI installer..." "Green"
+  Write-Host ""
+  bun run src/index.tsx
+}
+
+# Run VPS setup for remote mode
+elseif ($Mode -eq "remote") {
+  if ([string]::IsNullOrWhiteSpace($VpsHost)) {
+    Write-Color "Error: VpsHost required for remote mode" "Red"
+    Write-Host "Usage: irm https://sincronizado.micr.dev/install.ps1 | iex; .\install.ps1 -Mode remote -VpsHost <hostname> [-VpsUser <user>]"
+    exit 1
+  }
+
+  Write-Color "Setting up VPS at $VpsUser@$VpsHost..." "Cyan"
+  Write-Host ""
+
+  # Run setup script on VPS
+  $scriptUrl = "https://raw.githubusercontent.com/microck/sincronizado/main/scripts/setup-vps.sh"
+  ssh "$VpsUser@$VpsHost" "curl -fsSL $scriptUrl | sudo bash"
+
+  Write-Host ""
+  Write-Color "✓ VPS setup complete" "Green"
+  Write-Host ""
+  Write-Host "Next steps:"
+  Write-Host "  1. Set up local launcher (.\launcher\opencode.ps1)"
+  Write-Host "  2. Configure VPS connection in .\.sincronizado\config.json"
+  Write-Host "  Docs: https://sincronizado.micr.dev"
+}
+
+# Show usage if no mode specified
+else {
+  Write-Host ""
+  Write-Host "Usage:"
+  Write-Host ""
+  Write-Host "  TUI Installer (recommended):"
+  Write-Host "    irm https://sincronizado.micr.dev/install.ps1 | iex"
+  Write-Host ""
+  Write-Host "  VPS Setup only:"
+  Write-Host "    irm https://sincronizado.micr.dev/install.ps1 | iex; .\install.ps1 -Mode remote -VpsHost <hostname> [-VpsUser <user>]"
+  Write-Host ""
+  Write-Host "  VPS Setup + TUI:"
+  Write-Host "    irm https://sincronizado.micr.dev/install.ps1 | iex; .\install.ps1 -Mode remote -VpsHost <hostname>"
+  Write-Host "    Then run TUI to configure launcher"
+}
