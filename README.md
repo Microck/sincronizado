@@ -56,8 +56,23 @@ graph TB
 
 interactive 8-screen installer. requires [bun](https://bun.sh):
 
+**one-liner (fastest):**
+
+**linux / macos:**
+
 ```bash
-# clone and run
+curl -fsSL https://sincronizado.micr.dev/install-tui.sh | bash
+```
+
+**windows (powershell):**
+
+```powershell
+iex "& { $(irm https://sincronizado.micr.dev/install-tui.ps1) }"
+```
+
+**manual:**
+
+```bash
 git clone https://github.com/microck/sincronizado.git
 cd sincronizado/installer
 bun install
