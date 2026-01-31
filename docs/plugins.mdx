@@ -243,6 +243,51 @@ Edit `~/.config/claude/settings.json`:
 3. Check paths in settings.json are correct
 4. Restart Claude Code session
 
+## Third-Party Integrations
+
+### OpenSync (Session Analytics)
+
+[OpenSync](https://www.opensync.dev/) provides cloud-synced dashboards for tracking AI coding sessions across multiple agents including OpenCode and Claude Code.
+
+**Features:**
+
+- Real-time session syncing and tracking
+- Token usage analytics and cost monitoring
+- Semantic search across sessions
+- Export eval datasets (DeepEval, OpenAI Evals)
+- Multi-agent support (OpenCode, Claude, Codex, Cursor)
+
+**Integration:**
+
+Install the sync plugin for your AI agent:
+
+```bash
+# For OpenCode
+npm install -g opencode-sync-plugin
+opencode-sync login
+
+# For Claude Code
+npm install -g claude-code-sync
+claude-code-sync login
+```
+
+Add to your agent configuration:
+
+```json
+{
+  "plugins": ["opencode-sync-plugin"]
+}
+```
+
+**Why use it with sincronizado:**
+
+- Track all VPS-based AI sessions in one dashboard
+- Monitor token costs across multiple projects
+- Search historical sessions for context retrieval
+- Build eval datasets from production sessions
+
+Learn more at [opensync.dev](https://www.opensync.dev/)
+
 ## SSH MCP Server (Optional)
 
 For AI agents to manage your VPS via SSH commands, install the SSH MCP server:
