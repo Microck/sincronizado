@@ -19,6 +19,11 @@ interface InstallStep {
 }
 
 export function Install({ config, onComplete, onBack }: InstallProps) {
+  const dryRun =
+    process.env.SINC_DRY_RUN === '1' ||
+    process.env.SINC_DRY_RUN === 'true' ||
+    process.env.SINC_DEMO === '1' ||
+    process.env.SINC_DEMO === 'true';
   const [steps, setSteps] = useState<InstallStep[]>([
     { name: 'Connect to VPS', command: '', progress: 0, status: 'pending' },
     { name: 'Install base dependencies', command: '', progress: 0, status: 'pending' },
@@ -47,7 +52,11 @@ export function Install({ config, onComplete, onBack }: InstallProps) {
       updateStep(i, { status: 'running' });
 
       try {
-        await runSSHCommand(hostname, config.sshUser, flags, i);
+        if (dryRun) {
+          await runDryStep(i);
+        } else {
+          await runSSHCommand(hostname, config.sshUser, flags, i);
+        }
         updateStep(i, { status: 'complete', progress: 100 });
       } catch (error) {
         updateStep(i, { status: 'error' });
@@ -57,6 +66,18 @@ export function Install({ config, onComplete, onBack }: InstallProps) {
 
     if (!isCancelled) {
       onComplete();
+    }
+  };
+
+  const runDryStep = async (step: number) => {
+    const label = steps[step]?.name || `Step ${step + 1}`;
+    setOutput((prev) => [...prev.slice(-10), `[dry-run] ${label}`]);
+
+    const ticks = [10, 35, 60, 85, 100];
+    for (const t of ticks) {
+      if (isCancelled) return;
+      updateStep(step, { progress: t });
+      await sleep(120);
     }
   };
 
@@ -127,7 +148,7 @@ export function Install({ config, onComplete, onBack }: InstallProps) {
     <box flexDirection="column" paddingTop={2}>
       <box paddingBottom={1}>
         <text>Installing on {config.hostname || 'VPS'}...</text>
-        <text fg="gray">Press ESC to cancel</text>
+        <text fg="gray">{dryRun ? 'Dry run. No SSH.' : 'Press ESC to cancel'}</text>
       </box>
 
       <box flexDirection="column" paddingBottom={1}>
@@ -166,4 +187,8 @@ function buildFlags(config: InstallConfig): string {
   if (config.noPlugins) flags.push('--no-plugins');
 
   return flags.join(' ');
+}
+
+function sleep(ms: number) {
+  return new Promise<void>((resolve) => setTimeout(resolve, ms));
 }

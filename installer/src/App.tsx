@@ -68,10 +68,34 @@ const defaultConfig: InstallConfig = {
   projectRoot: '~/projects',
 };
 
+const isDemo = () => {
+  const v = process.env.SINC_DEMO;
+  return v === '1' || v === 'true';
+};
+
+const demoConfig: InstallConfig = {
+  ...defaultConfig,
+  agent: 'opencode',
+  mode: 'custom',
+  withKimaki: true,
+  withLunaroute: true,
+  withWorktreeSession: true,
+  withSessionHandoff: true,
+  withAgentOfEmpires: true,
+  withOpenSync: true,
+  setupAlias: true,
+  provider: 'oracle',
+  hostname: 'demo-vps.example',
+  sshUser: 'ubuntu',
+  projectRoot: '~/projects/demo',
+};
+
 export function App() {
   const renderer = useRenderer();
-  const [screen, setScreen] = useState<Screen>('welcome');
-  const [config, setConfig] = useState<InstallConfig>(defaultConfig);
+  const [screen, setScreen] = useState<Screen>(() => (isDemo() ? 'install' : 'welcome'));
+  const [config, setConfig] = useState<InstallConfig>(() =>
+    isDemo() ? demoConfig : defaultConfig,
+  );
   const [history, setHistory] = useState<Screen[]>([]);
 
   const exit = () => {
