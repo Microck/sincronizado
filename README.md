@@ -70,7 +70,7 @@ curl -fsSL https://sincronizado.micr.dev/install.sh | bash
 irm https://sincronizado.micr.dev/install.ps1 | iex
 ```
 
-note: do not use `npx sincronizado` / `bunx sincronizado` (node cannot run opentui).
+note: the TUI uses @clack/prompts and requires bun to run.
 
 **manual:**
 
@@ -78,13 +78,14 @@ note: do not use `npx sincronizado` / `bunx sincronizado` (node cannot run opent
 git clone https://github.com/microck/sincronizado.git
 cd sincronizado/installer
 bun install
-bun run src/index.tsx
+bun run src/index.ts
 ```
 
 **features:**
 
 - mode selection (minimal / standard / full / custom)
 - ai agent selection (opencode or claude)
+- **vps security hardening** - automated ssh key setup, firewall, fail2ban protection
 - **one-click shell alias setup** - type "opencode" from anywhere
 - **opensync integration** - track sessions and token usage
 - component checkboxes (discord bot, ai proxy, worktree sessions)
@@ -188,19 +189,21 @@ requires [bun](https://bun.sh).
 git clone https://github.com/microck/sincronizado.git
 cd sincronizado/installer
 bun install
-bun run src/index.tsx
+bun run src/index.ts
 ```
 
-8-screen flow:
+10-screen flow:
 
 1. welcome
-2. mode select (minimal/standard/full/custom)
-3. addons (checkboxes)
-4. vps provider (oracle/hetzner/do/aws)
-5. config (hostname, user, root)
-6. confirm
-7. install (real-time ssh progress)
-8. complete
+2. agent select (opencode/claude)
+3. mode select (minimal/standard/full/custom)
+4. addons (checkboxes)
+5. security hardening (optional)
+6. vps provider (oracle/hetzner/do/aws)
+7. config (hostname, user, root)
+8. confirm
+9. install (real-time ssh progress)
+10. complete
 
 ## core components
 

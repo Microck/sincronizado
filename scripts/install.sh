@@ -69,7 +69,7 @@ echo -e "${GREEN}OK: Dependencies installed${NC}"
 echo ""
 echo -e "${GREEN}Launching TUI installer...${NC}"
 echo ""
-bun run src/index.tsx
+bun run src/index.ts
 
 # After TUI exits, check if we should do VPS setup
 cd "$INSTALL_DIR"
