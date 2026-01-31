@@ -9,10 +9,10 @@
     "dark": "#8B7D2E"
   },
   "logo": {
-    "dark": "#F5F0C4",
-    "light": "#8B7D2E"
+    "dark": "/logo.png",
+    "light": "/logo.png"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "/logo.png",
   "navbar": {
     "links": [
       {
