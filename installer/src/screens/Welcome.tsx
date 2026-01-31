@@ -103,7 +103,7 @@ export function Welcome({ onContinue, onExit }: WelcomeProps) {
         <text fg="gray">• Installation mode (Minimal/Standard/Full)</text>
         <text fg="gray">• AI agent (OpenCode or Claude Code)</text>
         <text fg="gray">• Optional add-ons (Discord bot, AI proxy, OpenSync, etc.)</text>
-        <text fg="gray">• Shell alias setup (type "opencode" anywhere)</text>
+        <text fg="gray">• Shell alias setup (type 'opencode' from anywhere)</text>
         <text fg="gray">• VPS provider and connection details</text>
       </box>
       <box paddingTop={2} paddingBottom={1}>
