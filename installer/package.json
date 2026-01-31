@@ -3,15 +3,11 @@
   "version": "1.1.9",
   "description": "Interactive TUI installer for Sincronizado development environment - REQUIRES BUN",
   "type": "module",
-  "bin": {
-    "sincronizado": "bin/sincronizado"
-  },
   "scripts": {
     "dev": "bun run src/index.tsx",
     "build": "echo 'No build step required'",
     "typecheck": "tsc --noEmit",
-    "format": "prettier --write src/",
-    "postinstall": "node -e \"console.error('ERROR: sincronizado requires Bun runtime.')\" && node -e \"console.error('Do not install with npm. Use one of these methods:')\" && node -e \"console.error('')\" && node -e \"console.error('1. One-liner: curl -fsSL https://sincronizado.micr.dev/install.sh | bash')\" && node -e \"console.error('2. With TUI: git clone https://github.com/microck/sincronizado.git && cd sincronizado/installer && bun install && bun run src/index.tsx')\" && node -e \"console.error('')\" && node -e \"console.error('See: https://sincronizado.micr.dev')\" && exit 1"
+    "format": "prettier --write src/"
   },
   "dependencies": {
     "@opentui/core": "0.1.60",
