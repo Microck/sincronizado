@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "name": "*sincronizado*",
+  "name": "sincronizado",
   "theme": "maple",
   "description": "Hyper-local development stack with remote AI execution",
   "colors": {
