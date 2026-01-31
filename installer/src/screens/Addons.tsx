@@ -1,8 +1,8 @@
-import React from "react";
-import { Box, Text } from "@opentui/react";
-import { CheckboxGroup } from "../components/CheckboxGroup.js";
-import { ButtonGroup } from "../components/Button.js";
-import type { InstallConfig } from "../App.js";
+import React from 'react';
+import { Box, Text } from '@opentui/react';
+import { CheckboxGroup } from '../components/CheckboxGroup.js';
+import { ButtonGroup } from '../components/Button.js';
+import type { InstallConfig } from '../App.js';
 
 interface AddonsProps {
   config: InstallConfig;
@@ -13,81 +13,95 @@ interface AddonsProps {
 
 const addonOptions = [
   {
-    value: "withKimaki",
-    label: "Kimaki (Discord Bot)",
-    description: "Control agents via Discord with voice support",
+    value: 'withKimaki',
+    label: 'Kimaki (Discord Bot)',
+    description: 'Control agents via Discord with voice support',
   },
   {
-    value: "withLunaroute",
-    label: "LunaRoute (AI Proxy)",
-    description: "Debug AI interactions and track token usage",
+    value: 'withLunaroute',
+    label: 'LunaRoute (AI Proxy)',
+    description: 'Debug AI interactions and track token usage',
   },
   {
-    value: "withWorktreeSession",
-    label: "Worktree Sessions",
-    description: "Git worktree per OpenCode session",
+    value: 'withWorktreeSession',
+    label: 'Worktree Sessions',
+    description: 'Git worktree per OpenCode session',
   },
   {
-    value: "withSessionHandoff",
-    label: "Session Handoff",
-    description: "Seamless context continuation between sessions",
+    value: 'withSessionHandoff',
+    label: 'Session Handoff',
+    description: 'Seamless context continuation between sessions',
   },
   {
-    value: "withAgentOfEmpires",
-    label: "Agent of Empires",
-    description: "Alternative session manager (replaces ccmanager)",
+    value: 'withAgentOfEmpires',
+    label: 'Agent of Empires',
+    description: 'Alternative session manager (replaces ccmanager)',
+  },
+  {
+    value: 'withOpenSync',
+    label: 'OpenSync (Session Analytics)',
+    description: 'Track all AI sessions, token usage, and export eval datasets',
+  },
+  {
+    value: 'setupAlias',
+    label: 'Setup shell alias',
+    description: "Type 'opencode' or 'claude' from anywhere",
   },
 ];
 
 const skipOptions = [
   {
-    value: "noAgentOS",
-    label: "Skip Agent-OS",
-    description: "No web UI for mobile access",
+    value: 'noAgentOS',
+    label: 'Skip Agent-OS',
+    description: 'No web UI for mobile access',
   },
   {
-    value: "noCcmanager",
-    label: "Skip ccmanager",
-    description: "No session TUI (use agent-of-empires instead)",
+    value: 'noCcmanager',
+    label: 'Skip ccmanager',
+    description: 'No session TUI (use agent-of-empires instead)',
   },
   {
-    value: "noPlugins",
-    label: "Skip OpenCode plugins",
-    description: "No direnv, agentmap, sync, ai-sessions",
+    value: 'noPlugins',
+    label: 'Skip OpenCode plugins',
+    description: 'No direnv, agentmap, sync, ai-sessions',
   },
 ];
 
 export function Addons({ config, onChange, onContinue, onBack }: AddonsProps) {
   const selectedAddons = [
-    ...(config.withKimaki ? ["withKimaki"] : []),
-    ...(config.withLunaroute ? ["withLunaroute"] : []),
-    ...(config.withWorktreeSession ? ["withWorktreeSession"] : []),
-    ...(config.withSessionHandoff ? ["withSessionHandoff"] : []),
-    ...(config.withAgentOfEmpires ? ["withAgentOfEmpires"] : []),
+    ...(config.withKimaki ? ['withKimaki'] : []),
+    ...(config.withLunaroute ? ['withLunaroute'] : []),
+    ...(config.withWorktreeSession ? ['withWorktreeSession'] : []),
+    ...(config.withSessionHandoff ? ['withSessionHandoff'] : []),
+    ...(config.withAgentOfEmpires ? ['withAgentOfEmpires'] : []),
+    ...(config.withOpenSync ? ['withOpenSync'] : []),
+    ...(config.setupAlias ? ['setupAlias'] : []),
   ];
 
   const selectedSkips = [
-    ...(config.noAgentOS ? ["noAgentOS"] : []),
-    ...(config.noCcmanager ? ["noCcmanager"] : []),
-    ...(config.noPlugins ? ["noPlugins"] : []),
+    ...(config.noAgentOS ? ['noAgentOS'] : []),
+    ...(config.noCcmanager ? ['noCcmanager'] : []),
+    ...(config.noPlugins ? ['noPlugins'] : []),
   ];
 
   const handleAddonChange = (values: string[]) => {
     onChange({
-      withKimaki: values.includes("withKimaki"),
-      withLunaroute: values.includes("withLunaroute"),
-      withWorktreeSession: values.includes("withWorktreeSession"),
-      withSessionHandoff: values.includes("withSessionHandoff"),
-      withAgentOfEmpires: values.includes("withAgentOfEmpires"),
-      noCcmanager: values.includes("withAgentOfEmpires"),
+      withKimaki: values.includes('withKimaki'),
+      withLunaroute: values.includes('withLunaroute'),
+      withWorktreeSession: values.includes('withWorktreeSession'),
+      withSessionHandoff: values.includes('withSessionHandoff'),
+      withAgentOfEmpires: values.includes('withAgentOfEmpires'),
+      withOpenSync: values.includes('withOpenSync'),
+      setupAlias: values.includes('setupAlias'),
+      noCcmanager: values.includes('withAgentOfEmpires'),
     });
   };
 
   const handleSkipChange = (values: string[]) => {
     onChange({
-      noAgentOS: values.includes("noAgentOS"),
-      noCcmanager: values.includes("noCcmanager"),
-      noPlugins: values.includes("noPlugins"),
+      noAgentOS: values.includes('noAgentOS'),
+      noCcmanager: values.includes('noCcmanager'),
+      noPlugins: values.includes('noPlugins'),
     });
   };
 
@@ -97,7 +111,11 @@ export function Addons({ config, onChange, onContinue, onBack }: AddonsProps) {
         <Text bold>Add optional features:</Text>
       </Box>
       <Box paddingBottom={1}>
-        <CheckboxGroup options={addonOptions} values={selectedAddons} onChange={handleAddonChange} />
+        <CheckboxGroup
+          options={addonOptions}
+          values={selectedAddons}
+          onChange={handleAddonChange}
+        />
       </Box>
       <Box paddingTop={1} paddingBottom={1}>
         <Text bold>Skip default components:</Text>
@@ -108,8 +126,8 @@ export function Addons({ config, onChange, onContinue, onBack }: AddonsProps) {
       <Box paddingTop={1}>
         <ButtonGroup
           buttons={[
-            { label: "Continue", onClick: onContinue, variant: "primary" },
-            { label: "Back", onClick: onBack, variant: "secondary" },
+            { label: 'Continue', onClick: onContinue, variant: 'primary' },
+            { label: 'Back', onClick: onBack, variant: 'secondary' },
           ]}
         />
       </Box>

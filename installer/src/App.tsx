@@ -37,6 +37,8 @@ export interface InstallConfig {
   withWorktreeSession: boolean;
   withSessionHandoff: boolean;
   withAgentOfEmpires: boolean;
+  withOpenSync: boolean;
+  setupAlias: boolean;
   noAgentOS: boolean;
   noCcmanager: boolean;
   noPlugins: boolean;
@@ -55,6 +57,8 @@ const defaultConfig: InstallConfig = {
   withWorktreeSession: false,
   withSessionHandoff: false,
   withAgentOfEmpires: false,
+  withOpenSync: false,
+  setupAlias: false,
   noAgentOS: false,
   noCcmanager: false,
   noPlugins: false,
