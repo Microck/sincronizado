@@ -1,10 +1,10 @@
 {
   "name": "sincronizado",
-  "version": "1.1.2",
+  "version": "1.1.7",
   "description": "Interactive TUI installer for Sincronizado development environment - REQUIRES BUN",
   "type": "module",
   "bin": {
-    "sincronizado": "./bin/sincronizado"
+    "sincronizado": "bin/sincronizado"
   },
   "scripts": {
     "dev": "bun run src/index.tsx",
@@ -16,7 +16,8 @@
   "dependencies": {
     "@opentui/core": "0.1.60",
     "@opentui/react": "0.1.60",
-    "react": "^18.3.1"
+    "react": "19",
+    "react-dom": "19"
   },
   "devDependencies": {
     "@types/node": "^20.10.0",
