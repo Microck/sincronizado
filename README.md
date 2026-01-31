@@ -64,7 +64,7 @@ npm install -g sincronizado
 sincronizado
 ```
 
-\*\*features:
+**features:**
 
 - mode selection (minimal / standard / full / custom)
 - ai agent selection (opencode or claude)
