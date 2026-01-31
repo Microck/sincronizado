@@ -24,12 +24,21 @@ Edit locally (VS Code / JetBrains). Run AI + heavy execution on a VPS. Keep late
 
 ### TUI (recommended)
 
-```bash
-# Install globally first
-npm install -g sincronizado
+Requires [Bun](https://bun.sh) to be installed.
 
-# Then run
-sincronizado
+```bash
+# Clone and run directly
+git clone https://github.com/microck/sincronizado.git
+cd sincronizado/installer
+bun install
+bun run src/index.tsx
+```
+
+Or use the install scripts (no TUI):
+
+```bash
+# Quick install without TUI
+curl -fsSL https://sincronizado.micr.dev/install.sh | bash
 ```
 
 **TUI features:**

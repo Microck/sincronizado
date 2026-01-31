@@ -54,14 +54,14 @@ graph TB
 
 ### tui installer (recommended)
 
-interactive 8-screen installer:
+interactive 8-screen installer. requires [bun](https://bun.sh):
 
 ```bash
-# install globally first
-npm install -g sincronizado
-
-# then run
-sincronizado
+# clone and run
+git clone https://github.com/microck/sincronizado.git
+cd sincronizado/installer
+bun install
+bun run src/index.tsx
 ```
 
 **features:**
