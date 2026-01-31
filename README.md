@@ -10,6 +10,7 @@
   <a href="LICENSE"><img alt="license" src="https://img.shields.io/badge/license-MIT-blue.svg" /></a>
   <a href="https://bun.sh/"><img alt="bun" src="https://img.shields.io/badge/bun-1.0+-yellow.svg" /></a>
   <a href="https://nodejs.org/"><img alt="node" src="https://img.shields.io/badge/node-18+-green.svg" /></a>
+  <a href="https://www.anthropic.com/claude-code"><img alt="claude" src="https://img.shields.io/badge/Claude%20Code-supported-orange.svg" /></a>
   <a href="https://discord.gg/opencode"><img alt="discord" src="https://img.shields.io/badge/discord-OpenCode-7289da.svg" /></a>
   <a href="https://sincronizado.micr.dev"><img alt="docs" src="https://img.shields.io/badge/docs-mintlify-00C7B7.svg" /></a>
 </p>
@@ -56,7 +57,7 @@ graph TB
 ### linux / macos (bash)
 
 ```bash
-# minimal - core only (et, opencode, ufw)
+# minimal - core only (et, opencode/claude, ufw)
 curl -fsSL https://sincronizado.micr.dev/install.sh | bash -s -- --mode=minimal
 
 # standard - recommended (+ agent-os, ccmanager, plugins)
@@ -64,6 +65,9 @@ curl -fsSL https://sincronizado.micr.dev/install.sh | bash
 
 # full - everything (+ kimaki discord bot, lunaroute proxy, etc)
 curl -fsSL https://sincronizado.micr.dev/install.sh | bash -s -- --mode=full
+
+# with claude code instead of opencode
+curl -fsSL https://sincronizado.micr.dev/install.sh | bash -s -- --agent=claude
 ```
 
 ### windows (powershell)
@@ -77,6 +81,9 @@ iex "& { $(irm https://sincronizado.micr.dev/install.ps1) }"
 
 # full - everything
 iex "& { $(irm https://sincronizado.micr.dev/install.ps1) } -Mode full"
+
+# with claude code instead of opencode
+iex "& { $(irm https://sincronizado.micr.dev/install.ps1) } -Agent claude"
 ```
 
 ### tui installer (interactive)
@@ -96,6 +103,8 @@ sudo ./setup-vps.sh --mode=standard
 
 ### 2. local setup
 
+**with opencode:**
+
 ```powershell
 # windows
 winget install Mutagen.Mutagen
@@ -104,6 +113,18 @@ winget install Mutagen.Mutagen
 # macos/linux
 brew install mutagen
 ./launcher/opencode.sh -p myapp
+```
+
+**with claude code:**
+
+```powershell
+# windows
+winget install Mutagen.Mutagen
+.\launcher\claude.ps1 -Project myapp
+
+# macos/linux
+brew install mutagen
+./launcher/claude.sh -p myapp
 ```
 
 ### 3. done
@@ -116,7 +137,7 @@ brew install mutagen
 
 | mode         | components                            | use case                |
 | ------------ | ------------------------------------- | ----------------------- |
-| **minimal**  | et, opencode, ufw                     | headless servers, ci/cd |
+| **minimal**  | et, opencode/claude, ufw              | headless servers, ci/cd |
 | **standard** | + agent-os, ccmanager, plugins        | **recommended**         |
 | **full**     | + kimaki, lunaroute, worktree-session | power users             |
 | **custom**   | pick components                       | specific needs          |
@@ -164,7 +185,7 @@ sincronizado
 | **tailscale**        | zero-config vpn    | no port forwarding, secure by default |
 | **eternal terminal** | resilient ssh      | survives wifi/5g handoffs             |
 | **mutagen**          | bidirectional sync | <500ms file sync                      |
-| **opencode**         | ai agent           | the actual ai doing work              |
+| **opencode/claude**  | ai agent           | the actual ai doing work              |
 | **agent-os**         | web ui             | mobile access, session browser        |
 
 ## advanced features
