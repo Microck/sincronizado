@@ -30,7 +30,7 @@ Windows (PowerShell):
 irm https://sincronizado.micr.dev/install.ps1 | iex
 ```
 
-Note: do not use `npx sincronizado` / `bunx sincronizado` (Node can't run OpenTUI).
+Note: the TUI uses @clack/prompts and requires bun to run.
 
 TUI provides:
 
@@ -45,7 +45,7 @@ TUI provides:
 git clone https://github.com/microck/sincronizado.git
 cd sincronizado/installer
 bun install
-bun run src/index.tsx
+bun run src/index.ts
 ```
 
 ### Option 3: Manual setup
