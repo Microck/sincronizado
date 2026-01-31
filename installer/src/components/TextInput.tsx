@@ -39,17 +39,17 @@ export function TextInput({ label, value, onChange, placeholder }: TextInputProp
       return;
     }
 
-    if (key.input) {
-      const newValue = value.slice(0, cursorPosition) + key.input + value.slice(cursorPosition);
+    if (key.sequence && !key.ctrl && !key.meta && key.name.length === 1) {
+      const newValue = value.slice(0, cursorPosition) + key.sequence + value.slice(cursorPosition);
       onChange(newValue);
-      setCursorPosition(cursorPosition + key.input.length);
+      setCursorPosition(cursorPosition + key.sequence.length);
     }
   });
 
   return (
     <box flexDirection="column">
       <text>{label}:</text>
-      <box borderStyle={isFocused ? 'round' : 'single'} paddingX={1}>
+      <box borderStyle={isFocused ? 'rounded' : 'single'} padding={1}>
         <text>{value || placeholder || ''}</text>
       </box>
     </box>

@@ -15,13 +15,15 @@ export function Complete({ config, onExit }: CompleteProps) {
   return (
     <box flexDirection="column" paddingTop={2}>
       <box paddingBottom={1}>
-        <text color="green" bold>
-          ✓ Installation complete!
+        <text fg="green">
+          <b>✓ Installation complete!</b>
         </text>
       </box>
 
       <box paddingTop={1} paddingBottom={1}>
-        <text bold>Next steps:</text>
+        <text>
+          <b>Next steps:</b>
+        </text>
       </box>
 
       <box paddingLeft={2}>
@@ -59,7 +61,7 @@ export function Complete({ config, onExit }: CompleteProps) {
           <text>{stepNum++}. Install OpenSync plugin:</text>
           <text> npm install -g opencode-sync-plugin</text>
           <text> opencode-sync login</text>
-          <text dimColor> Then add to opencode.json plugins array</text>
+          <text fg="gray"> Then add to opencode.json plugins array</text>
         </box>
       )}
 
@@ -87,82 +89,82 @@ export function Complete({ config, onExit }: CompleteProps) {
       </box>
 
       <box paddingTop={2}>
-        <text color="#FFFFC5" dimColor>
+        <text fg="gray">
           {
             '                                  ██                                                                                 ██                                  '
           }
         </text>
-        <text color="#FFFFC5" dimColor>
+        <text fg="gray">
           {
             '                                 ████                                                                ███  ███       █████                                 '
           }
         </text>
-        <text color="#FFFFC5" dimColor>
+        <text fg="gray">
           {
             '                               █████                                                                 ████ ████       █████                                '
           }
         </text>
-        <text color="#FFFFC5" dimColor>
+        <text fg="gray">
           {
             '                              ████                                                                    ███  ███         ████                               '
           }
         </text>
-        <text color="#FFFFC5" dimColor>
+        <text fg="gray">
           {
             '                             ████                        ██                      ███                   ███  ███         ████                              '
           }
         </text>
-        <text color="#FFFFC5" dimColor>
+        <text fg="gray">
           {
             '             ████████       ████                         ████                  ████                     ██   ██          ████       ████████             '
           }
         </text>
-        <text color="#FFFFC5" dimColor>
+        <text fg="gray">
           {
             '          ████████████      ████                           ████               ████                                        ███      █████████████         '
           }
         </text>
-        <text color="#FFFFC5" dimColor>
+        <text fg="gray">
           {
             '      █████████    ████     ███           ██████████████████████            ███████████████████████                       ███     ████    █████████      '
           }
         </text>
-        <text color="#FFFFC5" dimColor>
+        <text fg="gray">
           {
             '  █████████ ████   ████     ███           ██████████████████████            ███████████████████████                       ███      ███   ████ █████████  '
           }
         </text>
-        <text color="#FFFFC5" dimColor>
+        <text fg="gray">
           {
             ' ████████    █████████      ████                                                                                          ███      ██████████   ████████ '
           }
         </text>
-        <text color="#FFFFC5" dimColor>
+        <text fg="gray">
           {
             '    █████████ ██████        ████                                                                                         ████        ██████ █████████    '
           }
         </text>
-        <text color="#FFFFC5" dimColor>
+        <text fg="gray">
           {
             '        ████████             ████                                     █                                                 ████             █████████       '
           }
         </text>
-        <text color="#FFFFC5" dimColor>
+        <text fg="gray">
           {
             '           █████████          ████                                   ███                                               ████          █████████           '
           }
         </text>
-        <text color="#FFFFC5" dimColor>
+        <text fg="gray">
           {
             '               ████████        ████                                ██████                                             ████        ████████               '
           }
         </text>
-        <text color="#FFFFC5" dimColor>
+        <text fg="gray">
           {
             '                   ████         █████                             ███  ███                                          █████         ████                   '
           }
         </text>
-        <text color="#FFFFC5" dimColor>
+        <text fg="gray">
           {
             '                                   ██                              ██     █                                           ███                                 '
           }
@@ -171,9 +173,7 @@ export function Complete({ config, onExit }: CompleteProps) {
 
       {config.withOpenSync && (
         <box paddingTop={1}>
-          <text color="#FFFFC5" dimColor>
-            📊 OpenSync: Track sessions anywhere
-          </text>
+          <text fg="gray">📊 OpenSync: Track sessions anywhere</text>
         </box>
       )}
     </box>

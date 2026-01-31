@@ -13,27 +13,29 @@ export function Config({ config, onChange, onContinue, onBack }: ConfigProps) {
   return (
     <box flexDirection="column" paddingTop={2}>
       <box paddingBottom={1}>
-        <text bold>VPS Connection Details</text>
+        <text>
+          <b>VPS Connection Details</b>
+        </text>
       </box>
       <box paddingBottom={1}>
         <text>Hostname/IP: </text>
-        <text color="#FFFFC5">{config.hostname || '<not set>'}</text>
+        <text fg="#FFFFC5">{config.hostname || '<not set>'}</text>
       </box>
       <box paddingBottom={1}>
         <text>SSH User: </text>
-        <text color="#FFFFC5">{config.sshUser}</text>
+        <text fg="#FFFFC5">{config.sshUser}</text>
       </box>
       <box paddingBottom={1}>
         <text>Project Root: </text>
-        <text color="#FFFFC5">{config.projectRoot}</text>
+        <text fg="#FFFFC5">{config.projectRoot}</text>
       </box>
       <box paddingTop={2}>
-        <text dimColor>
+        <text fg="gray">
           Configure these in your .opencode.config.json or via environment variables:
         </text>
       </box>
       <box paddingTop={1} paddingLeft={2}>
-        <text dimColor>SINC_HOSTNAME, SINC_SSH_USER, SINC_PROJECT_ROOT</text>
+        <text fg="gray">SINC_HOSTNAME, SINC_SSH_USER, SINC_PROJECT_ROOT</text>
       </box>
       <box paddingTop={3}>
         <ButtonGroup

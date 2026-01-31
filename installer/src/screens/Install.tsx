@@ -127,7 +127,7 @@ export function Install({ config, onComplete, onBack }: InstallProps) {
     <box flexDirection="column" paddingTop={2}>
       <box paddingBottom={1}>
         <text>Installing on {config.hostname || 'VPS'}...</text>
-        <text dimColor>Press ESC to cancel</text>
+        <text fg="gray">Press ESC to cancel</text>
       </box>
 
       <box flexDirection="column" paddingBottom={1}>
@@ -139,8 +139,8 @@ export function Install({ config, onComplete, onBack }: InstallProps) {
       </box>
 
       {output.length > 0 && (
-        <box borderStyle="single" paddingX={1} height={6}>
-          <text dimColor>{output.slice(-5).join('\n')}</text>
+        <box borderStyle="single" padding={1} height={6}>
+          <text fg="gray">{output.slice(-5).join('\n')}</text>
         </box>
       )}
 

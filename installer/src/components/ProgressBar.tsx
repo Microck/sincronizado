@@ -28,13 +28,13 @@ export function ProgressBar({ progress, label, status = 'pending' }: ProgressBar
   return (
     <box flexDirection="column">
       <box>
-        <text color={statusColor}>
+        <text fg={statusColor}>
           {statusIcon} {label}
         </text>
       </box>
       <box>
-        <text color="#FFFFC5">{'█'.repeat(filled)}</text>
-        <text dimColor>{'░'.repeat(empty)}</text>
+        <text fg="#FFFFC5">{'█'.repeat(filled)}</text>
+        <text fg="gray">{'░'.repeat(empty)}</text>
         <text> {Math.round(progress)}%</text>
       </box>
     </box>

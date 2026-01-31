@@ -30,7 +30,7 @@ export function RadioGroup<T extends string>({ options, value, onChange }: Radio
             {index === selectedIndex ? '● ' : '○ '}
             {option.label}
             {index === selectedIndex && option.description && (
-              <text dimColor> — {option.description}</text>
+              <text fg="gray"> — {option.description}</text>
             )}
           </text>
         </box>

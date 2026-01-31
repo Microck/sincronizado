@@ -19,10 +19,14 @@ export function Button({ label, onClick, variant = 'primary' }: ButtonProps) {
   const color = variant === 'danger' ? 'red' : variant === 'secondary' ? 'gray' : '#FFFFC5';
 
   return (
-    <box borderStyle={isFocused ? 'double' : 'single'} paddingX={2}>
-      <text color={isFocused ? color : undefined} bold={isFocused}>
-        {label}
-      </text>
+    <box borderStyle={isFocused ? 'double' : 'single'} padding={2}>
+      {isFocused ? (
+        <text fg={color}>
+          <b>{label}</b>
+        </text>
+      ) : (
+        <text>{label}</text>
+      )}
     </box>
   );
 }
@@ -47,19 +51,14 @@ export function ButtonGroup({ buttons }: ButtonGroupProps) {
   return (
     <box gap={2}>
       {buttons.map((button, index) => (
-        <box key={index} borderStyle={index === selectedIndex ? 'double' : 'single'} paddingX={2}>
-          <text
-            color={
-              index === selectedIndex
-                ? button.variant === 'danger'
-                  ? 'red'
-                  : '#FFFFC5'
-                : undefined
-            }
-            bold={index === selectedIndex}
-          >
-            {button.label}
-          </text>
+        <box key={index} borderStyle={index === selectedIndex ? 'double' : 'single'} padding={2}>
+          {index === selectedIndex ? (
+            <text fg={button.variant === 'danger' ? 'red' : '#FFFFC5'}>
+              <b>{button.label}</b>
+            </text>
+          ) : (
+            <text>{button.label}</text>
+          )}
         </box>
       ))}
     </box>

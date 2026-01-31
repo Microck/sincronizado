@@ -34,13 +34,13 @@ export function CheckboxGroup({ options, values, onChange }: CheckboxGroupProps)
             {values.includes(option.value) ? '[x] ' : '[ ] '}
             {option.label}
             {index === selectedIndex && option.description && (
-              <text dimColor> — {option.description}</text>
+              <text fg="gray"> — {option.description}</text>
             )}
           </text>
         </box>
       ))}
       <box paddingTop={1}>
-        <text dimColor>Press space to toggle, arrow keys to navigate</text>
+        <text fg="gray">Press space to toggle, arrow keys to navigate</text>
       </box>
     </box>
   );

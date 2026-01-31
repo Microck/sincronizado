@@ -3,6 +3,7 @@ import type { Screen } from '../App.js';
 
 const screenTitles: Record<Screen, string> = {
   welcome: 'Welcome',
+  agent: 'Select AI Agent',
   mode: 'Installation Mode',
   addons: 'Select Add-ons',
   provider: 'VPS Provider',
@@ -16,28 +17,28 @@ export function Header({ screen }: { screen: Screen }) {
   return (
     <box flexDirection="column" paddingBottom={1}>
       <box>
-        <text bold color="#FFFFC5">
-          ╔══════════════════════════════════════════════════════════╗
+        <text fg="#FFFFC5">
+          <b>╔══════════════════════════════════════════════════════════╗</b>
         </text>
       </box>
       <box>
-        <text bold color="#FFFFC5">
-          ║
+        <text fg="#FFFFC5">
+          <b>║</b>
         </text>
-        <text bold color="white">
-          {'           SINCRONIZADO INSTALLER v1.1.0            '}
+        <text fg="white">
+          <b> SINCRONIZADO INSTALLER v1.1.0 </b>
         </text>
-        <text bold color="#FFFFC5">
-          ║
+        <text fg="#FFFFC5">
+          <b>║</b>
         </text>
       </box>
       <box>
-        <text bold color="#FFFFC5">
-          ╚══════════════════════════════════════════════════════════╝
+        <text fg="#FFFFC5">
+          <b>╚══════════════════════════════════════════════════════════╝</b>
         </text>
       </box>
       <box paddingTop={1}>
-        <text dimColor>
+        <text fg="gray">
           {'  '}
           {screenTitles[screen]}
         </text>

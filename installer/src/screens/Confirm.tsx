@@ -34,30 +34,50 @@ export function Confirm({ config, onInstall, onBack }: ConfirmProps) {
   return (
     <box flexDirection="column" paddingTop={2}>
       <box paddingBottom={1}>
-        <text bold>Review your installation:</text>
+        <text>
+          <b>Review your installation:</b>
+        </text>
       </box>
       <box paddingLeft={2}>
         <text>
-          <text bold>Mode:</text> {config.mode}
+          <text>
+            <b>Mode:</b>
+          </text>{' '}
+          {config.mode}
         </text>
         <text>
-          <text bold>Provider:</text> {config.provider}
+          <text>
+            <b>Provider:</b>
+          </text>{' '}
+          {config.provider}
         </text>
         <text>
-          <text bold>Hostname:</text> {config.hostname || '<not set>'}
+          <text>
+            <b>Hostname:</b>
+          </text>{' '}
+          {config.hostname || '<not set>'}
         </text>
         <text>
-          <text bold>SSH User:</text> {config.sshUser}
+          <text>
+            <b>SSH User:</b>
+          </text>{' '}
+          {config.sshUser}
         </text>
         <text>
-          <text bold>Add-ons:</text> {renderAddons()}
+          <text>
+            <b>Add-ons:</b>
+          </text>{' '}
+          {renderAddons()}
         </text>
         <text>
-          <text bold>Skip:</text> {renderSkips()}
+          <text>
+            <b>Skip:</b>
+          </text>{' '}
+          {renderSkips()}
         </text>
       </box>
       <box paddingTop={2}>
-        <text dimColor>This will SSH into your VPS and run the installation script.</text>
+        <text fg="gray">This will SSH into your VPS and run installation script.</text>
       </box>
       <box paddingTop={3}>
         <ButtonGroup

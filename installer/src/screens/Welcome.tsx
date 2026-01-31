@@ -10,82 +10,82 @@ export function Welcome({ onContinue, onExit }: WelcomeProps) {
   return (
     <box flexDirection="column" paddingTop={1}>
       <box paddingBottom={1}>
-        <text color="#FFFFC5">
+        <text fg="#FFFFC5">
           {
             '                                  ██                                                                                 ██                                  '
           }
         </text>
-        <text color="#FFFFC5">
+        <text fg="#FFFFC5">
           {
             '                                 ████                                                                ███  ███       █████                                 '
           }
         </text>
-        <text color="#FFFFC5">
+        <text fg="#FFFFC5">
           {
             '                               █████                                                                 ████ ████       █████                                '
           }
         </text>
-        <text color="#FFFFC5">
+        <text fg="#FFFFC5">
           {
             '                              ████                                                                    ███  ███         ████                               '
           }
         </text>
-        <text color="#FFFFC5">
+        <text fg="#FFFFC5">
           {
             '                             ████                        ██                      ███                   ███  ███         ████                              '
           }
         </text>
-        <text color="#FFFFC5">
+        <text fg="#FFFFC5">
           {
             '             ████████       ████                         ████                  ████                     ██   ██          ████       ████████             '
           }
         </text>
-        <text color="#FFFFC5">
+        <text fg="#FFFFC5">
           {
             '          ████████████      ████                           ████               ████                                        ███      █████████████         '
           }
         </text>
-        <text color="#FFFFC5">
+        <text fg="#FFFFC5">
           {
             '      █████████    ████     ███           ██████████████████████            ███████████████████████                       ███     ████    █████████      '
           }
         </text>
-        <text color="#FFFFC5">
+        <text fg="#FFFFC5">
           {
             '  █████████ ████   ████     ███           ██████████████████████            ███████████████████████                       ███      ███   ████ █████████  '
           }
         </text>
-        <text color="#FFFFC5">
+        <text fg="#FFFFC5">
           {
             ' ████████    █████████      ████                                                                                          ███      ██████████   ████████ '
           }
         </text>
-        <text color="#FFFFC5">
+        <text fg="#FFFFC5">
           {
             '    █████████ ██████        ████                                                                                         ████        ██████ █████████    '
           }
         </text>
-        <text color="#FFFFC5">
+        <text fg="#FFFFC5">
           {
             '        ████████             ████                                     █                                                 ████             █████████       '
           }
         </text>
-        <text color="#FFFFC5">
+        <text fg="#FFFFC5">
           {
             '           █████████          ████                                   ███                                               ████          █████████           '
           }
         </text>
-        <text color="#FFFFC5">
+        <text fg="#FFFFC5">
           {
             '               ████████        ████                                ██████                                             ████        ████████               '
           }
         </text>
-        <text color="#FFFFC5">
+        <text fg="#FFFFC5">
           {
             '                   ████         █████                             ███  ███                                          █████         ████                   '
           }
         </text>
-        <text color="#FFFFC5">
+        <text fg="#FFFFC5">
           {
             '                                   ██                              ██     █                                           ███                                 '
           }
@@ -97,14 +97,14 @@ export function Welcome({ onContinue, onExit }: WelcomeProps) {
         </text>
       </box>
       <box paddingBottom={1}>
-        <text dimColor>You will be guided through selecting:</text>
+        <text fg="gray">You will be guided through selecting:</text>
       </box>
       <box paddingLeft={2}>
-        <text dimColor>• Installation mode (Minimal/Standard/Full)</text>
-        <text dimColor>• AI agent (OpenCode or Claude Code)</text>
-        <text dimColor>• Optional add-ons (Discord bot, AI proxy, OpenSync, etc.)</text>
-        <text dimColor>• Shell alias setup (type "opencode" anywhere)</text>
-        <text dimColor>• VPS provider and connection details</text>
+        <text fg="gray">• Installation mode (Minimal/Standard/Full)</text>
+        <text fg="gray">• AI agent (OpenCode or Claude Code)</text>
+        <text fg="gray">• Optional add-ons (Discord bot, AI proxy, OpenSync, etc.)</text>
+        <text fg="gray">• Shell alias setup (type "opencode" anywhere)</text>
+        <text fg="gray">• VPS provider and connection details</text>
       </box>
       <box paddingTop={2} paddingBottom={1}>
         <text>Press tab/shift+tab to navigate, enter to select.</text>

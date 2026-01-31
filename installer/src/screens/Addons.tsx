@@ -107,7 +107,9 @@ export function Addons({ config, onChange, onContinue, onBack }: AddonsProps) {
   return (
     <box flexDirection="column" paddingTop={2}>
       <box paddingBottom={1}>
-        <text bold>Add optional features:</text>
+        <text>
+          <b>Add optional features:</b>
+        </text>
       </box>
       <box paddingBottom={1}>
         <CheckboxGroup
@@ -117,7 +119,9 @@ export function Addons({ config, onChange, onContinue, onBack }: AddonsProps) {
         />
       </box>
       <box paddingTop={1} paddingBottom={1}>
-        <text bold>Skip default components:</text>
+        <text>
+          <b>Skip default components:</b>
+        </text>
       </box>
       <box paddingBottom={2}>
         <CheckboxGroup options={skipOptions} values={selectedSkips} onChange={handleSkipChange} />
