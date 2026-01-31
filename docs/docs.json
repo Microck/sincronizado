@@ -1,18 +1,18 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "name": "Sincronizado",
-  "theme": "mint",
+  "theme": "maple",
   "description": "Hyper-local development stack with remote AI execution",
+  "colors": {
+    "primary": "#D4C96E",
+    "light": "#F5F0C4",
+    "dark": "#8B7D2E"
+  },
   "logo": {
-    "dark": "#ffffff",
-    "light": "#000000"
+    "dark": "#F5F0C4",
+    "light": "#8B7D2E"
   },
   "favicon": "/favicon.svg",
-  "colors": {
-    "primary": "#0F172A",
-    "light": "#334155",
-    "dark": "#0F172A"
-  },
   "navbar": {
     "links": [
       {
