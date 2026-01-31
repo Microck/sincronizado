@@ -38,7 +38,7 @@ export function Confirm({ config, onInstall, onBack }: ConfirmProps) {
           <b>Review your installation:</b>
         </text>
       </box>
-      <box paddingLeft={2}>
+      <box paddingLeft={2} flexDirection="column">
         <text>
           <text>
             <b>Mode:</b>

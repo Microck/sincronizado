@@ -13,9 +13,9 @@ export function RadioGroup<T extends string>({ options, value, onChange }: Radio
   );
 
   useKeyboard((key) => {
-    if (key.name === 'upArrow') {
+    if (key.name === 'up') {
       setSelectedIndex((i) => Math.max(0, i - 1));
-    } else if (key.name === 'downArrow') {
+    } else if (key.name === 'down') {
       setSelectedIndex((i) => Math.min(options.length - 1, i + 1));
     } else if (key.name === 'return') {
       onChange(options[selectedIndex].value);

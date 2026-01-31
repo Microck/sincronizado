@@ -9,7 +9,7 @@
 curl -fsSL https://sincronizado.micr.dev/install.sh | bash
 
 # Windows PowerShell
-iex "& { $(irm https://sincronizado.micr.dev/install.ps1) }"
+irm https://sincronizado.micr.dev/install.ps1 | iex
 ```
 
 ### TUI Installer (Interactive)

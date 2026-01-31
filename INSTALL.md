@@ -14,17 +14,11 @@ https://raw.githubusercontent.com/microck/sincronizado/main/INSTALL.md
 ### One-liner (Recommended)
 
 ```bash
-# Linux/macOS with OpenCode
+# Linux/macOS
 curl -fsSL https://sincronizado.micr.dev/install.sh | bash
 
-# Linux/macOS with Claude Code
-curl -fsSL https://sincronizado.micr.dev/install.sh | bash -s -- --agent=claude
-
-# Windows with OpenCode
-iex "& { $(irm https://sincronizado.micr.dev/install.ps1) }"
-
-# Windows with Claude Code
-iex "& { $(irm https://sincronizado.micr.dev/install.ps1) } -Agent claude"
+# Windows (PowerShell)
+irm https://sincronizado.micr.dev/install.ps1 | iex
 ```
 
 ### TUI Installer (Interactive)
@@ -105,37 +99,14 @@ How do you want to install?
 
 #### Option 1: One-liner Script
 
-**With OpenCode:**
+Run one command, then pick agent/mode/components in the TUI:
 
 ```bash
 # Linux/macOS
 curl -fsSL https://sincronizado.micr.dev/install.sh | bash
 
-# Windows PowerShell (admin)
-iex "& { $(irm https://sincronizado.micr.dev/install.ps1) }"
-```
-
-**With Claude Code:**
-
-```bash
-# Linux/macOS
-curl -fsSL https://sincronizado.micr.dev/install.sh | bash -s -- --agent=claude
-
-# Windows PowerShell (admin)
-iex "& { $(irm https://sincronizado.micr.dev/install.ps1) } -Agent claude"
-```
-
-**Installation Modes:**
-
-```bash
-# Minimal (core only: ET, AI agent, UFW)
-curl -fsSL https://sincronizado.micr.dev/install.sh | bash -s -- --mode=minimal
-
-# Standard (recommended: + Agent-OS, session manager, plugins)
-curl -fsSL https://sincronizado.micr.dev/install.sh | bash
-
-# Full (everything: + Discord bot, AI proxy, worktrees)
-curl -fsSL https://sincronizado.micr.dev/install.sh | bash -s -- --mode=full
+# Windows (PowerShell)
+irm https://sincronizado.micr.dev/install.ps1 | iex
 ```
 
 #### Option 2: TUI Installer (Recommended)
@@ -154,17 +125,14 @@ bun run src/index.tsx
 
 **TUI Features:**
 
-1. Welcome screen with ASCII art
-2. Mode selection (minimal/standard/full/custom)
-3. AI agent selection (OpenCode/Claude)
-4. **One-click shell alias setup** - type "opencode" anywhere
-5. **OpenSync integration** - track sessions and costs
-6. Component checkboxes (Discord bot, AI proxy, worktree sessions)
-7. VPS provider template selection
-8. Configuration (hostname, user, SSH key)
-9. Installation confirmation
-10. Real-time SSH progress
-11. Completion summary with next steps
+1. Agent selection (OpenCode / Claude Code)
+2. Mode selection (minimal / standard / full / custom)
+3. Optional add-ons (kimaki, lunaroute, worktrees, etc.)
+4. VPS provider templates
+5. VPS connection config (host/user)
+6. Confirmation screen
+7. Real-time install progress
+8. Completion + next steps (includes optional VPS setup trigger)
 
 #### Option 3: Manual Setup
 
@@ -182,7 +150,7 @@ cd sincronizado
 
 # 3. Setup VPS
 ssh ubuntu@your-vps-ip
-sudo ./scripts/setup-vps.sh --mode=standard --agent=opencode
+sudo ./scripts/setup-vps.sh --mode=standard
 
 # 4. Configure locally
 cat > .opencode.config.json << 'EOF'

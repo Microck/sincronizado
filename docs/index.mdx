@@ -17,28 +17,32 @@ Edit locally (VS Code / JetBrains). Run AI + heavy execution on a VPS. Keep late
 - Mobile access via Agent-OS (web) or Kimaki (Discord)
 - Interactive installer (TUI)
 - Tiered installation: minimal / standard / full / custom
-- AI agent selection: `--agent=opencode` (default) or `--agent=claude`
+- AI agent selection in TUI (OpenCode or Claude Code)
 - SSH MCP server for AI-powered VPS management
 
 ## Install
 
 ### TUI (recommended)
 
-Requires [Bun](https://bun.sh) to be installed.
+Linux / macOS:
 
 ```bash
-# Clone and run directly
+curl -fsSL https://sincronizado.micr.dev/install.sh | bash
+```
+
+Windows (PowerShell):
+
+```powershell
+irm https://sincronizado.micr.dev/install.ps1 | iex
+```
+
+From source:
+
+```bash
 git clone https://github.com/microck/sincronizado.git
 cd sincronizado/installer
 bun install
 bun run src/index.tsx
-```
-
-Or use the install scripts (no TUI):
-
-```bash
-# Quick install without TUI
-curl -fsSL https://sincronizado.micr.dev/install.sh | bash
 ```
 
 **TUI features:**
@@ -47,16 +51,6 @@ curl -fsSL https://sincronizado.micr.dev/install.sh | bash
 - **One-click shell alias** - type "opencode" from anywhere
 - **OpenSync integration** - track all sessions and costs
 - Automatic VPS configuration
-
-### One-liner
-
-```bash
-# With OpenCode (default)
-curl -fsSL https://sincronizado.micr.dev/install.sh | bash
-
-# With Claude Code
-curl -fsSL https://sincronizado.micr.dev/install.sh | bash -s -- --agent=claude
-```
 
 ## Quick links
 

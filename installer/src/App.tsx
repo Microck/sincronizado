@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useRenderer } from '@opentui/react';
 import { Welcome } from './screens/Welcome.js';
 import { AgentSelect } from './screens/AgentSelect.js';
 import { ModeSelect } from './screens/ModeSelect.js';
@@ -67,10 +68,39 @@ const defaultConfig: InstallConfig = {
   projectRoot: '~/projects',
 };
 
+const isDemo = () => {
+  const v = process.env.SINC_DEMO;
+  return v === '1' || v === 'true';
+};
+
+const demoConfig: InstallConfig = {
+  ...defaultConfig,
+  agent: 'opencode',
+  mode: 'custom',
+  withKimaki: true,
+  withLunaroute: true,
+  withWorktreeSession: true,
+  withSessionHandoff: true,
+  withAgentOfEmpires: true,
+  withOpenSync: true,
+  setupAlias: true,
+  provider: 'oracle',
+  hostname: 'demo-vps.example',
+  sshUser: 'ubuntu',
+  projectRoot: '~/projects/demo',
+};
+
 export function App() {
-  const [screen, setScreen] = useState<Screen>('welcome');
-  const [config, setConfig] = useState<InstallConfig>(defaultConfig);
+  const renderer = useRenderer();
+  const [screen, setScreen] = useState<Screen>(() => (isDemo() ? 'install' : 'welcome'));
+  const [config, setConfig] = useState<InstallConfig>(() =>
+    isDemo() ? demoConfig : defaultConfig,
+  );
   const [history, setHistory] = useState<Screen[]>([]);
+
+  const exit = () => {
+    renderer.destroy();
+  };
 
   const navigateTo = (next: Screen) => {
     setHistory((h) => [...h, screen]);
@@ -92,9 +122,7 @@ export function App() {
   return (
     <box flexDirection="column" height={24}>
       <Header screen={screen} />
-      {screen === 'welcome' && (
-        <Welcome onContinue={() => navigateTo('agent')} onExit={() => process.exit(0)} />
-      )}
+      {screen === 'welcome' && <Welcome onContinue={() => navigateTo('agent')} onExit={exit} />}
       {screen === 'agent' && (
         <AgentSelect
           config={config}
@@ -141,7 +169,7 @@ export function App() {
       {screen === 'install' && (
         <Install config={config} onComplete={() => navigateTo('complete')} onBack={goBack} />
       )}
-      {screen === 'complete' && <Complete config={config} onExit={() => process.exit(0)} />}
+      {screen === 'complete' && <Complete config={config} onExit={exit} />}
     </box>
   );
 }

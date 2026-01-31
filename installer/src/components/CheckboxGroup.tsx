@@ -11,9 +11,9 @@ export function CheckboxGroup({ options, values, onChange }: CheckboxGroupProps)
   const [selectedIndex, setSelectedIndex] = React.useState(0);
 
   useKeyboard((key) => {
-    if (key.name === 'upArrow') {
+    if (key.name === 'up') {
       setSelectedIndex((i) => Math.max(0, i - 1));
-    } else if (key.name === 'downArrow') {
+    } else if (key.name === 'down') {
       setSelectedIndex((i) => Math.min(options.length - 1, i + 1));
     } else if (key.name === 'space') {
       const option = options[selectedIndex];
