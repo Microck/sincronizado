@@ -97,8 +97,11 @@ cd sincronizado
 ### 3) vps setup
 
 ```bash
-# Standard mode (recommended)
+# Standard mode with OpenCode (default)
 sudo ./scripts/setup-vps.sh
+
+# With Claude Code instead
+sudo ./scripts/setup-vps.sh --agent=claude
 
 # Or with specific components
 sudo ./scripts/setup-vps.sh --mode=custom --with-kimaki --with-lunaroute
@@ -123,6 +126,8 @@ sudo ./scripts/setup-vps.sh --mode=custom --with-kimaki --with-lunaroute
 
 ### 5) start
 
+**With OpenCode:**
+
 Windows:
 
 ```powershell
@@ -133,6 +138,20 @@ macOS/Linux:
 
 ```bash
 ./launcher/opencode.sh
+```
+
+**With Claude Code:**
+
+Windows:
+
+```powershell
+.\launcher\claude.ps1
+```
+
+macOS/Linux:
+
+```bash
+./launcher/claude.sh
 ```
 
 ## Verify
@@ -146,7 +165,7 @@ macOS/Linux:
 
 | mode     | components                            | use case                |
 | -------- | ------------------------------------- | ----------------------- |
-| minimal  | ET, OpenCode, UFW                     | headless servers, CI/CD |
+| minimal  | ET, OpenCode/Claude, UFW              | headless servers, CI/CD |
 | standard | + Agent-OS, ccmanager, plugins        | recommended             |
 | full     | + Kimaki, LunaRoute, worktree-session | power users             |
 | custom   | pick components                       | specific needs          |
@@ -156,6 +175,7 @@ macOS/Linux:
 Add flags to customize install:
 
 ```bash
+--agent=claude             # use Claude Code instead of OpenCode
 --with-kimaki              # discord bot for voice/text control
 --with-lunaroute           # ai proxy with token tracking
 --with-worktree-session    # git worktree per session

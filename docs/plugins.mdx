@@ -3,7 +3,7 @@ title: Plugins
 description: OpenCode plugin guide.
 ---
 
-Complete guide to installing and using OpenCode plugins with _sincronizado_.
+Complete guide to installing and using OpenCode and Claude Code plugins with _sincronizado_.
 
 ## Core plugins (standard mode)
 
@@ -186,14 +186,60 @@ Edit `.opencode.config.json` to enable/disable plugins:
 
 For npm-based plugins (worktree-session, session-handoff), add to `opencode.json` instead.
 
+## Claude Code MCP Servers
+
+When using Claude Code (`--agent=claude`), the VPS setup installs Anthropic's official MCP servers:
+
+### Included MCP servers
+
+- **@anthropic-ai/mcp-server-filesystem** - File operations (read, write, list, search)
+- **@anthropic-ai/mcp-server-git** - Git operations (status, diff, log, branch)
+- **@anthropic-ai/mcp-server-fetch** - HTTP requests and web fetching
+
+### Configuring MCP servers
+
+Edit `~/.config/claude/settings.json`:
+
+```json
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@anthropic-ai/mcp-server-filesystem", "/home/user/projects"]
+    },
+    "git": {
+      "command": "npx",
+      "args": ["-y", "@anthropic-ai/mcp-server-git"]
+    },
+    "fetch": {
+      "command": "npx",
+      "args": ["-y", "@anthropic-ai/mcp-server-fetch"]
+    }
+  }
+}
+```
+
+### Claude Code-specific features
+
+- **/config** - View and edit configuration
+- **/mcp** - List and manage MCP servers
+- **MCP tools** - Claude can use filesystem, git, and fetch tools automatically
+
 ## Troubleshooting
 
-### Plugin not loading
+### Plugin not loading (OpenCode)
 
 1. Check plugin exists in `~/.config/opencode/plugins/`
 2. Verify plugin name matches enabled list
 3. Restart OpenCode session
 4. For npm plugins: verify global install with `npm list -g`
+
+### MCP server not working (Claude)
+
+1. Check MCP config: `claude /config`
+2. Verify server is installed: `npm list -g @anthropic-ai/mcp-server-filesystem`
+3. Check paths in settings.json are correct
+4. Restart Claude Code session
 
 ### sync plugin auth fails
 

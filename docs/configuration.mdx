@@ -1,14 +1,21 @@
 ---
 title: Configuration
-description: .opencode.config.json reference.
+description: Configuration reference for OpenCode and Claude Code.
 ---
 
-Complete reference for `.opencode.config.json`.
+Complete reference for `.opencode.config.json` and `.claude.config.json`.
 
 ## Location
 
+### OpenCode
+
 - Project: `.opencode.config.json` in project root
 - Global fallback: `~/.config/sincronizado/config.json`
+
+### Claude Code
+
+- Project: `.claude.config.json` in project root
+- Global fallback: `~/.config/sincronizado/claude-config.json`
 
 ## Schema
 
@@ -207,13 +214,41 @@ Checks:
 - Valid JSON syntax
 - Host configurations complete
 
+## Claude Code Configuration
+
+Claude Code uses the same structure but different filename:
+
+```json
+{
+  "vps": {
+    "default": "oracle-ashburn",
+    "hosts": {
+      "oracle-ashburn": {
+        "hostname": "ashburn",
+        "user": "ubuntu",
+        "port": 2222,
+        "provider": "oracle"
+      }
+    }
+  },
+  "sync": {
+    "alpha": ".",
+    "beta": "~/projects/myapp",
+    "ignore": [".git", "node_modules"]
+  }
+}
+```
+
+Create as `.claude.config.json` when using Claude Code agent.
+
 ## Troubleshooting
 
 ### Config not loading
 
-1. Check file is valid JSON: `python -m json.tool < .opencode.config.json`
+1. Check file is valid JSON: `python -m json.tool < .opencode.config.json` (or `.claude.config.json`)
 2. Verify file is in project root
 3. Check file permissions (readable)
+4. Ensure correct filename for your agent (`.opencode.config.json` vs `.claude.config.json`)
 
 ### VPS not found
 
