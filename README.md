@@ -1,12 +1,24 @@
-# sincronizado
+<p align="center">
+  <a href="https://github.com/Microck/sincronizado">
+    <img src="/assets/logo/logosmall.png" alt="logo" width="200">
+  </a>
+</p>
 
-> hyper-local dev with remote ai execution
+<p align="center">*sincronizado* is a hyper-local development stack that runs your AI coding assistant on a VPS while you edit files locally. Zero latency. Maximum compute. Mobile accessible.</p>
 
-sincronizado runs your ai coding assistant on a vps while you edit files locally. zero latency. maximum compute. mobile accessible.
+<p align="center">
+  <a href="LICENSE"><img alt="license" src="https://img.shields.io/badge/license-MIT-blue.svg" /></a>
+  <a href="https://bun.sh/"><img alt="bun" src="https://img.shields.io/badge/bun-1.0+-yellow.svg" /></a>
+  <a href="https://nodejs.org/"><img alt="node" src="https://img.shields.io/badge/node-18+-green.svg" /></a>
+  <a href="https://discord.gg/opencode"><img alt="discord" src="https://img.shields.io/badge/discord-OpenCode-7289da.svg" /></a>
+  <a href="https://sincronizado.micr.dev"><img alt="docs" src="https://img.shields.io/badge/docs-mintlify-00C7B7.svg" /></a>
+</p>
+
+---
 
 ## why
 
-local machines have great editors but limited resources. running multiple ai instances locally is intensive and hard to manage while doing other work. cloud vps has compute but terrible latency for editing. sincronizado bridges this: edit locally, execute remotely.
+local machines have great editors but limited resources. running multiple ai instances locally is intensive and hard to manage while doing other work. cloud vps has compute but terrible latency for editing. _sincronizado_ bridges this: edit locally, execute remotely.
 
 ## architecture
 
