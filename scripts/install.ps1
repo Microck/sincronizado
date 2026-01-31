@@ -84,7 +84,7 @@ Write-Success "Dependencies installed"
 Write-Host ""
 Write-Color "Launching TUI installer..." "Green"
 Write-Host ""
-bun run src/index.tsx
+bun run src/index.ts
 
 # After TUI exits, check if we should do VPS setup
 Set-Location $installDir

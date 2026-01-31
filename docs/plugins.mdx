@@ -11,7 +11,11 @@ These plugins are installed by default in standard mode and higher.
 
 ### opencode-direnv (simonwjackson)
 
+**[https://github.com/simonwjackson/opencode-direnv](https://github.com/simonwjackson/opencode-direnv)**
+
 Purpose: auto-load env vars from `.envrc` when entering directories.
+
+![opencode-direnv demo](https://raw.githubusercontent.com/simonwjackson/opencode-direnv/main/demo.gif)
 
 Install:
 
@@ -35,7 +39,25 @@ export DATABASE_URL=postgres://localhost/db
 
 ### agentmap (remorses)
 
+**[https://github.com/remorses/agentmap](https://github.com/remorses/agentmap)**
+
 Purpose: tree view of codebase for better context in headless VPS environments.
+
+```mermaid
+graph TD
+    Root[Project Root]
+    Root --> src[src/]
+    Root --> tests[tests/]
+    src --> components[components/]
+    src --> utils[utils/]
+    src --> api[api/]
+    components --> Button[Button.tsx]
+    components --> Card[Card.tsx]
+    utils --> helpers[helpers.ts]
+    api --> routes[routes/]
+    tests --> unit[unit/]
+    tests --> e2e[e2e/]
+```
 
 Install:
 
@@ -51,7 +73,17 @@ Usage:
 
 ### opencode-sync (tctinh)
 
+**[https://github.com/tctinh/opencode-sync](https://github.com/tctinh/opencode-sync)**
+
 Purpose: sync OpenCode settings and history across machines via GitHub Gist.
+
+```mermaid
+graph LR
+    A[Machine 1<br/>OpenCode] -->|push| B[GitHub Gist]
+    B -->|pull| C[Machine 2<br/>OpenCode]
+    B -->|pull| D[Machine 3<br/>OpenCode]
+    B -->|pull| E[Machine N<br/>OpenCode]
+```
 
 Install:
 
@@ -69,7 +101,11 @@ Setup:
 
 ### ai-sessions-mcp (yoavf)
 
+**[https://github.com/yoavf/ai-sessions-mcp](https://github.com/yoavf/ai-sessions-mcp)**
+
 Purpose: search and reference past OpenCode sessions.
+
+![AI Sessions MCP demo](https://private-user-images.githubusercontent.com/844866/497479657-c75edc64-32f0-4deb-93d6-301c1e01ea81.gif)
 
 Install:
 
@@ -86,6 +122,8 @@ Usage:
 ## Session management
 
 ### ccmanager (kbwo)
+
+**[https://github.com/kbwo/ccmanager](https://github.com/kbwo/ccmanager)**
 
 Purpose: visual session manager with real-time status indicators.
 
@@ -106,7 +144,11 @@ Usage:
 
 ### agent-of-empires (njbrake)
 
+**[https://github.com/njbrake/agent-of-empires](https://github.com/njbrake/agent-of-empires)**
+
 Purpose: alt session manager using tmux + git worktrees.
+
+![agent-of-empires demo](https://media.githubusercontent.com/media/njbrake/agent-of-empires/main/docs/assets/demo.gif)
 
 Install:
 
@@ -127,7 +169,19 @@ Note: mutually exclusive with ccmanager.
 
 ### opencode-worktree-session (felixAnhalt)
 
+**[https://github.com/felixAnhalt/opencode-worktree-session](https://github.com/felixAnhalt/opencode-worktree-session)**
+
 Purpose: automatic git worktree per OpenCode session with auto-cleanup.
+
+```mermaid
+flowchart LR
+    A[Create Worktree] --> B{Terminal Spawns}
+    B --> C[OpenCode Running]
+    C --> D[Work in Isolation]
+    D --> E[Delete Worktree]
+    E --> F{Auto-commit & Cleanup}
+    F --> G[Session Ends]
+```
 
 Install:
 
@@ -162,7 +216,19 @@ Benefits:
 
 ### opencode-session-handoff
 
+**[https://github.com/microck/opencode-session-handoff](https://github.com/microck/opencode-session-handoff)**
+
 Purpose: compact continuation when sessions hit context limit.
+
+```mermaid
+graph LR
+    A[Session 1<br/>Context Full] -->|handoff| B[Compact<br/>Summary]
+    B --> C[Session 2<br/>Fresh Start]
+    C -->|work| D[Continue]
+    D -->|context full| E[Session 3]
+    E -->|handoff| F[Compact<br/>Summary]
+    F --> G[Session 4]
+```
 
 Configure in `opencode.json`:
 
@@ -251,7 +317,21 @@ Edit `~/.config/claude/settings.json`:
 
 ### OpenSync (Session Analytics)
 
+**[https://www.opensync.dev/](https://www.opensync.dev/)**
+
 [OpenSync](https://www.opensync.dev/) provides cloud-synced dashboards for tracking AI coding sessions across multiple agents including OpenCode and Claude Code.
+
+```mermaid
+graph TB
+    A[OpenCode<br/>Sessions] -->|sync| B[OpenSync Cloud]
+    C[Claude Code<br/>Sessions] -->|sync| B
+    D[Codex<br/>Sessions] -->|sync| B
+    E[Cursor<br/>Sessions] -->|sync| B
+    B --> F[Dashboard]
+    B --> G[Analytics]
+    B --> H[Search]
+    B --> I[Export]
+```
 
 **Features:**
 

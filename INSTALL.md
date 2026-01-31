@@ -32,7 +32,7 @@ cd sincronizado/installer
 
 # Install and run
 bun install
-bun run src/index.tsx
+bun run src/index.ts
 ```
 
 ---
@@ -120,19 +120,27 @@ cd sincronizado/installer
 
 # Install and run
 bun install
-bun run src/index.tsx
+bun run src/index.ts
 ```
 
 **TUI Features:**
 
-1. Agent selection (OpenCode / Claude Code)
-2. Mode selection (minimal / standard / full / custom)
-3. Optional add-ons (kimaki, lunaroute, worktrees, etc.)
-4. VPS provider templates
-5. VPS connection config (host/user)
-6. Confirmation screen
-7. Real-time install progress
-8. Completion + next steps (includes optional VPS setup trigger)
+1. **Agent selection** - OpenCode (open source) or Claude Code (subscription)
+2. **Mode selection** - Minimal, Standard, Full, or Custom
+3. **Add-on selection** - Optional components with checkboxes
+4. **Security hardening** - SSH key setup, firewall, fail2ban
+5. **VPS provider** - Oracle, Hetzner, DigitalOcean, AWS templates
+6. **Connection config** - Hostname, user, project root
+7. **Confirmation screen** - Review all choices before proceeding
+8. **Optional VPS setup** - One-click VPS configuration with real-time progress
+9. **Completion summary** - Next steps and verification commands
+
+**Key Concepts Explained:**
+
+- **Hash-based sessions**: Each project gets a unique session ID based on its full path hash (e.g., `sync-myproject-a1b2c3`). Prevents collisions when working on multiple projects with the same name.
+- **Eternal Terminal (port 2222)**: Resilient SSH that survives network handoffs (wifi ↔ 5G). Unlike regular SSH, ET auto-reconnects without breaking your AI session.
+- **VPS Setup Phase**: After TUI completes, it optionally triggers automatic VPS setup via SSH, installing all selected components in one pass.
+- **Shell Aliases**: TUI can set up shell aliases (`opencode`, `claude`) so you can start sessions from any directory.
 
 #### Option 3: Manual Setup
 
@@ -179,9 +187,17 @@ EOF
 .\launcher\opencode.ps1 -Project myapp  # Windows
 ```
 
-### Step 4: Configure SSH MCP Server (Optional but Recommended)
+### Step 4: Configure SSH MCP Server (For LLM Agents Only)
 
-For AI agents to manage the VPS via SSH commands, install the SSH MCP server:
+**This step is ONLY for LLM agents that need to execute commands on the VPS.** Regular users do not need this.
+
+SSH MCP allows LLM agents to:
+
+- Execute commands on the VPS directly
+- Check service status (opencode, claude, agent-os)
+- Manage files remotely
+- Monitor system resources
+- Restart services when needed
 
 ```bash
 # Install SSH MCP server
@@ -189,10 +205,9 @@ npm install -g @tufantunc/ssh-mcp
 
 # Or with uv
 uv tool install ssh-mcp
-
-# Configure MCP server
-# Add to your AI client's MCP configuration:
 ```
+
+Add to your AI client's MCP configuration:
 
 **OpenCode Configuration:**
 
@@ -236,6 +251,19 @@ uv tool install ssh-mcp
 - Claude Desktop (macOS): `~/Library/Application Support/Claude/claude_desktop_config.json`
 - Claude Desktop (Windows): `%APPDATA%\Claude\claude_desktop_config.json`
 - Claude Desktop (Linux): `~/.config/Claude/claude_desktop_config.json`
+
+⚠️ **Security Note for LLM Agents:**
+
+- Only configure SSH MCP with Tailscale-connected VPS (never expose SSH publicly)
+- Use SSH key authentication (never passwords)
+- Limit SSH key permissions on VPS to `~/.ssh/` with 0600 permissions
+- Regular users do NOT need SSH MCP - this is for LLM agent automation only
+
+**Why SSH MCP is useful for LLM agents:**
+
+- Allows the LLM to diagnose and fix issues on VPS without user intervention
+- Enables automated service management and monitoring
+- Supports complex workflows that require VPS-level access
 
 ### Step 5: Verify Setup
 
