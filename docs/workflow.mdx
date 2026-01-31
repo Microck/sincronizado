@@ -29,6 +29,32 @@ cd ~/Projects/my-project
 ~/sincronizado/launcher/opencode.sh
 ```
 
+### Quick alias setup
+
+Add to your shell config for faster access:
+
+**Windows (PowerShell profile):**
+
+```powershell
+# Add to $PROFILE
+function opencode {
+    & "D:\sincronizado\launcher\opencode.ps1" @args
+}
+```
+
+**macOS/Linux (.bashrc/.zshrc):**
+
+```bash
+# Add alias
+alias opencode='~/sincronizado/launcher/opencode.sh'
+```
+
+Then simply run:
+
+```bash
+opencode  # starts session in current directory
+```
+
 ### 3) What happens automatically
 
 - Hash-based session ID generated (collision-proof)
