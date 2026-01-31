@@ -1,17 +1,17 @@
 {
-  "version": 2,
+  "cleanUrls": true,
   "rewrites": [
     {
       "source": "/install.sh",
-      "destination": "https://raw.githubusercontent.com/microck/sincronizado/main/scripts/setup-vps.sh"
+      "destination": "https://raw.githubusercontent.com/Microck/sincronizado/main/scripts/setup-vps.sh"
     },
     {
       "source": "/install.ps1",
-      "destination": "https://raw.githubusercontent.com/microck/sincronizado/main/scripts/install.ps1"
+      "destination": "https://raw.githubusercontent.com/Microck/sincronizado/main/scripts/install.ps1"
     },
     {
-      "source": "/launcher/:path*",
-      "destination": "https://raw.githubusercontent.com/microck/sincronizado/main/launcher/:path*"
+      "source": "/launcher/(.*)",
+      "destination": "https://raw.githubusercontent.com/Microck/sincronizado/main/launcher/:match"
     },
     {
       "source": "/(.*)",
@@ -21,15 +21,15 @@
   "headers": [
     {
       "source": "/install.sh",
-      "headers": [{ "key": "Content-Type", "value": "text/plain" }]
+      "headers": [{ "key": "Content-Type", "value": "text/plain; charset=utf-8" }]
     },
     {
       "source": "/install.ps1",
-      "headers": [{ "key": "Content-Type", "value": "text/plain" }]
+      "headers": [{ "key": "Content-Type", "value": "text/plain; charset=utf-8" }]
     },
     {
       "source": "/launcher/(.*)",
-      "headers": [{ "key": "Content-Type", "value": "text/plain" }]
+      "headers": [{ "key": "Content-Type", "value": "text/plain; charset=utf-8" }]
     }
   ]
 }
