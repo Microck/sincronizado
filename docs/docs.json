@@ -67,4 +67,19 @@
       "defer": true
     }
   ]
+},
+  "rewrites": [
+    {
+      "source": "/install.ps1",
+      "destination": "https://raw.githubusercontent.com/Microck/sincronizado/main/scripts/install.ps1"
+    },
+    {
+      "source": "/install.sh",
+      "destination": "https://raw.githubusercontent.com/Microck/sincronizado/main/scripts/setup-vps.sh"
+    },
+    {
+      "source": "/launcher/(.*)",
+      "destination": "https://raw.githubusercontent.com/Microck/sincronizado/main/launcher/:match"
+    }
+  ]
 }
