@@ -8,15 +8,6 @@
   background: linear-gradient(135deg, var(--sinc-yellow) 0%, #f4e98e 100%);
 }
 
-.mdx-content code {
-  background: rgba(96, 97, 78, 0.15);
-  color: var(--sinc-yellow-ink);
-}
-
-.mdx-content table thead th {
-  background: rgba(96, 97, 78, 0.25);
-}
-
 .mermaid {
   background: transparent;
 }
