@@ -241,6 +241,71 @@ Edit `~/.config/claude/settings.json`:
 3. Check paths in settings.json are correct
 4. Restart Claude Code session
 
+## SSH MCP Server (Optional)
+
+For AI agents to manage your VPS via SSH commands, install the SSH MCP server:
+
+### Installation
+
+```bash
+npm install -g @tufantunc/ssh-mcp
+```
+
+### Configuration
+
+**OpenCode:**
+
+```json
+{
+  "mcp": {
+    "ssh": {
+      "command": ["ssh-mcp"],
+      "enabled": true,
+      "type": "local",
+      "environment": {
+        "SSH_HOST": "your-vps.tailnet.ts.net",
+        "SSH_USER": "ubuntu",
+        "SSH_KEY": "~/.ssh/id_rsa"
+      }
+    }
+  }
+}
+```
+
+**Claude Code:**
+
+```json
+{
+  "mcpServers": {
+    "ssh": {
+      "command": "ssh-mcp",
+      "env": {
+        "SSH_HOST": "your-vps.tailnet.ts.net",
+        "SSH_USER": "ubuntu",
+        "SSH_KEY": "~/.ssh/id_rsa"
+      }
+    }
+  }
+}
+```
+
+### Capabilities
+
+The SSH MCP server allows your AI agent to:
+
+- Execute commands on the VPS
+- Check service status (opencode, claude, agent-os)
+- Manage files remotely
+- Monitor system resources
+- Restart services when needed
+
+### Security Notes
+
+- Only use with Tailscale-connected VPS (never expose SSH publicly)
+- Use SSH key authentication (not passwords)
+- Limit SSH key permissions on VPS
+- Store keys in `~/.ssh/` with 0600 permissions
+
 ### sync plugin auth fails
 
 1. Regenerate GitHub token with `gist` scope
