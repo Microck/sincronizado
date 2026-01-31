@@ -4,13 +4,12 @@
   </a>
 </p>
 
-<p align="center">*sincronizado* is a hyper-local development stack that runs your AI coding assistant on a VPS while you edit files locally. Zero latency. Maximum compute. Mobile accessible.</p>
+<p align="center">hyper-local development stack that runs your AI coding assistant on a VPS for zero friction.</p>
 
 <p align="center">
   <a href="LICENSE"><img alt="license" src="https://img.shields.io/badge/license-MIT-blue.svg" /></a>
   <a href="https://bun.sh/"><img alt="bun" src="https://img.shields.io/badge/bun-1.0+-yellow.svg" /></a>
   <a href="https://nodejs.org/"><img alt="node" src="https://img.shields.io/badge/node-18+-green.svg" /></a>
-  <a href="https://discord.gg/opencode"><img alt="discord" src="https://img.shields.io/badge/discord-OpenCode-7289da.svg" /></a>
   <a href="https://sincronizado.micr.dev"><img alt="docs" src="https://img.shields.io/badge/docs-mintlify-00C7B7.svg" /></a>
 </p>
 
