@@ -9,8 +9,8 @@
     "dark": "#8B7D2E"
   },
   "logo": {
-    "dark": "/logo.png",
-    "light": "/logo.png"
+    "dark": "/logo-dark.svg",
+    "light": "/logo-light.svg"
   },
   "favicon": "/logo.png",
   "navbar": {
