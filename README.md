@@ -171,13 +171,14 @@ brew install mutagen
 
 ## tui installer
 
-```bash
-# interactive mode selection
-bunx sincronizado
+requires [bun](https://bun.sh).
 
-# or install globally
-npm install -g sincronizado
-sincronizado
+```bash
+# clone and run
+git clone https://github.com/microck/sincronizado.git
+cd sincronizado/installer
+bun install
+bun run src/index.tsx
 ```
 
 8-screen flow:
