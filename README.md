@@ -4,7 +4,9 @@
   </a>
 </p>
 
-<p align="center">hyper-local development stack that runs your AI coding assistant on a VPS for zero friction.</p>
+<p align="center">*sincronizado* is a hyper-local development stack that runs your AI coding assistant on a VPS for zero friction.</p>
+
+<p align="center"><a href="./INSTALL.md">📖 LLM Installation Guide</a> | <a href="https://sincronizado.micr.dev">📚 Full Documentation</a></p>
 
 <p align="center">
   <a href="LICENSE"><img alt="license" src="https://img.shields.io/badge/license-MIT-blue.svg" /></a>
@@ -50,45 +52,46 @@ graph TB
     Phone -->|http| AO
 ```
 
-## installation modes
+## installation
 
-### linux / macos (bash)
+### quick install (one-liner)
+
+**linux / macos:**
 
 ```bash
-# minimal - core only (et, opencode/claude, ufw)
-curl -fsSL https://sincronizado.micr.dev/install.sh | bash -s -- --mode=minimal
-
-# standard - recommended (+ agent-os, ccmanager, plugins)
 curl -fsSL https://sincronizado.micr.dev/install.sh | bash
-
-# full - everything (+ kimaki discord bot, lunaroute proxy, etc)
-curl -fsSL https://sincronizado.micr.dev/install.sh | bash -s -- --mode=full
-
-# with claude code instead of opencode
-curl -fsSL https://sincronizado.micr.dev/install.sh | bash -s -- --agent=claude
 ```
 
-### windows (powershell)
+**windows (powershell admin):**
 
 ```powershell
-# minimal - core only
-iex "& { $(irm https://sincronizado.micr.dev/install.ps1) } -Mode minimal"
-
-# standard - recommended (default)
 iex "& { $(irm https://sincronizado.micr.dev/install.ps1) }"
-
-# full - everything
-iex "& { $(irm https://sincronizado.micr.dev/install.ps1) } -Mode full"
-
-# with claude code instead of opencode
-iex "& { $(irm https://sincronizado.micr.dev/install.ps1) } -Agent claude"
 ```
 
-### tui installer (interactive)
+### llm agent install
 
-```bash
-bunx sincronizado
+paste this into your ai agent session:
+
 ```
+install and configure sincronizado by following instructions here:
+https://raw.githubusercontent.com/microck/sincronizado/main/INSTALL.md
+```
+
+the llm-friendly install guide includes:
+
+- step-by-step setup for ai agents
+- ssh mcp server configuration
+- automated verification steps
+- troubleshooting for common errors
+
+### manual install
+
+see [INSTALL.md](./INSTALL.md) for detailed options including:
+
+- tui installer: `bunx sincronizado`
+- agent selection: `--agent=opencode` or `--agent=claude`
+- installation modes: minimal / standard / full / custom
+- ssh mcp server for ai-powered vps management
 
 ## quick start
 
