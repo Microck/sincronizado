@@ -1,0 +1,9 @@
+#!/bin/sh
+if ! command -v bun >/dev/null 2>&1; then
+  echo "Error: sincronizado requires Bun to be installed."
+  echo "Install Bun: https://bun.sh"
+  exit 1
+fi
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+bun run "$SCRIPT_DIR/../src/index.tsx"
