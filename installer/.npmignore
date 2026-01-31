@@ -1,0 +1,10 @@
+src/
+*.tsx
+tsconfig.json
+.prettierrc
+.eslintrc
+.gitignore
+node_modules/
+bun.lockb
+*.md
+!README.md
