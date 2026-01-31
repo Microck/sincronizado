@@ -1,26 +1,29 @@
-# Sincronizado NPM Package
+# Sincronizado
 
 ## Installation
 
-```bash
-npm install -g sincronizado
-```
-
-## Usage
+### Quick Install (One-liner)
 
 ```bash
-# Start development session
-sincronizado
+# Linux/macOS
+curl -fsSL https://sincronizado.micr.dev/install.sh | bash
 
-# List sessions
-sincronizado --list
-
-# Create config
-sincronizado-config
+# Windows PowerShell
+iex "& { $(irm https://sincronizado.micr.dev/install.ps1) }"
 ```
 
-## Configuration
+### TUI Installer (Interactive)
 
-Create `.opencode.config.json` in your project root.
+Requires [Bun](https://bun.sh).
 
-See full documentation at: https://microck.github.io/sincronizado/
+```bash
+# Clone and run
+git clone https://github.com/microck/sincronizado.git
+cd sincronizado/installer
+bun install
+bun run src/index.tsx
+```
+
+## Documentation
+
+Full documentation at: https://sincronizado.micr.dev
