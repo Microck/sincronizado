@@ -37,13 +37,42 @@ bun run src/index.ts
 
 ---
 
-## For LLM Agents (Automated Setup)
+## For LLM Agents (Guided Setup)
 
-If you're an LLM helping set up _sincronizado_, follow this **automation-first** workflow. Unlike the TUI that asks 10 questions, you can actually **do the work** via SSH MCP.
+If you're an LLM helping set up _sincronizado_, follow this **guided** workflow.
+
+### Critical Rules
+
+1. **NEVER run commands without user confirmation** - Always ask "Proceed? (y/n)" before executing
+2. **Explain what you're about to do** - One sentence max, then ask
+3. **Wait for explicit "yes" or "y"** - Do not assume consent
+4. **Show results after each step** - Let user verify before continuing
+5. **Stop on any error** - Explain what went wrong, ask how to proceed
+
+### Flow Summary
+
+```
+Step 0: Check local prerequisites → report findings → ask to continue
+Step 1: Configure SSH MCP → write config → restart session
+Step 2: Auto-detect VPS state → show what's installed/missing → recommend → user confirms
+Step 3: Execute setup → stream progress → handle errors → verify services
+Step 4: Configure local → install mutagen → create config → setup alias
+Step 5: Final verification → test sync → show access URLs → done
+```
+
+Each step = explain briefly + ask permission + execute + show result.
 
 ### Step 0: Verify Prerequisites
 
-Check these requirements before starting:
+**Example interaction:**
+
+> "Checking your system... [runs checks]
+>
+> Found: Ubuntu 22.04, Tailscale connected, SSH key at ~/.ssh/id_rsa
+>
+> Proceed with setup? (y/n)"
+
+Check these requirements:
 
 ```bash
 # Confirm OS
@@ -72,17 +101,19 @@ ssh -o ConnectTimeout=5 ubuntu@your-vps.tailnet.ts.net "echo 'SSH OK'"
 
 ### Step 1: Configure SSH MCP (DO THIS FIRST)
 
-Since you're running inside an AI agent (OpenCode/Claude/Gemini), you need to configure SSH MCP **for yourself** so you can execute commands on the user's VPS.
+You need SSH access to the user's VPS. Ask for connection details:
 
-**Ask user for 3 values:**
+> "I need 3 things to connect to your VPS:
+>
+> 1. Hostname (Tailscale): e.g., oracle.tail1234.ts.net
+> 2. SSH user: e.g., ubuntu
+> 3. SSH key path: e.g., ~/.ssh/id_rsa
+>
+> Please provide these."
 
-```
-I need your VPS connection details to set up automated configuration:
+**After user provides info, confirm before writing config:**
 
-1. VPS hostname (Tailscale): _______________ (e.g., oracle.tail1234.ts.net)
-2. SSH user: _______________ (default: ubuntu)
-3. SSH private key path: _______________ (default: ~/.ssh/id_rsa)
-```
+> "I'll add SSH MCP to your AI config at [path]. OK? (y/n)"
 
 **Install SSH MCP package:**
 
@@ -137,7 +168,7 @@ Check which AI client you're running in, then update the appropriate config:
 
 **Tell user to restart:**
 
-> "SSH MCP configured in your AI client. **Please restart this AI session** (exit and start a new one) so I can connect to your VPS and complete the setup automatically."
+> "I've configured the SSH tool. **Please restart this AI session** (exit and start a new one) so I can connect to your VPS. When you return, paste the install instructions again, and I'll skip to Step 2."
 
 Once user restarts their AI session, you'll have SSH access to their VPS. Proceed to Step 2.
 
@@ -167,50 +198,133 @@ Once user restarts their AI session, you'll have SSH access to their VPS. Procee
    # Then update MCP config to use full path
    ```
 
-### Step 2: Auto-Detect & Recommend
+### Step 2: Select VPS & Configure Components
 
-Use SSH MCP to inspect VPS and provide **one confirmation question**:
+**A. Select VPS (if multiple SSH MCPs exist)**
+
+Check user's opencode.json for existing SSH connections:
 
 ```bash
-# Detect VPS specs
+# Look for SSH MCP entries in ~/.config/opencode/opencode.json
+grep -A 5 '"ssh' ~/.config/opencode/opencode.json
+```
+
+If multiple found, ask:
+
+> "Found X VPS connections. Which one to use?
+>
+> 1. ssh-oracle (141.145.192.88)
+> 2. ssh-usa (129.213.76.28)
+> 3. ssh-nas (192.168.1.50)
+>
+> Enter number:"
+
+**B. Detect Everything**
+
+Run comprehensive checks to see what's already installed:
+
+```bash
+# VPS specs
 free -h | grep Mem
 cat /etc/os-release | grep PRETTY_NAME
 nproc
-# Check if AI agents already installed
-which opencode claude 2>/dev/null || echo "none"
+df -h /
+
+# Check installed components
+which opencode claude et 2>/dev/null
+dpkg -l | grep -E "eternal-terminal|et" 2>/dev/null
+npm list -g --depth=0 2>/dev/null | grep -E "opencode|claude|agent-os|ccmanager|kimaki|lunaroute"
+
+# Check running services
+systemctl is-active opencode 2>/dev/null && echo "opencode: running" || echo "opencode: not running"
+systemctl is-active agent-os 2>/dev/null && echo "agent-os: running" || echo "agent-os: not running"
+systemctl is-active eternal-terminal 2>/dev/null && echo "et: running" || echo "et: not running"
+systemctl is-active kimaki 2>/dev/null && echo "kimaki: running" || echo "kimaki: not running"
+
+# Check ports
+ss -tlnp 2>/dev/null | grep -E '2222|3000|8082' || netstat -tlnp 2>/dev/null | grep -E '2222|3000|8082'
+
+# Check if sincronizado repo exists
+ls -la ~/sincronizado/.git 2>/dev/null && echo "sincronizado: cloned" || echo "sincronizado: not cloned"
 ```
 
-**Decision table:**
+**C. Show Status & Recommend**
 
-| RAM Detected | Recommendation | Reason                           |
-| ------------ | -------------- | -------------------------------- |
-| < 2GB        | ❌ Block       | Insufficient for AI agents       |
-| 2-4GB        | minimal mode   | ET + AI agent + firewall only    |
-| 4-8GB        | standard mode  | + Agent-OS + ccmanager + plugins |
-| 8GB+         | full mode      | + Kimaki + LunaRoute + worktrees |
+Present findings with status indicators:
 
-**Agent selection:**
-
-- User mentions Claude subscription → Claude Code
-- Otherwise → OpenCode (open source, default)
-
-**Present to user:**
-
-> "Detected: 8GB RAM, Ubuntu 22.04. **Recommend 'standard' mode with OpenCode.**
+> "**VPS:** Ubuntu 22.04, 8GB RAM, 4 cores ✓
 >
-> This installs: Eternal Terminal, OpenCode, Agent-OS (web UI), session manager, plugins.
+> **Current Status:**
 >
-> Confirm? (yes/no/custom)"
+> - OpenCode: installed ✓, not running
+> - Agent-OS: not installed
+> - Eternal Terminal: installed ✓, not running
+> - ccmanager: not installed
+> - Kimaki: not installed
+> - LunaRoute: not installed
+>
+> **Recommend:** Install missing components (Agent-OS, ccmanager) and start services.
+>
+> Options:
+>
+> 1. **minimal** - Just fix/start existing (ET + OpenCode)
+> 2. **standard** - Install Agent-OS + ccmanager + plugins
+> 3. **full** - Everything including Kimaki + LunaRoute
+> 4. **custom** - Pick specific components
+>
+> Which? (1/2/3/4 or 'status' to recheck):"
 
-If "custom", ask which components:
+**D. Handle Different Scenarios**
 
-- Mode: minimal/standard/full
-- Agent: opencode/claude
-- Add-ons: kimaki, lunaroute, worktree-session
+**If everything already installed and running:**
 
-### Step 3: Automated VPS Setup
+> "Everything looks good! All services installed and running.
+>
+> - OpenCode: ✓
+> - Agent-OS: ✓ running at http://hostname:3000
+> - Eternal Terminal: ✓
+>
+> Skip to Step 4 (local setup)? (y/n)"
 
-Once confirmed, execute via SSH MCP:
+**If nothing installed (fresh VPS):**
+
+> "Fresh VPS detected. Nothing installed yet.
+>
+> Recommend 'standard' for 8GB RAM:
+>
+> - Core: ET + OpenCode + UFW
+> - Plus: Agent-OS + ccmanager + plugins
+>
+> Go with standard? (yes/no/custom)"
+
+**If partial installation:**
+
+> "Partial setup detected:
+>
+> - ✓ Eternal Terminal installed
+> - ✗ OpenCode not installed
+> - ✗ Agent-OS not installed
+>
+> Complete the installation? (y/n)"
+
+**E. Confirm Actions**
+
+Based on detection + user choice, summarize what you'll do:
+
+> "**Actions:**
+>
+> - Install: Agent-OS, ccmanager, plugins
+> - Start services: opencode, agent-os, eternal-terminal
+> - Skip: Kimaki, LunaRoute (user declined)
+> - Already OK: UFW firewall configured
+>
+> Proceed? (y/n)"
+
+### Step 3: VPS Setup
+
+> "Starting VPS setup. This takes ~3 minutes. Proceed? (y/n)"
+
+Execute via SSH MCP:
 
 ```bash
 # 1. Clone sincronizado repo on VPS
@@ -232,6 +346,23 @@ sudo ~/sincronizado/scripts/setup-vps.sh --mode=MODE --agent=AGENT [OPTIONS]
 > - Installing Agent-OS... ✓
 > - Configuring firewall... ✓
 > - Starting services... ✓
+
+**If OpenCode fails (404 error):**
+
+The setup script has automatic fallback:
+
+1. Tries official installer (opencode.ai)
+2. Falls back to npm
+3. Falls back to GitHub releases
+
+If all fail, ask user:
+
+> "OpenCode install failed. Options:
+>
+> 1. Retry (temporary network issue)
+> 2. Install manually from github.com/opencode-ai/opencode
+> 3. Use Claude Code instead
+>    Choose (1/2/3):"
 
 **If VPS setup script fails:**
 
@@ -293,14 +424,20 @@ fi
 
 **Common service failures and fixes:**
 
-| Issue                | Fix                                              |
-| -------------------- | ------------------------------------------------ | ------------------------------------ |
-| Port 2222 in use     | `sudo lsof -ti:2222                              | xargs kill -9` then restart ET       |
-| Port 3000 in use     | `sudo lsof -ti:3000                              | xargs kill -9` then restart agent-os |
-| Missing dependencies | `sudo apt-get update && sudo apt-get install -f` |
-| Permission denied    | `sudo chown -R $USER:$USER ~/.config/opencode`   |
+| Issue                | Fix                                                         |
+| -------------------- | ----------------------------------------------------------- |
+| Port 2222 in use     | `sudo lsof -ti:2222 \| xargs kill -9` then restart ET       |
+| Port 3000 in use     | `sudo lsof -ti:3000 \| xargs kill -9` then restart agent-os |
+| Missing dependencies | `sudo apt-get update && sudo apt-get install -f`            |
+| Permission denied    | `sudo chown -R $USER:$USER ~/.config/opencode`              |
 
 ### Step 4: Local Environment Setup
+
+> "VPS done! Now setting up your local machine.
+>
+> I'll install Mutagen (file sync) and create a config file.
+>
+> Proceed? (y/n)"
 
 **Detect user's OS:**
 
@@ -347,13 +484,17 @@ fi
 mutagen daemon start 2>/dev/null || true
 ```
 
-**Create local config** based on agent choice:
+**Ask for VPS Provider:**
+
+> "Which VPS provider are you using? (oracle/hetzner/digitalocean/aws/other)"
+
+**Create local config** based on agent choice and provider:
 
 **If OpenCode:** `.opencode.config.json`
 
 **If Claude Code:** `.claude.config.json`
 
-Both files have same structure:
+Both files have same structure. Replace `USER_PROVIDED_PROVIDER` with their answer (default to `oracle` if unknown).
 
 ```json
 {
@@ -364,7 +505,7 @@ Both files have same structure:
         "hostname": "USER_PROVIDED_HOSTNAME",
         "user": "USER_PROVIDED_USER",
         "port": 2222,
-        "provider": "oracle"
+        "provider": "USER_PROVIDED_PROVIDER"
       }
     }
   }
@@ -403,9 +544,22 @@ Tell user:
 
 > "Alias 'ALIAS_NAME' added. Restart your terminal or run `source ~/.bashrc` (or `$PROFILE` on Windows) to use it."
 
-### Step 5: Automated Verification
+### Step 5: Verification
 
-Run verification checks via SSH MCP:
+> "Running final checks...
+>
+> VPS:
+>
+> - Eternal Terminal: running
+> - OpenCode: running
+> - Agent-OS: running at http://hostname:3000
+>
+> Local:
+>
+> - Mutagen: installed
+> - Config: created
+>
+> Setup complete! Run `opencode` to start."
 
 ```bash
 # Check all services
@@ -434,172 +588,6 @@ echo "sincronizado test $(date)" > /tmp/sync-test.txt
 # Then verify on VPS:
 cat ~/projects/*/sync-test.txt
 ```
-
-### Step 6: Completion
-
-**Show success message (customize with actual values):**
-
-> Setup complete!
->
-> VPS (USER_PROVIDED_HOSTNAME):
->
-> - Eternal Terminal: Running ✓
-> - OpenCode: Installed ✓
-> - Agent-OS: Installed ✓
->
-> Local:
->
-> - Sincronizado: Cloned ✓
-> - Mutagen: Installed ✓
-> - Config: Created ✓
->
-> **Quick start:**
->
-> ```
-> cd /path/to/your-project
-> ALIAS_NAME -p your-project
-> ```
->
-> **Access your VPS:**
->
-> - SSH: ssh USER_PROVIDED_USER@USER_PROVIDED_HOSTNAME
-> - Web UI: http://USER_PROVIDED_HOSTNAME:3000
->
-> Note: http://USER_PROVIDED_HOSTNAME:3000 is only accessible via Tailscale VPN
->
-> **Need help?** Run verification anytime or check troubleshooting below.
-
-**Ask for star:**
-
-> "If you found this helpful, would you like to star the repository? It helps the project grow! ᕙ(⇀‸↼‶)ᕗ"
-
-If user agrees, run:
-
-```bash
-gh repo star microck/sincronizado
-```
-
-**Important**: Only run if user explicitly says yes. Never run automatically without consent.
-
-### Step 7: Optional - OpenSync Integration
-
-Ask user if they want to track sessions and costs:
-
-```
-Do you want to install OpenSync for session tracking and analytics? (y/n) [n]
-
-This provides:
-- Cloud-synced session dashboards
-- Token usage analytics and cost monitoring
-- Search across all your AI sessions
-- Multi-agent support (works with both OpenCode and Claude)
-
-Learn more: https://opensync.dev
-```
-
-If yes, install based on agent:
-
-**For OpenCode:**
-
-```bash
-npm install -g opencode-sync-plugin
-opencode-sync login
-```
-
-**For Claude Code:**
-
-```bash
-npm install -g claude-code-sync
-claude-code-sync login
-```
-
-Add to agent config:
-
-**OpenCode** (`~/.config/opencode/opencode.json`):
-
-```json
-{
-  "plugins": ["opencode-sync-plugin"]
-}
-```
-
-**Claude Code** (`~/.config/claude/settings.json`):
-
-```json
-{
-  "mcpServers": {
-    "opensync": {
-      "command": "claude-code-sync",
-      "args": ["mcp"]
-    }
-  }
-}
-```
-
-Tell user:
-
-> "OpenSync installed! Sessions will now sync to your dashboard at https://opensync.dev"
-
-### Step 8: Optional - Mount VPS as Windows Drive
-
-**Only for Windows users.** Ask:
-
-```
-Do you want to mount your VPS as a Windows drive letter (e.g., Z:)? (y/n) [n]
-
-This lets you browse VPS files in File Explorer like a local drive.
-```
-
-If yes, setup SSHFS-Win:
-
-```powershell
-# Install SSHFS-Win
-winget install SSHFS-Win.SSHFS-Win
-
-# Install WinFsp (required dependency)
-winget install WinFsp.WinFsp
-
-# Create mount command
-$driveLetter = "Z"
-$vpsHost = "USER_PROVIDED_HOSTNAME"
-$vpsUser = "USER_PROVIDED_USER"
-
-# Mount as network drive
-net use ${driveLetter}: "\\sshfs\${vpsUser}@${vpsHost}" /persistent:yes
-
-# Or with specific path
-net use ${driveLetter}: "\\sshfs\${vpsUser}@${vpsHost}\home\${vpsUser}" /persistent:yes
-```
-
-**Alternative: SSHFS via command line:**
-
-```powershell
-# Mount specific path
-sshfs "${vpsUser}@${vpsHost}:/home/${vpsUser}" "${driveLetter}:" -o idmap=user,IdentityFile="$env:USERPROFILE\.ssh\id_rsa"
-```
-
-Tell user:
-
-> "VPS mounted as drive ${driveLetter}:. You can browse it in File Explorer."
->
-> "To unmount: `net use ${driveLetter}: /delete` or right-click in File Explorer → Disconnect"
-
-**Note:** SSHFS-Win requires:
-
-- Windows 10/11
-- Tailscale connection active (for hostname resolution)
-- SSH key authentication (password auth not supported by SSHFS-Win)
-
-### Optional: IDE Configuration
-
-**VS Code:**
-
-- Install "Remote - SSH" extension for direct VPS editing
-- Or use local VS Code with automatic Mutagen sync
-
-**JetBrains:**
-
-- Built-in SSH deployment or SSHFS mount
 
 ---
 
@@ -725,6 +713,9 @@ EOF
 | "Port 3000 blocked"       | Run `ufw allow 3000/tcp` on VPS                      |
 | "Permission denied (SSH)" | Verify SSH key added to VPS `~/.ssh/authorized_keys` |
 | "Claude MCP not working"  | Verify `claude /config` shows MCP server             |
+| "OpenCode 404 error"      | Script auto-retries with npm + GitHub fallback       |
+| "Agent-OS not running"    | Run `sudo systemctl restart agent-os`                |
+| "ET port 2222 in use"     | `sudo lsof -ti:2222 \| xargs kill -9`                |
 
 **Platform-Specific Notes:**
 
