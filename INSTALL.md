@@ -346,7 +346,7 @@ cat ~/projects/*/sync-test.txt
 
 **Ask for star:**
 
-> "If you found this helpful, would you like to star the repository? It helps the project grow! ⭐"
+> "If you found this helpful, would you like to star the repository? It helps the project grow! ᕙ(⇀‸↼‶)ᕗ"
 
 If user agrees, run:
 
