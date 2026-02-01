@@ -101,19 +101,47 @@ sudo ./scripts/setup-vps.sh --mode=custom --with-kimaki --with-lunaroute
 }
 ```
 
-### 5) start
+### 5) alias (optional)
+
+Set up a shortcut command so you can type `opencode` from any directory.
+
+**Windows (PowerShell):**
+
+```powershell
+# Add to your $PROFILE
+function opencode { & "$env:USERPROFILE\.sincronizado\launcher\opencode.ps1" }
+```
+
+**macOS/Linux:**
+
+```bash
+# Add to ~/.bashrc or ~/.zshrc
+alias opencode='~/.sincronizado/launcher/opencode.sh'
+```
+
+Then restart your terminal or run `source ~/.bashrc` (or `$PROFILE` on Windows).
+
+### 6) start
 
 **With OpenCode:**
 
 Windows:
 
 ```powershell
+# With alias:
+opencode
+
+# Without alias:
 .\launcher\opencode.ps1
 ```
 
 macOS/Linux:
 
 ```bash
+# With alias:
+opencode
+
+# Without alias:
 ./launcher/opencode.sh
 ```
 
@@ -122,12 +150,20 @@ macOS/Linux:
 Windows:
 
 ```powershell
+# With alias:
+claude
+
+# Without alias:
 .\launcher\claude.ps1
 ```
 
 macOS/Linux:
 
 ```bash
+# With alias:
+claude
+
+# Without alias:
 ./launcher/claude.sh
 ```
 

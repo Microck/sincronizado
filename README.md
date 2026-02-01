@@ -13,7 +13,6 @@
   <a href="https://sincronizado.micr.dev"><img alt="docs" src="https://img.shields.io/badge/docs-mintlify-00C7B7.svg" /></a>
 </p>
 
-
 <p align="center">
   <a href="https://sincronizado.micr.dev/">
     <img src="https://github.com/user-attachments/assets/964890fc-d9f8-4cc5-b16d-47b118ee2f53" alt="TUI demo" width="700">
@@ -91,7 +90,7 @@ bun run src/index.ts
 - mode selection (minimal / standard / full / custom)
 - ai agent selection (opencode or claude)
 - **vps security hardening** - automated ssh key setup, firewall, fail2ban protection
-- **one-click shell alias setup** - type "opencode" from anywhere
+- **one-click shell alias setup** - type "opencode" from anywhere (or pick your own command name)
 - **opensync integration** - track sessions and token usage
 - component checkboxes (discord bot, ai proxy, worktree sessions)
 - vps provider templates
@@ -161,6 +160,7 @@ brew install mutagen
 - editor syncs via mutagen (<500ms)
 - ai runs on vps via eternal terminal
 - check status on phone at http://vps:3000
+- optional: type `opencode` from anywhere (if you set up the alias)
 
 ## tiered installation
 
