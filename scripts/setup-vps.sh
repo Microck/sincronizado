@@ -254,9 +254,46 @@ install_opencode() {
         return 0
     fi
 
-    curl -fsSL https://opencode.ai/install.sh | bash
+    # Try official installer first
+    if curl -fsSL https://opencode.ai/install.sh 2>/dev/null | bash; then
+        log_success "OpenCode installed via official installer"
+        return 0
+    fi
     
-    log_success "OpenCode installed"
+    log_warning "Official installer failed (404). Trying alternative methods..."
+    
+    # Fallback 1: Try npm if available
+    if npm install -g opencode 2>/dev/null; then
+        log_success "OpenCode installed via npm"
+        return 0
+    fi
+    
+    # Fallback 2: Manual installation from GitHub releases
+    log_info "Attempting manual installation from GitHub..."
+    local ARCH=$(uname -m)
+    local OPENCODE_VERSION="latest"
+    
+    case $ARCH in
+        x86_64) OPENCODE_ARCH="linux-amd64" ;;
+        aarch64) OPENCODE_ARCH="linux-arm64" ;;
+        *) 
+            log_error "Unsupported architecture: $ARCH"
+            return 1
+            ;;
+    esac
+    
+    cd /tmp
+    if curl -fsSL "https://github.com/opencode-ai/opencode/releases/${OPENCODE_VERSION}/download/opencode-${OPENCODE_ARCH}.tar.gz" -o opencode.tar.gz 2>/dev/null; then
+        tar -xzf opencode.tar.gz
+        chmod +x opencode
+        mv opencode /usr/local/bin/
+        log_success "OpenCode installed from GitHub releases"
+        return 0
+    fi
+    
+    log_error "All OpenCode installation methods failed"
+    log_info "Please install manually from: https://github.com/opencode-ai/opencode"
+    return 1
 }
 
 install_claude_code() {
