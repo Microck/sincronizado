@@ -141,6 +141,32 @@ Check which AI client you're running in, then update the appropriate config:
 
 Once user restarts their AI session, you'll have SSH access to their VPS. Proceed to Step 2.
 
+**If SSH MCP connection fails after restart:**
+
+1. **Verify SSH works manually first:**
+
+   ```bash
+   ssh -o ConnectTimeout=10 USER_PROVIDED_USER@USER_PROVIDED_HOSTNAME "echo 'SSH OK'"
+   ```
+
+   If this fails, the issue is SSH connectivity, not MCP.
+
+2. **Check MCP configuration loaded:**
+   - OpenCode: Run `opencode /config` and verify "ssh" appears in MCP servers
+   - Claude Desktop: Check settings → MCP servers → ssh
+
+3. **Common MCP fixes:**
+   - **"command not found: ssh-mcp"**: Ensure npm global bin is in PATH
+   - **"SSH connection refused"**: Verify Tailscale is running on both sides
+   - **"Permission denied"**: Check SSH key permissions are 600: `chmod 600 USER_PROVIDED_KEY_PATH`
+
+4. **Retry with explicit path:**
+   If `ssh-mcp` isn't found, use full path:
+   ```bash
+   which ssh-mcp  # Get full path
+   # Then update MCP config to use full path
+   ```
+
 ### Step 2: Auto-Detect & Recommend
 
 Use SSH MCP to inspect VPS and provide **one confirmation question**:
@@ -207,28 +233,127 @@ sudo ~/sincronizado/scripts/setup-vps.sh --mode=MODE --agent=AGENT [OPTIONS]
 > - Configuring firewall... ✓
 > - Starting services... ✓
 
+**If VPS setup script fails:**
+
+```bash
+# Check exit code and capture error
+if [ $? -ne 0 ]; then
+  echo "VPS setup failed. Common causes:"
+  echo "  1. No internet connection on VPS"
+  echo "  2. Insufficient disk space (need 2GB+)"
+  echo "  3. Package manager locked (another apt process running)"
+  echo "  4. Missing sudo permissions"
+
+  # Check disk space
+  df -h /
+
+  # Check for apt lock
+  if lsof /var/lib/dpkg/lock-frontend &>/dev/null; then
+    echo "Another apt process is running. Wait or kill it:"
+    echo "  sudo killall apt apt-get"
+    echo "  sudo rm -f /var/lib/dpkg/lock-frontend"
+  fi
+
+  # Offer to retry
+  echo "Would you like to retry the setup? (y/n)"
+fi
+```
+
 **Verify services started:**
 
 ```bash
-systemctl is-active opencode
-systemctl is-active agent-os
-systemctl is-active eternal-terminal
+# Check all services and capture failures
+FAILED_SERVICES=""
+
+for service in opencode agent-os eternal-terminal; do
+  if ! systemctl is-active "$service" &>/dev/null; then
+    FAILED_SERVICES="$FAILED_SERVICES $service"
+    echo "✗ $service failed to start"
+    # Get last 20 lines of logs for debugging
+    journalctl -u "$service" --no-pager -n 20
+  else
+    echo "✓ $service running"
+  fi
+done
+
+# If services failed, try to restart them
+if [ -n "$FAILED_SERVICES" ]; then
+  echo "Some services failed. Attempting restart..."
+  for service in $FAILED_SERVICES; do
+    sudo systemctl restart "$service"
+    sleep 2
+    if systemctl is-active "$service" &>/dev/null; then
+      echo "✓ $service restarted successfully"
+    else
+      echo "✗ $service still failing - check logs with: journalctl -u $service -f"
+    fi
+  done
+fi
 ```
+
+**Common service failures and fixes:**
+
+| Issue                | Fix                                              |
+| -------------------- | ------------------------------------------------ | ------------------------------------ |
+| Port 2222 in use     | `sudo lsof -ti:2222                              | xargs kill -9` then restart ET       |
+| Port 3000 in use     | `sudo lsof -ti:3000                              | xargs kill -9` then restart agent-os |
+| Missing dependencies | `sudo apt-get update && sudo apt-get install -f` |
+| Permission denied    | `sudo chown -R $USER:$USER ~/.config/opencode`   |
 
 ### Step 4: Local Environment Setup
 
-Clone sincronizado locally and configure launcher:
+**Detect user's OS:**
 
 ```bash
-# Clone to local machine
-git clone https://github.com/microck/sincronizado.git ~/.sincronizado
-
-# Install Mutagen
-brew install mutagen  # macOS
-winget install Mutagen.Mutagen  # Windows
+# Check OS
+uname -s  # Linux/macOS show "Linux" or "Darwin"
+echo $OS  # Windows shows "Windows_NT"
 ```
 
-**Create local config** `.opencode.config.json` (or `.claude.config.json`):
+**Check if sincronizado already installed:**
+
+```bash
+if [ -d "$HOME/.sincronizado/.git" ]; then
+  echo "Sincronizado already installed. Updating..."
+  cd "$HOME/.sincronizado" && git pull
+else
+  echo "Cloning sincronizado..."
+  git clone https://github.com/microck/sincronizado.git "$HOME/.sincronizado"
+fi
+```
+
+**Install Mutagen (if not already installed):**
+
+```bash
+# Check if mutagen installed
+if ! command -v mutagen &> /dev/null; then
+  echo "Installing Mutagen..."
+  # macOS
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    brew install mutagen
+  # Linux
+  elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    curl -fsSL https://github.com/mutagen-io/mutagen/releases/latest/download/mutagen_linux_amd64.tar.gz | tar xz -C /tmp
+    sudo mv /tmp/mutagen /usr/local/bin/
+  # Windows
+  elif [[ "$OS" == "Windows_NT" ]]; then
+    winget install Mutagen.Mutagen
+  fi
+else
+  echo "Mutagen already installed"
+fi
+
+# Start mutagen daemon if not running
+mutagen daemon start 2>/dev/null || true
+```
+
+**Create local config** based on agent choice:
+
+**If OpenCode:** `.opencode.config.json`
+
+**If Claude Code:** `.claude.config.json`
+
+Both files have same structure:
 
 ```json
 {
