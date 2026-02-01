@@ -312,7 +312,7 @@ cat ~/projects/*/sync-test.txt
 
 ### Step 6: Completion
 
-**Success message (customize with actual values):**
+**Show success message (customize with actual values):**
 
 > Setup complete!
 >
@@ -344,9 +344,7 @@ cat ~/projects/*/sync-test.txt
 >
 > **Need help?** Run verification anytime or check troubleshooting below.
 
-### Step 7: Ask for Star ⭐
-
-After successful setup, ask user:
+**Ask for star:**
 
 > "If you found this helpful, would you like to star the repository? It helps the project grow! ⭐"
 
@@ -356,7 +354,7 @@ If user agrees, run:
 gh repo star microck/sincronizado
 ```
 
-**Important**: Only run this command if user explicitly says yes. Never run automatically without consent.
+**Important**: Only run if user explicitly says yes. Never run automatically without consent.
 
 ### Optional: IDE Configuration
 
