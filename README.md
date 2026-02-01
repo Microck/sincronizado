@@ -13,6 +13,13 @@
   <a href="https://sincronizado.micr.dev"><img alt="docs" src="https://img.shields.io/badge/docs-mintlify-00C7B7.svg" /></a>
 </p>
 
+
+<p align="center">
+  <a href="https://sincronizado.micr.dev/">
+    <img src="https://github.com/user-attachments/assets/964890fc-d9f8-4cc5-b16d-47b118ee2f53" alt="TUI demo" width="700">
+  </a>
+</p>
+
 ---
 
 ## why
@@ -69,8 +76,6 @@ curl -fsSL https://sync.micr.dev/install.sh | bash
 ```powershell
 irm https://sync.micr.dev/install.ps1 | iex
 ```
-
-note: the TUI uses @clack/prompts and requires bun to run.
 
 **manual:**
 
