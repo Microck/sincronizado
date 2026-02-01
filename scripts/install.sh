@@ -13,6 +13,19 @@ RED='\033[0;31m'
 CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
+# Check for required dependencies
+check_dependency() {
+  if ! command -v "$1" &> /dev/null; then
+    echo -e "${RED}Error: $1 is required but not installed${NC}"
+    echo "  Install with: $2"
+    exit 1
+  fi
+}
+
+check_dependency "curl" "sudo apt-get install curl"
+check_dependency "git" "sudo apt-get install git"
+check_dependency "unzip" "sudo apt-get install unzip"
+
 # Check for Bun
 if ! command -v bun &> /dev/null; then
   echo -e "${YELLOW}Bun not found. Installing Bun...${NC}"
