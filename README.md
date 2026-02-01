@@ -1,10 +1,10 @@
 <p align="center">
   <a href="https://github.com/Microck/sincronizado">
-    <img src="/assets/logo/logosmall.png" alt="logo" width="200">
+    <img src="/assets/logo/logosmall.png" alt="logo" width="250">
   </a>
 </p>
 
-<p align="center">sincronizado is a hyper-local development stack that runs your AI coding assistant on a VPS for zero friction.</p>
+<p align="center">hyper-local development stack that runs your AI coding assistant on a VPS for zero friction.</p>
 
 <p align="center">
   <a href="LICENSE"><img alt="license" src="https://img.shields.io/badge/license-MIT-blue.svg" /></a>
