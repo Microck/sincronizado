@@ -101,7 +101,22 @@ ssh -o ConnectTimeout=5 ubuntu@your-vps.tailnet.ts.net "echo 'SSH OK'"
 
 ### Step 1: Configure SSH MCP (DO THIS FIRST)
 
-You need SSH access to the user's VPS. Ask for connection details:
+**Check for existing SSH MCP configs first:**
+
+```bash
+# Check if SSH MCP already configured
+grep -o '"ssh[^"]*"' ~/.config/opencode/opencode.json 2>/dev/null || echo "No SSH MCP found"
+```
+
+**If SSH MCP already exists:**
+
+> "Found existing SSH connection: ssh-usa (129.213.76.28)
+> Use this for setup? (y/n)"
+
+If yes → Skip to Step 2.
+If no → Continue below to add new connection.
+
+**If no SSH MCP exists**, ask for connection details:
 
 > "I need 3 things to connect to your VPS:
 >
@@ -200,24 +215,35 @@ Once user restarts their AI session, you'll have SSH access to their VPS. Procee
 
 ### Step 2: Select VPS & Configure Components
 
-**A. Select VPS (if multiple SSH MCPs exist)**
+**A. Select VPS (auto-detect existing)**
 
-Check user's opencode.json for existing SSH connections:
+Check for existing SSH MCP configs:
 
 ```bash
-# Look for SSH MCP entries in ~/.config/opencode/opencode.json
-grep -A 5 '"ssh' ~/.config/opencode/opencode.json
+# Parse SSH MCP entries from opencode config
+jq -r '.mcp | to_entries[] | select(.key | startswith("ssh")) | "\(.key): \(.value.command[-3] // .value.command[-1])"' ~/.config/opencode/opencode.json 2>/dev/null || grep -E '"ssh[^"]*":' ~/.config/opencode/opencode.json
 ```
 
-If multiple found, ask:
+**Example output:**
 
-> "Found X VPS connections. Which one to use?
+```
+ssh-oracle: --host=141.145.192.88
+ssh-usa: --host=129.213.76.28
+ssh-nas: --host=192.168.1.50
+```
+
+If **single found** → Use it automatically, tell user:
+
+> "Using existing connection: ssh-usa (129.213.76.28). Proceed? (y/n)"
+
+If **multiple found** → Ask:
+
+> "Found 3 VPS connections. Which to use?
 >
 > 1. ssh-oracle (141.145.192.88)
 > 2. ssh-usa (129.213.76.28)
 > 3. ssh-nas (192.168.1.50)
->
-> Enter number:"
+>    Enter number (or 'all' to check each):"
 
 **B. Detect Everything**
 
@@ -250,75 +276,93 @@ ls -la ~/sincronizado/.git 2>/dev/null && echo "sincronizado: cloned" || echo "s
 
 **C. Show Status & Recommend**
 
-Present findings with status indicators:
+Parse detection output and present clearly:
 
-> "**VPS:** Ubuntu 22.04, 8GB RAM, 4 cores ✓
+> "**VPS:** Ubuntu 22.04.5 LTS, 23GB RAM, 4 cores ✓
 >
-> **Current Status:**
+> **Detected:**
 >
 > - OpenCode: installed ✓, not running
-> - Agent-OS: not installed
 > - Eternal Terminal: installed ✓, not running
+> - Agent-OS: not installed
 > - ccmanager: not installed
 > - Kimaki: not installed
 > - LunaRoute: not installed
 >
-> **Recommend:** Install missing components (Agent-OS, ccmanager) and start services.
+> **Actions needed:**
 >
-> Options:
+> 1. Start existing services (OpenCode, ET)
+> 2. Install missing components (Agent-OS, ccmanager)
 >
-> 1. **minimal** - Just fix/start existing (ET + OpenCode)
-> 2. **standard** - Install Agent-OS + ccmanager + plugins
+> **Recommend:** 'standard' mode
+>
+> - Start: OpenCode + ET
+> - Install: Agent-OS + ccmanager + plugins
+>
+> Choose:
+>
+> 1. **start** - Just start existing services
+> 2. **standard** - Start + install Agent-OS + ccmanager + plugins
 > 3. **full** - Everything including Kimaki + LunaRoute
 > 4. **custom** - Pick specific components
 >
-> Which? (1/2/3/4 or 'status' to recheck):"
+> Which? (1/2/3/4):"
 
 **D. Handle Different Scenarios**
 
-**If everything already installed and running:**
+**Scenario 1: Everything installed + running**
 
-> "Everything looks good! All services installed and running.
+> "All services running ✓
 >
-> - OpenCode: ✓
-> - Agent-OS: ✓ running at http://hostname:3000
-> - Eternal Terminal: ✓
+> - OpenCode: running
+> - Agent-OS: running at http://hostname:3000
+> - Eternal Terminal: running
 >
 > Skip to Step 4 (local setup)? (y/n)"
 
-**If nothing installed (fresh VPS):**
+**Scenario 2: Everything installed but NOT running**
 
-> "Fresh VPS detected. Nothing installed yet.
+> "Components installed but stopped:
 >
-> Recommend 'standard' for 8GB RAM:
+> - OpenCode: installed, not running
+> - Agent-OS: installed, not running
+> - ET: installed, not running
+>
+> Start services only? (y/n)"
+
+**Scenario 3: Partial installation**
+
+> "Partial setup:
+>
+> - ✓ Eternal Terminal: installed + running
+> - ✗ OpenCode: not installed
+> - ✗ Agent-OS: not installed
+>
+> Complete installation? (y/n)"
+
+**Scenario 4: Fresh VPS**
+
+> "Fresh VPS. Nothing installed.
+>
+> Recommend 'standard' for 23GB RAM:
 >
 > - Core: ET + OpenCode + UFW
 > - Plus: Agent-OS + ccmanager + plugins
 >
-> Go with standard? (yes/no/custom)"
-
-**If partial installation:**
-
-> "Partial setup detected:
->
-> - ✓ Eternal Terminal installed
-> - ✗ OpenCode not installed
-> - ✗ Agent-OS not installed
->
-> Complete the installation? (y/n)"
+> Install standard? (y/n)"
 
 **E. Confirm Actions**
 
-Based on detection + user choice, summarize what you'll do:
+Summarize before executing:
 
-> "**Actions:**
+> "**Plan:**
 >
+> - Start services: opencode, eternal-terminal
 > - Install: Agent-OS, ccmanager, plugins
-> - Start services: opencode, agent-os, eternal-terminal
-> - Skip: Kimaki, LunaRoute (user declined)
-> - Already OK: UFW firewall configured
+> - Skip: Kimaki, LunaRoute
+> - Already configured: UFW firewall
 >
-> Proceed? (y/n)"
+> Execute? (y/n)"
 
 ### Step 3: VPS Setup
 
