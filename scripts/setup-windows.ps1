@@ -1,6 +1,6 @@
 #!/usr/bin/env pwsh
 # Sincronizado Windows VPS Setup Script
-# Usage: iex "& { $(irm https://sincronizado.micr.dev/install.ps1) } [-Mode <minimal|standard|full>]"
+# Usage: iex "& { $(irm https://sync.micr.dev/install.ps1) } [-Mode <minimal|standard|full>]"
 
 param(
     [ValidateSet("minimal", "standard", "full")]
@@ -94,7 +94,7 @@ Write-Host "1. SSH into your VPS:"
 Write-Host "   ssh ubuntu@YOUR_VPS_IP" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "2. Download and run setup:"
-Write-Host "   curl -fsSL https://sincronizado.micr.dev/install.sh | sudo bash -s -- --mode=$Mode" -ForegroundColor Cyan
+Write-Host "   curl -fsSL https://sync.micr.dev/install.sh | sudo bash -s -- --mode=$Mode" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "3. After VPS setup completes, return to Windows and run:"
 Write-Host "   cd $sincDir\launcher" -ForegroundColor Cyan
