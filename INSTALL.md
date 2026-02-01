@@ -351,6 +351,22 @@ Parse detection output and present clearly:
 >
 > Install standard? (y/n)"
 
+**F. Security Hardening (Optional)**
+
+Ask if user wants VPS hardening:
+
+> "Enable VPS security hardening?
+>
+> - Create non-root user (recommended)
+> - SSH key-only auth (disable password)
+> - UFW firewall (ports 22, 2222, 3000 only)
+>
+> Enable? (y/n) [y]"
+
+If yes:
+
+> "Create non-root user? (username or 'no'): [deployer]"
+
 **E. Confirm Actions**
 
 Summarize before executing:
@@ -558,35 +574,56 @@ Both files have same structure. Replace `USER_PROVIDED_PROVIDER` with their answ
 
 **Ask user about alias setup:**
 
-```
-Do you want to create a shortcut command so you can type 'opencode' from anywhere? (y/n) [y]
-```
+> "Create shortcut command to type 'opencode' from anywhere? (y/n) [y]"
 
 If yes:
 
-```
-What command name do you want? [default: opencode]
-```
+> "What command name? [default: opencode]"
 
-Set up the alias:
-
-**Windows (PowerShell):**
-Add to `$PROFILE`:
-
-```powershell
-function ALIAS_NAME { & "$env:USERPROFILE\.sincronizado\launcher\opencode.ps1" }
-```
-
-**macOS/Linux:**
-Add to `~/.bashrc` or `~/.zshrc`:
+**Auto-detect OS and set up accordingly:**
 
 ```bash
-alias ALIAS_NAME='~/.sincronizado/launcher/opencode.sh'
+# Detect OS
+if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" || "$OS" == "Windows_NT" ]]; then
+    OS_TYPE="windows"
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+    OS_TYPE="macos"
+else
+    OS_TYPE="linux"
+fi
+
+echo "Detected: $OS_TYPE"
+```
+
+**Windows PowerShell:**
+
+```powershell
+Add-Content $PROFILE "`nfunction ALIAS_NAME { & `"`$env:USERPROFILE\.sincronizado\launcher\opencode.ps1`" }"
+```
+
+**Windows CMD (if PowerShell not available):**
+
+```batch
+echo @echo off >> %USERPROFILE%\opencode.bat
+echo %USERPROFILE%\.sincronizado\launcher\opencode.bat %%* >> %USERPROFILE%\opencode.bat
+setx PATH "%PATH%;%USERPROFILE%"
+```
+
+**macOS/Linux (Bash):**
+
+```bash
+echo "alias ALIAS_NAME='$HOME/.sincronizado/launcher/opencode.sh'" >> ~/.bashrc
+```
+
+**macOS/Linux (Zsh):**
+
+```bash
+echo "alias ALIAS_NAME='$HOME/.sincronizado/launcher/opencode.sh'" >> ~/.zshrc
 ```
 
 Tell user:
 
-> "Alias 'ALIAS_NAME' added. Restart your terminal or run `source ~/.bashrc` (or `$PROFILE` on Windows) to use it."
+> "Alias 'ALIAS_NAME' added for $OS_TYPE. Restart terminal or run `source ~/.bashrc` / `$PROFILE` to use."
 
 ### Step 5: Verification
 
