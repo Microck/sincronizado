@@ -37,67 +37,289 @@ bun run src/index.ts
 
 ---
 
-## For LLM Agents
+## For LLM Agents (Automated Setup)
 
-If you're an LLM Agent helping set up _sincronizado_, Welcome! Follow these steps to install the hyper-local development stack for your user.
+If you're an LLM helping set up _sincronizado_, follow this **automation-first** workflow. Unlike the TUI that asks 10 questions, you can actually **do the work** via SSH MCP.
 
-### Step 0: Check Prerequisites
+### Step 0: Verify Prerequisites
 
-**CRITICAL**: Before starting, verify these requirements:
+Check these requirements before starting:
 
 ```bash
-# Check OS
+# Confirm OS
 uname -a  # Linux/macOS
 systeminfo | findstr /B /C:"OS"  # Windows
 
-# Check if user has a VPS ready
-# Required: Ubuntu 20.04+ or Debian 11+ VPS
+# Confirm Tailscale (required for security)
+tailscale status
 
-# Check Tailscale
-tailscale version  # User must have Tailscale account and tailnet setup
+# Confirm VPS SSH access
+ssh -o ConnectTimeout=5 ubuntu@your-vps.tailnet.ts.net "echo 'SSH OK'"
 ```
 
-**Required VPS Specifications:**
+**Requirements:**
 
-- **OS**: Ubuntu 20.04+ or Debian 11+
-- **RAM**: 4GB+ recommended (2GB minimum)
-- **CPU**: 2+ cores
-- **Network**: Tailscale connected
-- **Access**: SSH key-based authentication
+- Ubuntu 20.04+ or Debian 11+ VPS
+- Tailscale connected (never use public SSH)
+- SSH key-based access working
+- 2GB+ RAM (4GB recommended)
 
-**If no VPS**: User needs to create one (Oracle Cloud Free Tier, Hetzner, DigitalOcean, AWS)
+**Blockers:**
 
-**If no Tailscale**: User must install and configure Tailscale first
+- No VPS → Direct user to create Oracle Cloud Free Tier instance
+- No Tailscale → User must install first: https://tailscale.com/download
+- SSH password auth → Switch to SSH keys before proceeding
 
-### Step 1: Ask User About AI Agent Preference
+### Step 1: Configure SSH MCP (DO THIS FIRST)
 
-Ask user this single question:
+Since you're running inside an AI agent (OpenCode/Claude/Gemini), you need to configure SSH MCP **for yourself** so you can execute commands on the user's VPS.
 
-```
-Which AI agent do you want to use on the VPS?
-1. OpenCode (open source, recommended)
-2. Claude Code (Anthropic, requires subscription)
-```
-
-**Decision logic:**
-
-- User has Claude Pro/Max subscription → **Option 2** (Claude Code)
-- User wants free/open source → **Option 1** (OpenCode, default)
-
-### Step 2: Choose Installation Method
-
-Based on user's tech level:
+**Ask user for 3 values:**
 
 ```
-How do you want to install?
-1. One-liner script (fastest, automated)
-2. TUI installer (interactive, guided)
-3. Manual setup (full control)
+I need your VPS connection details to set up automated configuration:
+
+1. VPS hostname (Tailscale): _______________ (e.g., oracle.tail1234.ts.net)
+2. SSH user: _______________ (default: ubuntu)
+3. SSH private key path: _______________ (default: ~/.ssh/id_rsa)
 ```
 
-### Step 3: Execute Installation
+**Install SSH MCP package:**
 
-#### Option 1: One-liner Script
+```bash
+npm install -g @tufantunc/ssh-mcp
+# Or: uv tool install ssh-mcp
+```
+
+**Write MCP config using your file tools:**
+
+Check which AI client you're running in, then update the appropriate config:
+
+**If OpenCode:** Update `~/.config/opencode/opencode.json`:
+
+```json
+{
+  "mcp": {
+    "ssh": {
+      "command": ["ssh-mcp"],
+      "enabled": true,
+      "type": "local",
+      "environment": {
+        "SSH_HOST": "USER_PROVIDED_HOSTNAME",
+        "SSH_USER": "USER_PROVIDED_USER",
+        "SSH_KEY": "USER_PROVIDED_KEY_PATH"
+      }
+    }
+  }
+}
+```
+
+**If Claude Desktop:** Update config at:
+
+- macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- Windows: `%APPDATA%\Claude\claude_desktop_config.json`
+- Linux: `~/.config/Claude/claude_desktop_config.json`
+
+```json
+{
+  "mcpServers": {
+    "ssh": {
+      "command": "ssh-mcp",
+      "env": {
+        "SSH_HOST": "USER_PROVIDED_HOSTNAME",
+        "SSH_USER": "USER_PROVIDED_USER",
+        "SSH_KEY": "USER_PROVIDED_KEY_PATH"
+      }
+    }
+  }
+}
+```
+
+**Tell user to restart:**
+
+> "SSH MCP configured in your AI client. **Please restart this AI session** (exit and start a new one) so I can connect to your VPS and complete the setup automatically."
+
+Once user restarts their AI session, you'll have SSH access to their VPS. Proceed to Step 2.
+
+### Step 2: Auto-Detect & Recommend
+
+Use SSH MCP to inspect VPS and provide **one confirmation question**:
+
+```bash
+# Detect VPS specs
+free -h | grep Mem
+cat /etc/os-release | grep PRETTY_NAME
+nproc
+# Check if AI agents already installed
+which opencode claude 2>/dev/null || echo "none"
+```
+
+**Decision table:**
+
+| RAM Detected | Recommendation | Reason                           |
+| ------------ | -------------- | -------------------------------- |
+| < 2GB        | ❌ Block       | Insufficient for AI agents       |
+| 2-4GB        | minimal mode   | ET + AI agent + firewall only    |
+| 4-8GB        | standard mode  | + Agent-OS + ccmanager + plugins |
+| 8GB+         | full mode      | + Kimaki + LunaRoute + worktrees |
+
+**Agent selection:**
+
+- User mentions Claude subscription → Claude Code
+- Otherwise → OpenCode (open source, default)
+
+**Present to user:**
+
+> "Detected: 8GB RAM, Ubuntu 22.04. **Recommend 'standard' mode with OpenCode.**
+>
+> This installs: Eternal Terminal, OpenCode, Agent-OS (web UI), session manager, plugins.
+>
+> Confirm? (yes/no/custom)"
+
+If "custom", ask which components:
+
+- Mode: minimal/standard/full
+- Agent: opencode/claude
+- Add-ons: kimaki, lunaroute, worktree-session
+
+### Step 3: Automated VPS Setup
+
+Once confirmed, execute via SSH MCP:
+
+```bash
+# 1. Clone sincronizado repo on VPS
+git clone https://github.com/microck/sincronizado.git ~/sincronizado
+
+# 2. Run setup with selected mode
+sudo ~/sincronizado/scripts/setup-vps.sh --mode=MODE --agent=AGENT [OPTIONS]
+
+# Example for standard + opencode:
+# sudo ~/sincronizado/scripts/setup-vps.sh --mode=standard --agent=opencode
+```
+
+**Stream progress to user:**
+
+> "Setting up VPS (this takes 2-3 minutes)..."
+>
+> - Installing Eternal Terminal... ✓
+> - Installing OpenCode... ✓
+> - Installing Agent-OS... ✓
+> - Configuring firewall... ✓
+> - Starting services... ✓
+
+**Verify services started:**
+
+```bash
+systemctl is-active opencode
+systemctl is-active agent-os
+systemctl is-active eternal-terminal
+```
+
+### Step 4: Local Environment Setup
+
+Clone sincronizado locally and configure launcher:
+
+```bash
+# Clone to local machine
+git clone https://github.com/microck/sincronizado.git ~/.sincronizado
+
+# Install Mutagen
+brew install mutagen  # macOS
+winget install Mutagen.Mutagen  # Windows
+```
+
+**Create local config** `.opencode.config.json` (or `.claude.config.json`):
+
+```json
+{
+  "vps": {
+    "default": "my-vps",
+    "hosts": {
+      "my-vps": {
+        "hostname": "USER_PROVIDED_HOSTNAME",
+        "user": "USER_PROVIDED_USER",
+        "port": 2222,
+        "provider": "oracle"
+      }
+    }
+  }
+}
+```
+
+**Add shell alias** (optional but recommended):
+
+```bash
+# Add to ~/.bashrc or ~/.zshrc
+alias opencode="~/.sincronizado/launcher/opencode.sh"
+alias claude="~/.sincronizado/launcher/claude.sh"
+```
+
+### Step 5: Automated Verification
+
+Run verification checks via SSH MCP:
+
+```bash
+# Check all services
+echo "=== Service Status ==="
+systemctl is-active opencode && echo "✓ OpenCode running" || echo "✗ OpenCode failed"
+systemctl is-active agent-os && echo "✓ Agent-OS running" || echo "✗ Agent-OS failed"
+systemctl is-active eternal-terminal && echo "✓ ET running" || echo "✗ ET failed"
+
+# Check ports
+echo "=== Port Checks ==="
+ss -tlnp | grep -E '2222|3000'
+
+# Check resources
+echo "=== VPS Resources ==="
+free -h | grep Mem
+df -h / | tail -1
+```
+
+**Local sync test:**
+
+```bash
+# Create test file locally
+echo "sincronizado test $(date)" > /tmp/sync-test.txt
+
+# Sync to VPS (via launcher or mutagen directly)
+# Then verify on VPS:
+cat ~/projects/*/sync-test.txt
+```
+
+### Step 6: Completion
+
+**Success message:**
+
+> "✓ **Setup complete!**
+>
+> Your VPS is configured and services are running.
+>
+> **Quick start:**
+>
+> 1. `opencode -p myproject` (or `claude -p myproject`)
+> 2. Edit files locally → they sync to VPS in <500ms
+> 3. Open http://VPS_HOSTNAME:3000 on your phone to monitor
+>
+> **Need help?** Run verification anytime or check troubleshooting below."
+
+### Optional: IDE Configuration
+
+**VS Code:**
+
+- Install "Remote - SSH" extension for direct VPS editing
+- Or use local VS Code with automatic Mutagen sync
+
+**JetBrains:**
+
+- Built-in SSH deployment or SSHFS mount
+
+---
+
+## Standard Installation (For Humans)
+
+Use these methods if you prefer interactive setup or don't need LLM automation.
+
+### One-Liner Script (Fastest)
 
 Run one command, then pick agent/mode/components in TUI:
 
@@ -109,9 +331,9 @@ curl -fsSL https://sync.micr.dev/install.sh | bash
 irm https://sync.micr.dev/install.ps1 | iex
 ```
 
-#### Option 2: TUI Installer (Recommended)
+### TUI Installer (Interactive)
 
-The TUI installer provides a frictionless setup experience with one-click options. Requires [Bun](https://bun.sh).
+Requires [Bun](https://bun.sh). Most guided experience.
 
 ```bash
 # Clone repo
@@ -123,41 +345,33 @@ bun install
 bun run src/index.ts
 ```
 
-**TUI Features:**
+**TUI Screens:**
 
-1. **Agent selection** - OpenCode (open source) or Claude Code (subscription)
-2. **Mode selection** - Minimal, Standard, Full, or Custom
-3. **Add-on selection** - Optional components with checkboxes
-4. **Security hardening** - SSH key setup, firewall, fail2ban
-5. **VPS provider** - Oracle, Hetzner, DigitalOcean, AWS templates
-6. **Connection config** - Hostname, user, project root
-7. **Confirmation screen** - Review all choices before proceeding
-8. **Optional VPS setup** - One-click VPS configuration with real-time progress
-9. **Completion summary** - Next steps and verification commands
+1. Welcome
+2. Agent selection (OpenCode/Claude)
+3. Mode selection (minimal/standard/full/custom)
+4. Add-on checkboxes (Kimaki, LunaRoute, worktrees)
+5. Security hardening (SSH keys, firewall)
+6. VPS provider selection
+7. Connection configuration
+8. Confirm choices
+9. Real-time install progress
+10. Completion summary
 
-**Key Concepts Explained:**
-
-- **Hash-based sessions**: Each project gets a unique session ID based on its full path hash (e.g., `sync-myproject-a1b2c3`). Prevents collisions when working on multiple projects with the same name.
-- **Eternal Terminal (port 2222)**: Resilient SSH that survives network handoffs (wifi ↔ 5G). Unlike regular SSH, ET auto-reconnects without breaking your AI session.
-- **VPS Setup Phase**: After TUI completes, it optionally triggers automatic VPS setup via SSH, installing all selected components in one pass.
-- **Shell Aliases**: TUI can set up shell aliases (`opencode`, `claude`) so you can start sessions from any directory.
-
-#### Option 3: Manual Setup
+### Manual Setup (Full Control)
 
 ```bash
-# 1. Install dependencies
-# macOS:
-brew install mutagen
-
-# Windows:
-winget install Mutagen.Mutagen
+# 1. Install Mutagen locally
+brew install mutagen  # macOS
+winget install Mutagen.Mutagen  # Windows
 
 # 2. Clone repo
 git clone https://github.com/microck/sincronizado.git
 cd sincronizado
 
-# 3. Setup VPS
+# 3. Setup VPS manually
 ssh ubuntu@your-vps-ip
+cd ~/sincronizado
 sudo ./scripts/setup-vps.sh --mode=standard
 
 # 4. Configure locally
@@ -186,146 +400,6 @@ EOF
 ./launcher/opencode.sh -p myapp  # macOS/Linux
 .\launcher\opencode.ps1 -Project myapp  # Windows
 ```
-
-### Step 4: Configure SSH MCP Server (For LLM Agents Only)
-
-**This step is ONLY for LLM agents that need to execute commands on the VPS.** Regular users do not need this.
-
-SSH MCP allows LLM agents to:
-
-- Execute commands on the VPS directly
-- Check service status (opencode, claude, agent-os)
-- Manage files remotely
-- Monitor system resources
-- Restart services when needed
-
-```bash
-# Install SSH MCP server
-npm install -g @tufantunc/ssh-mcp
-
-# Or with uv
-uv tool install ssh-mcp
-```
-
-Add to your AI client's MCP configuration:
-
-**OpenCode Configuration:**
-
-```json
-{
-  "mcp": {
-    "ssh": {
-      "command": ["ssh-mcp"],
-      "enabled": true,
-      "type": "local",
-      "environment": {
-        "SSH_HOST": "your-vps.tailnet.ts.net",
-        "SSH_USER": "ubuntu",
-        "SSH_KEY": "~/.ssh/id_rsa"
-      }
-    }
-  }
-}
-```
-
-**Claude Desktop Configuration:**
-
-```json
-{
-  "mcpServers": {
-    "ssh": {
-      "command": "ssh-mcp",
-      "env": {
-        "SSH_HOST": "your-vps.tailnet.ts.net",
-        "SSH_USER": "ubuntu",
-        "SSH_KEY": "~/.ssh/id_rsa"
-      }
-    }
-  }
-}
-```
-
-**File location**:
-
-- OpenCode: `~/.config/opencode/opencode.json`
-- Claude Desktop (macOS): `~/Library/Application Support/Claude/claude_desktop_config.json`
-- Claude Desktop (Windows): `%APPDATA%\Claude\claude_desktop_config.json`
-- Claude Desktop (Linux): `~/.config/Claude/claude_desktop_config.json`
-
-⚠️ **Security Note for LLM Agents:**
-
-- Only configure SSH MCP with Tailscale-connected VPS (never expose SSH publicly)
-- Use SSH key authentication (never passwords)
-- Limit SSH key permissions on VPS to `~/.ssh/` with 0600 permissions
-- Regular users do NOT need SSH MCP - this is for LLM agent automation only
-
-**Why SSH MCP is useful for LLM agents:**
-
-- Allows the LLM to diagnose and fix issues on VPS without user intervention
-- Enables automated service management and monitoring
-- Supports complex workflows that require VPS-level access
-
-### Step 5: Verify Setup
-
-Run these verification commands:
-
-```bash
-# Check sync status
-mutagen sync list
-
-# Check AI agent on VPS
-ssh ubuntu@your-vps-ip "systemctl status opencode"  # or "systemctl status claude"
-
-# Check Agent-OS (if installed)
-ssh ubuntu@your-vps-ip "systemctl status agent-os"
-
-# Test file sync
-echo "test" > test.txt
-# Wait 5 seconds, then verify on VPS:
-ssh ubuntu@your-vps-ip "cat ~/projects/myapp/test.txt"
-```
-
-**If verification fails:**
-
-- Check Tailscale connection: `tailscale status`
-- Verify SSH access: `ssh ubuntu@your-vps-ip`
-- Check Mutagen daemon: `mutagen daemon start`
-- Review VPS logs: `ssh ubuntu@your-vps-ip "journalctl -u opencode -f"`
-
-### Step 6: Start Using
-
-**Launch AI session:**
-
-```bash
-# OpenCode
-./launcher/opencode.sh -p myproject
-
-# Claude Code
-./launcher/claude.sh -p myproject
-
-# Windows PowerShell
-.\launcher\opencode.ps1 -Project myproject
-.\launcher\claude.ps1 -Project myproject
-```
-
-**Access mobile UI:**
-
-```
-http://your-vps.tailnet.ts.net:3000
-```
-
-### Step 7: Configure IDE (Optional)
-
-**VS Code:**
-
-- Install "Remote - SSH" extension
-- Connect to VPS via SSH
-- Or use local VS Code with remote file sync
-
-**JetBrains:**
-
-- Use built-in SSH deployment
-- Or mount remote directory via SSHFS
 
 ## Installation Tiers
 
