@@ -481,6 +481,115 @@ gh repo star microck/sincronizado
 
 **Important**: Only run if user explicitly says yes. Never run automatically without consent.
 
+### Step 7: Optional - OpenSync Integration
+
+Ask user if they want to track sessions and costs:
+
+```
+Do you want to install OpenSync for session tracking and analytics? (y/n) [n]
+
+This provides:
+- Cloud-synced session dashboards
+- Token usage analytics and cost monitoring
+- Search across all your AI sessions
+- Multi-agent support (works with both OpenCode and Claude)
+
+Learn more: https://opensync.dev
+```
+
+If yes, install based on agent:
+
+**For OpenCode:**
+
+```bash
+npm install -g opencode-sync-plugin
+opencode-sync login
+```
+
+**For Claude Code:**
+
+```bash
+npm install -g claude-code-sync
+claude-code-sync login
+```
+
+Add to agent config:
+
+**OpenCode** (`~/.config/opencode/opencode.json`):
+
+```json
+{
+  "plugins": ["opencode-sync-plugin"]
+}
+```
+
+**Claude Code** (`~/.config/claude/settings.json`):
+
+```json
+{
+  "mcpServers": {
+    "opensync": {
+      "command": "claude-code-sync",
+      "args": ["mcp"]
+    }
+  }
+}
+```
+
+Tell user:
+
+> "OpenSync installed! Sessions will now sync to your dashboard at https://opensync.dev"
+
+### Step 8: Optional - Mount VPS as Windows Drive
+
+**Only for Windows users.** Ask:
+
+```
+Do you want to mount your VPS as a Windows drive letter (e.g., Z:)? (y/n) [n]
+
+This lets you browse VPS files in File Explorer like a local drive.
+```
+
+If yes, setup SSHFS-Win:
+
+```powershell
+# Install SSHFS-Win
+winget install SSHFS-Win.SSHFS-Win
+
+# Install WinFsp (required dependency)
+winget install WinFsp.WinFsp
+
+# Create mount command
+$driveLetter = "Z"
+$vpsHost = "USER_PROVIDED_HOSTNAME"
+$vpsUser = "USER_PROVIDED_USER"
+
+# Mount as network drive
+net use ${driveLetter}: "\\sshfs\${vpsUser}@${vpsHost}" /persistent:yes
+
+# Or with specific path
+net use ${driveLetter}: "\\sshfs\${vpsUser}@${vpsHost}\home\${vpsUser}" /persistent:yes
+```
+
+**Alternative: SSHFS via command line:**
+
+```powershell
+# Mount specific path
+sshfs "${vpsUser}@${vpsHost}:/home/${vpsUser}" "${driveLetter}:" -o idmap=user,IdentityFile="$env:USERPROFILE\.ssh\id_rsa"
+```
+
+Tell user:
+
+> "VPS mounted as drive ${driveLetter}:. You can browse it in File Explorer."
+>
+> "To unmount: `net use ${driveLetter}: /delete` or right-click in File Explorer → Disconnect"
+
+**Note:** SSHFS-Win requires:
+
+- Windows 10/11
+- Tailscale connection active (for hostname resolution)
+- SSH key authentication (password auth not supported by SSHFS-Win)
+
 ### Optional: IDE Configuration
 
 **VS Code:**
