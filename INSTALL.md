@@ -15,10 +15,10 @@ https://raw.githubusercontent.com/microck/sincronizado/main/INSTALL.md
 
 ```bash
 # Linux/macOS
-curl -fsSL https://sincronizado.micr.dev/install.sh | bash
+curl -fsSL https://sync.micr.dev/install.sh | bash
 
 # Windows (PowerShell)
-irm https://sincronizado.micr.dev/install.ps1 | iex
+irm https://sync.micr.dev/install.ps1 | iex
 ```
 
 ### TUI Installer (Interactive)
@@ -99,14 +99,14 @@ How do you want to install?
 
 #### Option 1: One-liner Script
 
-Run one command, then pick agent/mode/components in the TUI:
+Run one command, then pick agent/mode/components in TUI:
 
 ```bash
 # Linux/macOS
-curl -fsSL https://sincronizado.micr.dev/install.sh | bash
+curl -fsSL https://sync.micr.dev/install.sh | bash
 
 # Windows (PowerShell)
-irm https://sincronizado.micr.dev/install.ps1 | iex
+irm https://sync.micr.dev/install.ps1 | iex
 ```
 
 #### Option 2: TUI Installer (Recommended)

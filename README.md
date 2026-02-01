@@ -61,13 +61,13 @@ interactive 8-screen installer. requires [bun](https://bun.sh):
 **linux / macos:**
 
 ```bash
-curl -fsSL https://sincronizado.micr.dev/install.sh | bash
+curl -fsSL https://sync.micr.dev/install.sh | bash
 ```
 
 **windows (powershell):**
 
 ```powershell
-irm https://sincronizado.micr.dev/install.ps1 | iex
+irm https://sync.micr.dev/install.ps1 | iex
 ```
 
 note: the TUI uses @clack/prompts and requires bun to run.
@@ -114,7 +114,7 @@ see [INSTALL.md](./INSTALL.md) for detailed setup options including:
 recommended (runs TUI):
 
 ```bash
-curl -fsSL https://sincronizado.micr.dev/install.sh | bash
+curl -fsSL https://sync.micr.dev/install.sh | bash
 ```
 
 manual:
