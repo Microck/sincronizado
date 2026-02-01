@@ -67,20 +67,14 @@ temp/
 *.old
 
 # Documentation builds
-# Ignore old Docusaurus builds in docs/
 docs/.docusaurus/
 docs/build/
 docs/node_modules/
 docs/blog/
 docs/.vercel/
 
-# Ignore old mintlify folder
+# Old mintlify folder
 mintlify/
-
-# Package manager locks (optional - commit these if you prefer)
-# package-lock.json
-# yarn.lock
-# pnpm-lock.yaml
 
 # Python
 __pycache__/
@@ -89,8 +83,6 @@ __pycache__/
 *.so
 .Python
 *.egg-info/
-dist/
-build/
 *.egg
 .pytest_cache/
 
@@ -103,7 +95,10 @@ Cargo.lock
 *.prof
 vendor/
 
-.vercel
-nul
+# Vercel
+.vercel/
 
-.env*.local
+# Local planning and temp files
+.planning/
+HANDOFF.md
+PLAN.md
