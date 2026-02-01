@@ -111,7 +111,6 @@ if [ -f "installer/.tui-result.json" ]; then
       echo -e "  Mode: ${YELLOW}$MODE${NC}"
       echo ""
 
-      # Run setup script on VPS
       SCRIPT_URL="https://raw.githubusercontent.com/microck/sincronizado/main/scripts/setup-vps.sh"
       ssh "$USER@$HOST" "curl -fsSL $SCRIPT_URL | sudo bash -s -- $FLAGS"
 
@@ -119,10 +118,62 @@ if [ -f "installer/.tui-result.json" ]; then
         echo ""
         echo -e "${GREEN}OK: VPS setup complete${NC}"
         echo ""
-        echo "Next steps:"
-        echo "  1. Set up local launcher (./launcher/opencode.sh)"
-        echo "  2. Test connection: ssh $USER@$HOST"
-        echo "  3. Access Agent-OS: http://$HOST:3000"
+        
+        echo "========================================"
+        echo -e "${CYAN}  LOCAL LAUNCHER SETUP${NC}"
+        echo "========================================"
+        echo ""
+        
+        read -p "Do you want to create a shortcut command? (y/n) [y] " ALIAS_RESPONSE
+        ALIAS_RESPONSE=${ALIAS_RESPONSE:-y}
+        
+        ALIAS_NAME=""
+        if [[ $ALIAS_RESPONSE =~ ^[Yy]$ ]]; then
+          DEFAULT_ALIAS="opencode"
+          read -p "Command name [default: $DEFAULT_ALIAS] " CUSTOM_ALIAS
+          ALIAS_NAME=${CUSTOM_ALIAS:-$DEFAULT_ALIAS}
+          
+          SHELL_CONFIG=""
+          if [ -n "$ZSH_VERSION" ] || [ -f "$HOME/.zshrc" ]; then
+            SHELL_CONFIG="$HOME/.zshrc"
+          elif [ -n "$BASH_VERSION" ] || [ -f "$HOME/.bashrc" ]; then
+            SHELL_CONFIG="$HOME/.bashrc"
+          fi
+          
+          if [ -n "$SHELL_CONFIG" ]; then
+            LAUNCHER_PATH="$INSTALL_DIR/launcher/opencode.sh"
+            echo "" >> "$SHELL_CONFIG"
+            echo "# Sincronizado launcher alias" >> "$SHELL_CONFIG"
+            echo "alias $ALIAS_NAME='$LAUNCHER_PATH'" >> "$SHELL_CONFIG"
+            
+            echo -e "${GREEN}OK: Alias '$ALIAS_NAME' added to $(basename $SHELL_CONFIG)${NC}"
+            echo "  Usage: $ALIAS_NAME"
+            echo "  Restart terminal or run: source $SHELL_CONFIG"
+          else
+            echo -e "${YELLOW}Warning: Could not detect shell config file${NC}"
+            echo "  Add this alias manually:"
+            echo "  alias $ALIAS_NAME='$INSTALL_DIR/launcher/opencode.sh'"
+          fi
+        fi
+        
+        echo ""
+        echo "========================================"
+        echo -e "${CYAN}  READY TO USE${NC}"
+        echo "========================================"
+        echo ""
+        echo "Quick start:"
+        echo "  cd /path/to/your-project"
+        if [ -n "$ALIAS_NAME" ]; then
+          echo "  $ALIAS_NAME"
+        else
+          echo "  ~/.sincronizado/launcher/opencode.sh"
+        fi
+        echo ""
+        echo "Access your VPS:"
+        echo "  SSH:    ssh $USER@$HOST"
+        echo "  Web UI: http://$HOST:3000"
+        echo ""
+        echo "Note: http://$HOST:3000 is only accessible via Tailscale VPN"
       else
         echo -e "${RED}ERR: VPS setup failed${NC}"
         echo "  Check your SSH connection and try manually:"
@@ -131,7 +182,6 @@ if [ -f "installer/.tui-result.json" ]; then
       fi
     fi
 
-    # Cleanup
     rm -f "installer/.tui-result.json"
   fi
 else

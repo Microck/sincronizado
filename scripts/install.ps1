@@ -124,10 +124,52 @@ if (Test-Path $tuiResultFile) {
       Write-Host ""
       Write-Success "VPS setup complete!"
       Write-Host ""
-      Write-Host "Next steps:"
-      Write-Host "  1. Set up local launcher (.\launcher\opencode.ps1)"
-      Write-Host "  2. Test connection: ssh $user@$host"
-      Write-Host "  3. Access Agent-OS: http://$host`:3000"
+      
+      # Alias setup prompt
+      Write-Color "========================================" "Cyan"
+      Write-Color "  LOCAL LAUNCHER SETUP" "Cyan"
+      Write-Color "========================================" "Cyan"
+      Write-Host ""
+      
+      $aliasResponse = Read-Host "Do you want to create a shortcut command? (y/n) [y]"
+      if ([string]::IsNullOrWhiteSpace($aliasResponse) -or $aliasResponse -eq "y") {
+        $defaultAlias = "opencode"
+        $customAlias = Read-Host "Command name [default: $defaultAlias]"
+        $aliasName = if ([string]::IsNullOrWhiteSpace($customAlias)) { $defaultAlias } else { $customAlias }
+        
+        $profilePath = $PROFILE
+        if (-not (Test-Path $profilePath)) {
+          New-Item -ItemType File -Path $profilePath -Force | Out-Null
+        }
+        
+        $launcherPath = "$installDir\launcher\opencode.ps1"
+        $aliasLine = "function $aliasName { & '$launcherPath' }"
+        
+        Add-Content -Path $profilePath -Value "`n# Sincronizado launcher alias`n$aliasLine"
+        
+        Write-Success "Alias '$aliasName' added to PowerShell profile"
+        Write-Host "  Usage: $aliasName" -ForegroundColor Cyan
+        Write-Host "  Restart PowerShell or run: . `$PROFILE" -ForegroundColor Gray
+      }
+      
+      Write-Host ""
+      Write-Color "========================================" "Cyan"
+      Write-Color "  READY TO USE" "Cyan"
+      Write-Color "========================================" "Cyan"
+      Write-Host ""
+      Write-Host "Quick start:"
+      Write-Host "  cd C:\path\to\your-project"
+      if ($aliasName) {
+        Write-Host "  $aliasName"
+      } else {
+        Write-Host "  $installDir\launcher\opencode.ps1"
+      }
+      Write-Host ""
+      Write-Host "Access your VPS:"
+      Write-Host "  SSH:    ssh $user@$host"
+      Write-Host "  Web UI: http://$host`:3000"
+      Write-Host ""
+      Write-Host "Note: http://$host`:3000 is only accessible via Tailscale VPN"
     } else {
       Write-Host ""
       Write-Fail "VPS setup failed"
