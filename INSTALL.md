@@ -246,13 +246,37 @@ winget install Mutagen.Mutagen  # Windows
 }
 ```
 
-**Add shell alias** (optional but recommended):
+**Ask user about alias setup:**
+
+```
+Do you want to create a shortcut command so you can type 'opencode' from anywhere? (y/n) [y]
+```
+
+If yes:
+
+```
+What command name do you want? [default: opencode]
+```
+
+Set up the alias:
+
+**Windows (PowerShell):**
+Add to `$PROFILE`:
+
+```powershell
+function ALIAS_NAME { & "$env:USERPROFILE\.sincronizado\launcher\opencode.ps1" }
+```
+
+**macOS/Linux:**
+Add to `~/.bashrc` or `~/.zshrc`:
 
 ```bash
-# Add to ~/.bashrc or ~/.zshrc
-alias opencode="~/.sincronizado/launcher/opencode.sh"
-alias claude="~/.sincronizado/launcher/claude.sh"
+alias ALIAS_NAME='~/.sincronizado/launcher/opencode.sh'
 ```
+
+Tell user:
+
+> "Alias 'ALIAS_NAME' added. Restart your terminal or run `source ~/.bashrc` (or `$PROFILE` on Windows) to use it."
 
 ### Step 5: Automated Verification
 
@@ -288,19 +312,51 @@ cat ~/projects/*/sync-test.txt
 
 ### Step 6: Completion
 
-**Success message:**
+**Success message (customize with actual values):**
 
-> "✓ **Setup complete!**
+> Setup complete!
 >
-> Your VPS is configured and services are running.
+> VPS (USER_PROVIDED_HOSTNAME):
+>
+> - Eternal Terminal: Running ✓
+> - OpenCode: Installed ✓
+> - Agent-OS: Installed ✓
+>
+> Local:
+>
+> - Sincronizado: Cloned ✓
+> - Mutagen: Installed ✓
+> - Config: Created ✓
 >
 > **Quick start:**
 >
-> 1. `opencode -p myproject` (or `claude -p myproject`)
-> 2. Edit files locally → they sync to VPS in <500ms
-> 3. Open http://VPS_HOSTNAME:3000 on your phone to monitor
+> ```
+> cd /path/to/your-project
+> ALIAS_NAME -p your-project
+> ```
 >
-> **Need help?** Run verification anytime or check troubleshooting below."
+> **Access your VPS:**
+>
+> - SSH: ssh USER_PROVIDED_USER@USER_PROVIDED_HOSTNAME
+> - Web UI: http://USER_PROVIDED_HOSTNAME:3000
+>
+> Note: http://USER_PROVIDED_HOSTNAME:3000 is only accessible via Tailscale VPN
+>
+> **Need help?** Run verification anytime or check troubleshooting below.
+
+### Step 7: Ask for Star ⭐
+
+After successful setup, ask user:
+
+> "If you found this helpful, would you like to star the repository? It helps the project grow! ⭐"
+
+If user agrees, run:
+
+```bash
+gh repo star microck/sincronizado
+```
+
+**Important**: Only run this command if user explicitly says yes. Never run automatically without consent.
 
 ### Optional: IDE Configuration
 
@@ -471,38 +527,6 @@ EOF
 - Monitor VPS resource usage
 - Use `.env.local` for sensitive config (not committed)
 - Backup important work before major updates
-
-### Say 'Congratulations! 🎉' to User
-
-Say to user:
-
-> Congratulations! 🎉 You have successfully installed _sincronizado_!
->
-> Your local editor is now connected to remote AI execution.
->
-> **Quick test:** Try editing a file locally and watch it sync to your VPS in <500ms.
->
-> **Next steps:**
->
-> 1. Run your launcher script to start an AI session
-> 2. Open http://your-vps:3000 on your phone to monitor
-> 3. Edit files locally while AI executes remotely
->
-> Happy coding! ᕙ(⇀‸↼‶)ᕗ
-
-### Ask for a Star ⭐
-
-After successful setup, ask user:
-
-> "If you found this helpful, would you like to star the repository? It helps the project grow! ⭐"
-
-If user agrees, run:
-
-```bash
-gh repo star microck/sincronizado
-```
-
-**Important**: Only run this command if user explicitly says yes. Never run automatically without consent.
 
 ### Additional Resources
 
