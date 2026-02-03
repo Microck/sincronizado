@@ -29,11 +29,12 @@ export async function createSyncSession(
   config: Config,
   name: string,
   localPath: string,
-  remotePath: string
+  remotePath: string,
+  ignore: string[]
 ): Promise<{ success: boolean; error?: string }> {
   const sshHost = `${config.vps.user}@${config.vps.hostname}`;
 
-  const ignoreFlags = config.sync.ignore.flatMap((pattern) => ["--ignore", pattern]);
+  const ignoreFlags = ignore.flatMap((pattern) => ["--ignore", pattern]);
 
   const result = await mutagenExec([
     "sync",

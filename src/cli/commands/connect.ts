@@ -1,5 +1,6 @@
 import { resolve } from "path";
-import { createSpinner, formatError, log } from "../output";
+import { createSpinner, emitJson, formatError, log } from "../output";
+import { isJson } from "../output-context";
 import { loadConfig } from "../../config";
 import { generateSessionId, getProjectName, EXIT_CODES } from "../../utils";
 import { testConnection, hasSession, attachTmuxSession } from "../../connection";
@@ -9,6 +10,7 @@ import {
   flushSync,
   isMutagenInstalled,
 } from "../../sync";
+import { loadSyncIgnore, mergeIgnorePatterns } from "../../sync/ignore";
 
 interface ConnectOptions {
   resume?: boolean;
@@ -55,18 +57,33 @@ export async function connect(options: ConnectOptions = {}): Promise<number> {
     log(`Session ${sessionName} already exists. Use -r to resume.`);
   }
 
-  const syncSpinner = createSpinner("Starting file sync...");
-  syncSpinner.start();
-
   const remotePath = `${config.sync.remoteBase}/${projectName}`;
   const syncStatus = await getSyncStatus(sessionName);
 
+  if (isJson()) {
+    emitJson({
+      event: "sync-status",
+      session: sessionName,
+      exists: syncStatus.exists,
+      status: syncStatus.status,
+      watching: syncStatus.watching,
+    });
+  } else {
+    log(`Sync status: ${syncStatus.exists ? syncStatus.status : "not found"}`);
+  }
+
+  const syncSpinner = createSpinner("Starting file sync...");
+  syncSpinner.start();
+
   if (!syncStatus.exists) {
+    const fileIgnore = await loadSyncIgnore(projectPath);
+    const ignorePatterns = mergeIgnorePatterns(config.sync.ignore, fileIgnore);
     const syncResult = await createSyncSession(
       config,
       sessionName,
       projectPath,
-      remotePath
+      remotePath,
+      ignorePatterns
     );
     if (!syncResult.success) {
       syncSpinner.fail("Sync setup failed");
