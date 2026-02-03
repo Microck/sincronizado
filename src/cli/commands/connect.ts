@@ -11,11 +11,13 @@ import {
 } from "../../connection";
 import {
   createSyncSession,
+  getSyncConflicts,
   getSyncStatus,
   flushSync,
   terminateSync,
   isMutagenInstalled,
 } from "../../sync";
+import { formatConflicts } from "../../sync/conflicts";
 import { loadSyncIgnore, mergeIgnorePatterns } from "../../sync/ignore";
 
 interface ConnectOptions {
@@ -163,6 +165,19 @@ export async function connect(options: ConnectOptions = {}): Promise<number> {
 
   const agentCommand = config.agent === "opencode" ? "opencode" : "claude";
 
+  const seenConflicts = new Set<string>();
+  const conflictMonitor = setInterval(async () => {
+    const conflicts = await getSyncConflicts(sessionName);
+    const newConflicts = conflicts.filter((conflict) => !seenConflicts.has(conflict.path));
+    if (newConflicts.length === 0) {
+      return;
+    }
+    for (const conflict of newConflicts) {
+      seenConflicts.add(conflict.path);
+    }
+    log(`Sync conflict detected:\n${formatConflicts(newConflicts)}`);
+  }, 5000);
+
   logVerbose(`Attaching ${sessionName} in ${remotePath}`);
 
   const exitCode = await attachWithReconnect(
@@ -171,6 +186,8 @@ export async function connect(options: ConnectOptions = {}): Promise<number> {
     remotePath,
     agentCommand
   );
+
+  clearInterval(conflictMonitor);
 
   const sessionStillExists = await hasSession(config, sessionName);
   if (!sessionStillExists) {
