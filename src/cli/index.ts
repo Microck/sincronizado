@@ -5,6 +5,7 @@ import { list } from "./commands/list";
 import { kill } from "./commands/kill";
 import { EXIT_CODES } from "../utils";
 import { log, formatError } from "./output";
+import { initOutput } from "./output-context";
 
 const HELP_TEXT = `sinc - Connect to VPS AI agent with synced files
 
@@ -12,8 +13,11 @@ Usage: sinc [options]
 
 Options:
   -h, --help      Show this help message
-  -v, --version   Show version number
+  -V, --version   Show version number
   -r, --resume    Resume existing session
+  -q, --quiet     Suppress non-essential output
+  -v, --verbose   Show diagnostic output
+      --json      Emit machine-readable output
       --list      List active sessions
       --kill <id> Kill a session
 
@@ -29,8 +33,11 @@ async function main(): Promise<number> {
       args: Bun.argv.slice(2),
       options: {
         help: { type: "boolean", short: "h" },
-        version: { type: "boolean", short: "v" },
+        version: { type: "boolean", short: "V" },
         resume: { type: "boolean", short: "r" },
+        quiet: { type: "boolean", short: "q" },
+        verbose: { type: "boolean", short: "v" },
+        json: { type: "boolean" },
         list: { type: "boolean" },
         kill: { type: "string" },
       },
@@ -44,6 +51,7 @@ async function main(): Promise<number> {
   }
 
   const { values } = args;
+  initOutput({ quiet: values.quiet, verbose: values.verbose, json: values.json });
 
   if (values.help) {
     console.log(HELP_TEXT);
