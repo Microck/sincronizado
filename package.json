@@ -1,42 +1,25 @@
 {
   "name": "sincronizado",
-  "version": "1.1.0",
-  "description": "Hyper-local development stack with remote AI execution",
-  "private": true,
+  "version": "2.0.0",
+  "type": "module",
+  "bin": {
+    "sinc": "./src/cli/index.ts"
+  },
   "scripts": {
-    "lint": "eslint . --ext .js,.ts,.tsx",
-    "lint:fix": "eslint . --ext .js,.ts,.tsx --fix",
-    "format": "prettier --write \"**/*.{js,ts,tsx,json,md,yml,yaml}\"",
-    "format:check": "prettier --check \"**/*.{js,ts,tsx,json,md,yml,yaml}\"",
-    "docs:start": "cd docs && npm start",
-    "docs:build": "cd docs && npm run build",
-    "docs:deploy": "cd docs && npm run deploy",
-    "test": "echo \"Tests not yet implemented - Phase 10\" && exit 0"
+    "dev": "bun src/cli/index.ts",
+    "build": "bun build ./src/cli/index.ts --outdir dist",
+    "test": "bun test",
+    "test:integration": "SINC_INTEGRATION=1 bun test tests/integration",
+    "build:release": "bun run scripts/release-build.ts"
+  },
+  "dependencies": {
+    "@clack/prompts": "^0.9.0",
+    "chalk": "^5.3.0",
+    "ora": "^8.1.0",
+    "zod": "^3.24.0"
   },
   "devDependencies": {
-    "eslint": "^8.57.0",
-    "prettier": "^3.2.5"
-  },
-  "engines": {
-    "node": ">=18.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/microck/sincronizado.git"
-  },
-  "keywords": [
-    "development",
-    "ai",
-    "remote",
-    "sync",
-    "mutagen",
-    "tailscale",
-    "opencode"
-  ],
-  "author": "Microck",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/microck/sincronizado/issues"
-  },
-  "homepage": "https://github.com/microck/sincronizado#readme"
+    "@types/bun": "latest",
+    "typescript": "^5.7.0"
+  }
 }
