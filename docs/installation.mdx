@@ -11,6 +11,34 @@ sincronizado is a single binary executable, but it relies on a few external tool
 - **Linux** (x64 & ARM64)
 - **Windows** (via PowerShell or WSL2)
 
+## Installation Flow
+
+```mermaid
+graph TD
+    A[Start Install] --> B{OS?}
+    B -->|Linux/Mac| C[install.sh]
+    B -->|Windows| D[install.ps1]
+    
+    C --> E[Install Bun]
+    C --> F[Clone Repo]
+    C --> G[Build CLI]
+    C --> H[Launch TUI Wizard]
+    
+    D --> E
+    D --> F
+    D --> G
+    D --> H
+    
+    H --> I{TUI Choices}
+    I --> J[Agent Selection]
+    I --> K[Sync Mode]
+    I --> L[VPS Details]
+    I --> M[SSH Keys]
+    I --> N[Custom Alias]
+    I --> O[VPS Bootstrap]
+    I --> P[Security Hardening]
+```
+
 ## Automated Installation
 
 The easiest way to install is via our shell script. This script detects your OS, downloads the correct binary from GitHub Releases, and puts it in your PATH.
