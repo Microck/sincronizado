@@ -6,7 +6,7 @@ Paste this into your LLM agent session:
 
 ```
 Install and configure sincronizado by following instructions here:
-https://raw.githubusercontent.com/microck/sincronizado/main/INSTALL.md
+https://raw.githubusercontent.com/Microck/sincronizado/main/INSTALL.md
 ```
 
 **Alternative: Quick Install**
@@ -17,8 +17,14 @@ https://raw.githubusercontent.com/microck/sincronizado/main/INSTALL.md
 # Linux/macOS
 curl -fsSL https://sync.micr.dev/install.sh | bash
 
+# Then run the setup wizard
+sinc --setup
+
 # Windows (PowerShell)
 irm https://sync.micr.dev/install.ps1 | iex
+
+# Then run the setup wizard
+sinc --setup
 ```
 
 ### TUI Installer (Interactive)
@@ -27,7 +33,7 @@ Requires [Bun](https://bun.sh).
 
 ```bash
 # Clone repo
-git clone https://github.com/microck/sincronizado.git
+git clone https://github.com/Microck/sincronizado.git
 cd sincronizado/installer
 
 # Install and run
@@ -388,7 +394,7 @@ Execute via SSH MCP:
 
 ```bash
 # 1. Clone sincronizado repo on VPS
-git clone https://github.com/microck/sincronizado.git ~/sincronizado
+git clone https://github.com/Microck/sincronizado.git ~/sincronizado
 
 # 2. Run setup with selected mode
 sudo ~/sincronizado/scripts/setup-vps.sh --mode=MODE --agent=AGENT [OPTIONS]
@@ -515,7 +521,7 @@ if [ -d "$HOME/.sincronizado/.git" ]; then
   cd "$HOME/.sincronizado" && git pull
 else
   echo "Cloning sincronizado..."
-  git clone https://github.com/microck/sincronizado.git "$HOME/.sincronizado"
+  git clone https://github.com/Microck/sincronizado.git "$HOME/.sincronizado"
 fi
 ```
 
@@ -694,7 +700,7 @@ Requires [Bun](https://bun.sh). Most guided experience.
 
 ```bash
 # Clone repo
-git clone https://github.com/microck/sincronizado.git
+git clone https://github.com/Microck/sincronizado.git
 cd sincronizado/installer
 
 # Install and run
@@ -723,7 +729,7 @@ brew install mutagen  # macOS
 winget install Mutagen.Mutagen  # Windows
 
 # 2. Clone repo
-git clone https://github.com/microck/sincronizado.git
+git clone https://github.com/Microck/sincronizado.git
 cd sincronizado
 
 # 3. Setup VPS manually
@@ -835,7 +841,7 @@ EOF
 ### Additional Resources
 
 - **Full Documentation**: https://sincronizado.micr.dev
-- **GitHub Repo**: https://github.com/microck/sincronizado
+- **GitHub Repo**: https://github.com/Microck/sincronizado
 - **Discord Community**: https://discord.gg/opencode
 - **VPS Providers**: Oracle Cloud (free tier), Hetzner, DigitalOcean, AWS
 - **Tailscale**: https://tailscale.com

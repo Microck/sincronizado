@@ -18,7 +18,7 @@ Requires [Bun](https://bun.sh).
 
 ```bash
 # Clone and run
-git clone https://github.com/microck/sincronizado.git
+git clone https://github.com/Microck/sincronizado.git
 cd sincronizado/installer
 bun install
 bun run src/index.tsx

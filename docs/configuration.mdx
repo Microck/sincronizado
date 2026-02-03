@@ -1,257 +1,119 @@
 ---
 title: Configuration
-description: Configuration reference for OpenCode and Claude Code.
+description: Configuration reference for the sinc CLI.
 ---
 
-Complete reference for `.opencode.config.json` and `.claude.config.json`.
+This file controls how `sinc` connects to your VPS and how syncing behaves.
 
 ## Location
 
-### OpenCode
+The CLI reads a single global config file:
 
-- Project: `.opencode.config.json` in project root
-- Global fallback: `~/.config/sincronizado/config.json`
+- `~/.config/sincronizado/config.json`
 
-### Claude Code
-
-- Project: `.claude.config.json` in project root
-- Global fallback: `~/.config/sincronizado/claude-config.json`
+The setup wizard (`sinc --setup`) creates/updates it for you.
 
 ## Schema
 
 ```json
 {
   "vps": {
-    "default": "string",
-    "hosts": {
-      "host-name": {
-        "hostname": "string",
-        "user": "string",
-        "port": 2222,
-        "provider": "string"
-      }
-    }
+    "hostname": "string",
+    "user": "ubuntu",
+    "port": 22
   },
   "sync": {
-    "ignore": ["string"]
+    "mode": "both",
+    "ignore": ["node_modules", ".venv", ".git"],
+    "remoteBase": "~/workspace"
   },
-  "session": {
-    "prefix": "string",
-    "default_editor": "string"
+  "agent": "opencode",
+  "ssh": {
+    "connectTimeout": 10,
+    "keepaliveInterval": 60,
+    "identityFile": "~/.ssh/id_ed25519"
   },
-  "plugins": {
-    "enabled": ["string"]
+  "connection": {
+    "protocols": ["ssh", "et", "mosh"],
+    "reconnect": {
+      "maxAttempts": 5,
+      "baseDelayMs": 1000,
+      "maxDelayMs": 10000
+    }
   }
 }
 ```
 
 ## Options
 
-### vps.default
+### vps.hostname
 
-- Type: string
-- Required: yes
-- Example: `"oracle-ashburn"`
+- required
+- the host name or IP for SSH (tailscale hostname recommended)
 
-### vps.hosts
+### vps.user
 
-- Type: object
-- Required: yes
+- default: `ubuntu`
 
-#### host.hostname
+### vps.port
 
-- Type: string
-- Required: yes
-- Example: `"my-vps.tailnet.ts.net"`
+- default: `22`
 
-#### host.user
+### sync.mode
 
-- Type: string
-- Default: `"ubuntu"`
-
-#### host.port
-
-- Type: integer
-- Default: 2222
-
-#### host.provider
-
-- Type: string
-- Example: `"oracle"`
+- one of: `none`, `pull`, `push`, `both`
+- default: `both`
 
 ### sync.ignore
 
-- Type: array of strings
-- Default: `["node_modules", ".venv", ".git", "dist", "build"]`
+- list of ignore patterns (applied in addition to any `.syncignore` in the project)
 
-### session.prefix
+### sync.remoteBase
 
-- Type: string
-- Default: `"sync-"`
+- base directory on the VPS to place projects
+- default: `~/workspace`
 
-### session.default_editor
+### agent
 
-- Type: string
-- Default: `"code"`
+- one of: `opencode`, `claude`
+- default: `opencode`
 
-### plugins.enabled
+### ssh.identityFile
 
-- Type: array of strings
-- Default: `["opencode-direnv", "agentmap", "opencode-sync", "ai-sessions-mcp", "ccmanager"]`
+- optional
+- path to a private key (if you want to force a specific key)
+
+### connection.protocols
+
+- ordered list of protocols to attempt
+- default: `ssh`, `et`, `mosh`
 
 ## Example
 
 ```json
 {
   "vps": {
-    "default": "oracle-ashburn",
-    "hosts": {
-      "oracle-ashburn": {
-        "hostname": "ashburn",
-        "user": "ubuntu",
-        "port": 2222,
-        "provider": "oracle"
-      }
-    }
+    "hostname": "oracle.tail1234.ts.net",
+    "user": "ubuntu",
+    "port": 22
   },
   "sync": {
-    "ignore": ["node_modules", ".venv", ".git", "dist", "build"]
-  }
-}
-```
-
-## Examples
-
-### Single VPS (Oracle)
-
-```json
-{
-  "vps": {
-    "default": "oracle-ashburn",
-    "hosts": {
-      "oracle-ashburn": {
-        "hostname": "ashburn",
-        "user": "ubuntu",
-        "port": 2222,
-        "provider": "oracle"
-      }
-    }
-  }
-}
-```
-
-### Multiple VPS (prod + staging)
-
-```json
-{
-  "vps": {
-    "default": "prod",
-    "hosts": {
-      "prod": {
-        "hostname": "prod-vps",
-        "user": "ubuntu",
-        "port": 2222
-      },
-      "staging": {
-        "hostname": "staging-vps",
-        "user": "ubuntu",
-        "port": 2222
-      }
-    }
-  }
-}
-```
-
-### Custom sync ignore
-
-```json
-{
-  "sync": {
-    "ignore": ["node_modules", ".venv", ".git", "dist", "build", "*.tmp", "data/large-files/"]
-  }
-}
-```
-
-### Full configuration
-
-```json
-{
-  "vps": {
-    "default": "my-vps",
-    "hosts": {
-      "my-vps": {
-        "hostname": "my-vps.tailnet.ts.net",
-        "user": "ubuntu",
-        "port": 2222,
-        "provider": "hetzner"
-      }
-    }
+    "mode": "both",
+    "ignore": ["node_modules", ".venv", ".git"],
+    "remoteBase": "~/workspace"
   },
-  "sync": {
-    "ignore": ["node_modules", ".venv", ".git", "dist", "build", "__pycache__", ".pytest_cache"]
-  },
-  "session": {
-    "prefix": "sync-",
-    "default_editor": "code"
-  },
-  "plugins": {
-    "enabled": ["opencode-direnv", "agentmap", "opencode-sync", "ai-sessions-mcp", "ccmanager"]
-  }
+  "agent": "opencode"
 }
 ```
-
-## Validation
-
-Windows:
-
-```powershell
-.\scripts\config-wizard.ps1 -Validate
-```
-
-Checks:
-
-- Required fields present
-- Valid JSON syntax
-- Host configurations complete
-
-## Claude Code Configuration
-
-Claude Code uses the same structure but different filename:
-
-```json
-{
-  "vps": {
-    "default": "oracle-ashburn",
-    "hosts": {
-      "oracle-ashburn": {
-        "hostname": "ashburn",
-        "user": "ubuntu",
-        "port": 2222,
-        "provider": "oracle"
-      }
-    }
-  },
-  "sync": {
-    "alpha": ".",
-    "beta": "~/projects/myapp",
-    "ignore": [".git", "node_modules"]
-  }
-}
-```
-
-Create as `.claude.config.json` when using Claude Code agent.
 
 ## Troubleshooting
 
 ### Config not loading
 
-1. Check file is valid JSON: `python -m json.tool < .opencode.config.json` (or `.claude.config.json`)
-2. Verify file is in project root
-3. Check file permissions (readable)
-4. Ensure correct filename for your agent (`.opencode.config.json` vs `.claude.config.json`)
+1. Validate JSON: `python -m json.tool < ~/.config/sincronizado/config.json`
+2. Ensure the file is readable
 
-### VPS not found
+### VPS connection failing
 
-1. Verify `vps.default` matches a key in `vps.hosts`
-2. Check `hostname` is correct
-3. Ensure `user` has SSH access
+1. Verify SSH works: `ssh user@hostname "echo ok"`
+2. If you use Tailscale, confirm both sides are connected: `tailscale status`

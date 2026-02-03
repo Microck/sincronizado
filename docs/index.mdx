@@ -16,6 +16,7 @@ Edit locally (VS Code / JetBrains). Run AI + heavy execution on a VPS. Keep late
 - Zero-lag sync: file sync completes in &lt;500ms via Mutagen
 - Mobile access via Agent-OS (web) or Kimaki (Discord)
 - Interactive installer (TUI)
+- `sinc` CLI for connect/list/kill/setup
 - Tiered installation: minimal / standard / full / custom
 - AI agent selection in TUI (OpenCode or Claude Code)
 - SSH MCP server for AI-powered VPS management
@@ -36,10 +37,16 @@ Windows (PowerShell):
 irm https://sync.micr.dev/install.ps1 | iex
 ```
 
+Then run:
+
+```bash
+sinc --setup
+```
+
 From source:
 
 ```bash
-git clone https://github.com/microck/sincronizado.git
+git clone https://github.com/Microck/sincronizado.git
 cd sincronizado/installer
 bun install
 bun run src/index.ts
@@ -62,6 +69,6 @@ bun run src/index.ts
 
 ## Help
 
-- **LLM Installation Guide**: https://raw.githubusercontent.com/microck/sincronizado/main/INSTALL.md
-- GitHub issues: https://github.com/microck/sincronizado/issues
+- **LLM Installation Guide**: https://raw.githubusercontent.com/Microck/sincronizado/main/INSTALL.md
+- GitHub issues: https://github.com/Microck/sincronizado/issues
 - OpenCode Discord: https://discord.gg/opencode

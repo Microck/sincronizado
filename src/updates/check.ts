@@ -3,7 +3,7 @@ import { isUpdateAvailable } from "./version";
 import { log } from "../cli/output";
 import { getOutputMode } from "../cli/output-context";
 
-const DEFAULT_REPO = "microck/sincronizado";
+const DEFAULT_REPO = "Microck/sincronizado";
 
 export interface UpdateInfo {
   current: string;

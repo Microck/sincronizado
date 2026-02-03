@@ -1,24 +1,46 @@
 ---
-title: "CLI"
-description: "Commands and flags for sincronizado."
+title: CLI
+description: Commands and flags for sincronizado.
 ---
 
-# CLI reference
+The `sinc` CLI is the main entrypoint.
+
+## Usage
+
+```bash
+sinc [--setup] [--list] [--kill <id>] [--uninstall] [--resume] [--quiet] [--verbose] [--json]
+```
 
 ## Commands
 
 - `sinc` - Connect to the VPS from the current project directory
-- `sinc --setup` - Guided setup wizard
-- `sinc --list` - List active sessions
-- `sinc --kill <id>` - Kill a session
-- `sinc --uninstall` - Remove config and local install artifacts
+- `sinc --setup` - interactive setup (writes config + checks dependencies)
+- `sinc --list` - list active sessions
+- `sinc --kill <id>` - kill a session
+- `sinc --uninstall` - remove local config and sync sessions
 
 ## Flags
 
-- `-h, --help` - Show help
-- `-V, --version` - Show version
-- `-r, --resume` - Resume existing session
-- `-q, --quiet` - Suppress non-essential output
-- `-v, --verbose` - Show diagnostic output
-- `--json` - Emit machine-readable output
-- `--completions <shell>` - Print shell completions (bash|zsh|fish)
+- `-h, --help` - show help
+- `-V, --version` - show version
+- `-r, --resume` - resume an existing session
+- `-q, --quiet` - suppress non-essential output
+- `-v, --verbose` - show diagnostic output
+- `--json` - emit machine-readable output
+- `--completions <shell>` - print shell completions (`bash`, `zsh`, `fish`)
+
+## Examples
+
+```bash
+# first-time setup
+sinc --setup
+
+# connect
+sinc
+
+# list sessions
+sinc --list
+
+# kill a session
+sinc --kill abc123
+```

@@ -31,7 +31,7 @@ local machines have great editors but limited resources. running multiple ai ins
 graph TB
     subgraph Local["Local Dev Machine"]
         VS[VS Code / JetBrains]
-        Launcher[Launcher<br/>hash-based sessions]
+        CLI[sinc CLI<br/>sessions + sync]
     end
 
     subgraph Network["Secure Network"]
@@ -50,7 +50,7 @@ graph TB
     end
 
     VS <-->|Mut| AI
-    Launcher <-->|ET SSH| TM
+    CLI <-->|ET/SSH| TM
     TS -.->|encrypts| VS
     TS -.->|encrypts| VPS
     Phone -->|http| AO
@@ -79,7 +79,7 @@ irm https://sync.micr.dev/install.ps1 | iex
 **manual:**
 
 ```bash
-git clone https://github.com/microck/sincronizado.git
+git clone https://github.com/Microck/sincronizado.git
 cd sincronizado/installer
 bun install
 bun run src/index.ts
@@ -102,7 +102,7 @@ paste this into your ai agent session:
 
 ```
 install and configure sincronizado by following instructions here:
-https://raw.githubusercontent.com/microck/sincronizado/main/INSTALL.md
+https://raw.githubusercontent.com/Microck/sincronizado/main/INSTALL.md
 ```
 
 see [INSTALL.md](./INSTALL.md) for detailed setup options including:
@@ -113,54 +113,27 @@ see [INSTALL.md](./INSTALL.md) for detailed setup options including:
 
 ## quick start
 
-### 1. vps setup (one-time)
-
-recommended (runs TUI):
+### 1. install + setup (one-time)
 
 ```bash
 curl -fsSL https://sync.micr.dev/install.sh | bash
+sinc --setup
 ```
 
-manual:
+### 2. connect
+
+from your project directory:
 
 ```bash
-ssh ubuntu@your-vps-ip
-cd ~/sincronizado
-sudo ./scripts/setup-vps.sh --mode=standard
+sinc
 ```
 
-### 2. local setup
+### 3. manage sessions
 
-**with opencode:**
-
-```powershell
-# windows
-winget install Mutagen.Mutagen
-.\launcher\opencode.ps1 -Project myapp
-
-# macos/linux
-brew install mutagen
-./launcher/opencode.sh -p myapp
+```bash
+sinc --list
+sinc --kill <id>
 ```
-
-**with claude code:**
-
-```powershell
-# windows
-winget install Mutagen.Mutagen
-.\launcher\claude.ps1 -Project myapp
-
-# macos/linux
-brew install mutagen
-./launcher/claude.sh -p myapp
-```
-
-### 3. done
-
-- editor syncs via mutagen (<500ms)
-- ai runs on vps via eternal terminal
-- check status on phone at http://vps:3000
-- optional: type `opencode` from anywhere (if you set up the alias)
 
 ## tiered installation
 
@@ -191,7 +164,7 @@ requires [bun](https://bun.sh).
 
 ```bash
 # clone and run
-git clone https://github.com/microck/sincronizado.git
+git clone https://github.com/Microck/sincronizado.git
 cd sincronizado/installer
 bun install
 bun run src/index.ts
@@ -266,22 +239,24 @@ say "handoff" in opencode → new session starts with compact continuation promp
 ## configuration
 
 ```json
-// .opencode.config.json
 {
   "vps": {
-    "host": "oracle.tail1234.ts.net",
+    "hostname": "oracle.tail1234.ts.net",
     "user": "ubuntu",
-    "port": 2222
+    "port": 22
   },
   "sync": {
-    "alpha": ".",
-    "beta": "~/projects/myapp",
-    "ignore": [".git", "node_modules", ".next"]
-  }
+    "mode": "both",
+    "ignore": [".git", "node_modules", ".next"],
+    "remoteBase": "~/workspace"
+  },
+  "agent": "opencode"
 }
 ```
 
-see [docs/configuration.md](docs/docs/configuration.md)
+save as `~/.config/sincronizado/config.json`.
+
+see `docs/configuration.mdx`.
 
 ## mobile access
 

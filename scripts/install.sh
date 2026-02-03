@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REPO="microck/sincronizado"
+REPO="Microck/sincronizado"
 INSTALL_DIR="${HOME}/.local/bin"
 
 OS_NAME="$(uname -s)"

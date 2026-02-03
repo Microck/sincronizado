@@ -37,7 +37,7 @@ sudo ./rollback-vps.sh
 2. SSH into the VPS as root
 3. Download and run setup:
    ```bash
-   curl -fsSL https://raw.githubusercontent.com/microck/sincronizado/main/scripts/setup-vps.sh | sudo bash
+   curl -fsSL https://raw.githubusercontent.com/Microck/sincronizado/main/scripts/setup-vps.sh | sudo bash
    ```
 4. Access Agent-OS at `http://your-vps-ip:3000`
 

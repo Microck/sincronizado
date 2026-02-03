@@ -14,7 +14,7 @@ Thank you for your interest in contributing to Sincronizado! This document provi
 
 ```bash
 # Clone the repository
-git clone https://github.com/microck/sincronizado.git
+git clone https://github.com/Microck/sincronizado.git
 cd sincronizado
 
 # Install dependencies

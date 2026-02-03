@@ -38,18 +38,18 @@
     "links": [
       {
         "label": "GitHub",
-        "href": "https://github.com/microck/sincronizado",
+        "href": "https://github.com/Microck/sincronizado",
         "icon": "github"
       }
     ],
     "primary": {
       "type": "github",
-      "href": "https://github.com/microck/sincronizado"
+      "href": "https://github.com/Microck/sincronizado"
     }
   },
   "footer": {
     "socials": {
-      "github": "https://github.com/microck/sincronizado",
+      "github": "https://github.com/Microck/sincronizado",
       "discord": "https://discord.gg/opencode"
     }
   },
@@ -58,17 +58,12 @@
       {
         "group": "Getting started",
         "icon": "play",
-        "pages": ["index", "quick-start"]
-      },
-      {
-        "group": "Guides",
-        "icon": "book-open",
-        "pages": ["architecture", "workflow", "mobile-access"]
+        "pages": ["index", "quick-start", "installation"]
       },
       {
         "group": "Reference",
         "icon": "wrench",
-        "pages": ["configuration", "plugins", "troubleshooting"]
+        "pages": ["cli", "configuration", "troubleshooting"]
       }
     ]
   },

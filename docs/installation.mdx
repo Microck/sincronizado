@@ -1,26 +1,34 @@
 ---
-title: "Installation"
-description: "Install sincronizado and run the setup wizard."
+title: Installation
+description: Install sincronizado and run the setup wizard.
 ---
 
-# Installation
+Install `sinc`, then run the setup wizard once.
 
-## macOS / Linux
+## One-liner install
+
+macOS / Linux:
 
 ```bash
 curl -fsSL https://sync.micr.dev/install.sh | bash
 ```
 
-## Windows (PowerShell)
+Windows (PowerShell):
 
 ```powershell
 irm https://sync.micr.dev/install.ps1 | iex
 ```
 
-## Setup wizard
+## Setup
 
 ```bash
 sinc --setup
 ```
 
 The wizard collects VPS details, tests the connection, installs dependencies, and writes your config file.
+
+## Verify
+
+```bash
+sinc --version
+```

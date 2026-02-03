@@ -30,6 +30,14 @@ Windows (PowerShell):
 irm https://sync.micr.dev/install.ps1 | iex
 ```
 
+Then run the setup wizard:
+
+```bash
+sinc --setup
+```
+
+This writes your config to `~/.config/sincronizado/config.json` and verifies SSH + Mutagen.
+
 Note: the TUI uses @clack/prompts and requires bun to run.
 
 TUI provides:
@@ -42,7 +50,7 @@ TUI provides:
 ### Option 2: Run TUI from source
 
 ```bash
-git clone https://github.com/microck/sincronizado.git
+git clone https://github.com/Microck/sincronizado.git
 cd sincronizado/installer
 bun install
 bun run src/index.ts
@@ -67,7 +75,7 @@ brew install mutagen
 ### 2) clone
 
 ```bash
-git clone https://github.com/microck/sincronizado.git
+git clone https://github.com/Microck/sincronizado.git
 cd sincronizado
 ```
 
@@ -88,83 +96,28 @@ sudo ./scripts/setup-vps.sh --mode=custom --with-kimaki --with-lunaroute
 
 ```json
 {
-  "vps": {
-    "host": "your-vps-ip",
-    "user": "your-username",
-    "port": 2222
-  },
   "sync": {
-    "alpha": ".",
-    "beta": "~/projects/myapp",
-    "ignore": [".git", "node_modules"]
-  }
+    "mode": "both",
+    "ignore": ["node_modules", ".venv", ".git"],
+    "remoteBase": "~/workspace"
+  },
+  "vps": {
+    "hostname": "your-vps.tailnet.ts.net",
+    "user": "ubuntu",
+    "port": 22
+  },
+  "agent": "opencode"
 }
 ```
 
-### 5) alias (optional)
+Save this as `~/.config/sincronizado/config.json`.
 
-Set up a shortcut command so you can type `opencode` from any directory.
+### 5) start
 
-**Windows (PowerShell):**
-
-```powershell
-# Add to your $PROFILE
-function opencode { & "$env:USERPROFILE\.sincronizado\launcher\opencode.ps1" }
-```
-
-**macOS/Linux:**
+From your project directory:
 
 ```bash
-# Add to ~/.bashrc or ~/.zshrc
-alias opencode='~/.sincronizado/launcher/opencode.sh'
-```
-
-Then restart your terminal or run `source ~/.bashrc` (or `$PROFILE` on Windows).
-
-### 6) start
-
-**With OpenCode:**
-
-Windows:
-
-```powershell
-# With alias:
-opencode
-
-# Without alias:
-.\launcher\opencode.ps1
-```
-
-macOS/Linux:
-
-```bash
-# With alias:
-opencode
-
-# Without alias:
-./launcher/opencode.sh
-```
-
-**With Claude Code:**
-
-Windows:
-
-```powershell
-# With alias:
-claude
-
-# Without alias:
-.\launcher\claude.ps1
-```
-
-macOS/Linux:
-
-```bash
-# With alias:
-claude
-
-# Without alias:
-./launcher/claude.sh
+sinc
 ```
 
 ## Verify
