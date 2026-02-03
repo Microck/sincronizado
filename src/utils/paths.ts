@@ -10,7 +10,9 @@ export function getProjectName(absolutePath: string): string {
   const base = basename(absolutePath);
   const cleaned = base
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/\s+/g, "-")
+    .replace(/[^a-z0-9-]/g, "")
+    .replace(/-+/g, "-")
     .replace(/^-+|-+$/g, "");
   return cleaned || "project";
 }
