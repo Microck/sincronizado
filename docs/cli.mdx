@@ -29,6 +29,25 @@ sinc [--setup] [--list] [--kill <id>] [--uninstall] [--resume] [--quiet] [--verb
 - `--json` - emit machine-readable output
 - `--completions <shell>` - print shell completions (`bash`, `zsh`, `fish`)
 
+## Output modes
+
+- `--quiet` suppresses non-essential output
+- `--verbose` includes diagnostic output
+- `--json` emits machine-readable events (useful for wrappers)
+
+## Environment variables
+
+- `SINC_NO_UPDATE_CHECK=1` disables GitHub release checks
+
+## Exit codes
+
+- `0` success
+- `1` general error
+- `2` misuse (bad flags, trying to resume when no session exists, etc.)
+- `69` dependency unavailable
+- `76` connect error
+- `78` config error
+
 ## Examples
 
 ```bash

@@ -1,0 +1,49 @@
+---
+title: VPS setup
+description: Prepare your VPS for sinc sessions.
+---
+
+`sinc` needs a VPS it can SSH into and a place to run sessions.
+
+## Requirements
+
+- Linux VPS (Ubuntu/Debian recommended)
+- SSH access (key-based recommended)
+- `tmux` installed
+- your AI agent installed on the VPS (`opencode` or `claude`)
+
+## One-time setup
+
+If you're using the setup wizard, it can run VPS setup for you.
+
+```bash
+sinc --setup
+```
+
+When prompted, choose **Run VPS setup script now**.
+
+## Manual setup
+
+SSH into your VPS and run:
+
+```bash
+git clone https://github.com/Microck/sincronizado.git
+cd sincronizado
+sudo ./scripts/setup-vps.sh
+```
+
+What it does:
+
+- installs `tmux` (via apt/yum/dnf if available)
+- creates the workspace directory used by `sinc`
+- prints warnings if `opencode`/`claude` aren't installed
+
+## Verify
+
+On the VPS:
+
+```bash
+tmux -V
+which opencode || true
+which claude || true
+```

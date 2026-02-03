@@ -79,7 +79,7 @@ paste this into your ai agent session:
 
 ```
 install and configure sincronizado by following instructions here:
-https://raw.githubusercontent.com/Microck/sincronizado/main/INSTALL.md
+https://raw.githubusercontent.com/microck/sincronizado/main/INSTALL.md
 ```
 
 see [INSTALL.md](./INSTALL.md) for detailed setup options including:

@@ -110,7 +110,7 @@ The setup wizard (`sinc --setup`) creates/updates it for you.
 
 ### Config not loading
 
-1. Validate JSON: `python -m json.tool < ~/.config/sincronizado/config.json`
+1. Validate JSON: `node -e "JSON.parse(require('fs').readFileSync(process.env.HOME+'/.config/sincronizado/config.json','utf8'))"`
 2. Ensure the file is readable
 
 ### VPS connection failing

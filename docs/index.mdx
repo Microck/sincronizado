@@ -14,11 +14,10 @@ Edit locally (VS Code / JetBrains). Run AI + heavy execution on a VPS. Keep late
 - Local-first development
 - Remote AI execution (OpenCode or Claude Code)
 - Zero-lag sync: file sync completes in &lt;500ms via Mutagen
-- Mobile access via Agent-OS (web) or Kimaki (Discord)
 - Interactive setup wizard (`sinc --setup`)
 - `sinc` CLI for connect/list/kill/setup
-- Tiered installation: minimal / standard / full / custom
-- SSH MCP server for AI-powered VPS management
+- Session persistence on VPS via tmux
+- Auto-reconnect and protocol fallback (ssh / et / mosh)
 
 ## Install
 
@@ -55,12 +54,14 @@ bun run dev -- --setup
 
 - [Quick start](/quick-start)
 - [Installation](/installation)
+- [VPS setup](/vps-setup)
+- [Architecture](/architecture)
 - [CLI reference](/cli)
 - [Configuration](/configuration)
 - [Troubleshooting](/troubleshooting)
 
 ## Help
 
-- **LLM Installation Guide**: https://raw.githubusercontent.com/Microck/sincronizado/main/INSTALL.md
+- **LLM Installation Guide**: https://raw.githubusercontent.com/microck/sincronizado/main/INSTALL.md
 - GitHub issues: https://github.com/Microck/sincronizado/issues
 - OpenCode Discord: https://discord.gg/opencode

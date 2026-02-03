@@ -25,10 +25,30 @@ irm https://sync.micr.dev/install.ps1 | iex
 sinc --setup
 ```
 
-The wizard collects VPS details, tests the connection, installs dependencies, and writes your config file.
+The wizard:
+
+- collects VPS details (hostname/user/port)
+- configures SSH key usage (use existing or generate new)
+- installs local dependencies (Bun + Mutagen) if missing
+- writes `~/.config/sincronizado/config.json`
+- optionally runs the VPS setup script (`./scripts/setup-vps.sh`) over SSH
 
 ## Verify
 
 ```bash
 sinc --version
 ```
+
+From a project directory:
+
+```bash
+sinc
+```
+
+## Uninstall
+
+```bash
+sinc --uninstall
+```
+
+This removes local config and terminates the sync session for the current project.

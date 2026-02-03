@@ -3,20 +3,21 @@ title: Quick start
 description: Get up and running in minutes.
 ---
 
-Get up and running with sincronizado in 5 minutes.
+Get up and running with `sinc` in a few minutes.
 
 ## Prereqs
 
-- Windows 10+ or macOS 12+
-- VPS: Ubuntu 20.04+ or Debian 11+
-- Tailscale account
+Local:
+
+- SSH client
 - Git
 
+VPS:
+
+- Linux (Ubuntu/Debian recommended)
+- SSH access (key-based recommended)
+
 ## Install
-
-### Option 1: One-liner install (recommended)
-
-Installs the `sinc` CLI.
 
 Linux / macOS:
 
@@ -30,71 +31,17 @@ Windows (PowerShell):
 irm https://sync.micr.dev/install.ps1 | iex
 ```
 
-Then run the setup wizard:
+## Setup
+
+Run the setup wizard once:
 
 ```bash
 sinc --setup
 ```
 
-This writes your config to `~/.config/sincronizado/config.json` and verifies SSH + Mutagen.
+It writes `~/.config/sincronizado/config.json`, verifies SSH, installs local dependencies (Bun + Mutagen) if missing, and can run VPS bootstrap.
 
-### Option 3: Manual setup
-
-### 1) deps
-
-Windows (PowerShell):
-
-```powershell
-winget install Mutagen.Mutagen
-```
-
-macOS:
-
-```bash
-brew install mutagen
-```
-
-### 2) clone
-
-```bash
-git clone https://github.com/Microck/sincronizado.git
-cd sincronizado
-```
-
-### 3) vps setup
-
-```bash
-# Standard mode with OpenCode (default)
-sudo ./scripts/setup-vps.sh
-
-# With Claude Code instead
-sudo ./scripts/setup-vps.sh --agent=claude
-
-# Or with specific components
-sudo ./scripts/setup-vps.sh --mode=custom --with-kimaki --with-lunaroute
-```
-
-### 4) config
-
-```json
-{
-  "sync": {
-    "mode": "both",
-    "ignore": ["node_modules", ".venv", ".git"],
-    "remoteBase": "~/workspace"
-  },
-  "vps": {
-    "hostname": "your-vps.tailnet.ts.net",
-    "user": "ubuntu",
-    "port": 22
-  },
-  "agent": "opencode"
-}
-```
-
-Save this as `~/.config/sincronizado/config.json`.
-
-### 5) start
+## Connect
 
 From your project directory:
 
@@ -102,44 +49,37 @@ From your project directory:
 sinc
 ```
 
-## Verify
-
-1. Check sync: edit a file locally, verify it appears on VPS in &lt;500ms
-2. Test resilience: switch networks, session stays alive
-3. Mobile access: open `http://your-vps:3000`
-4. Optional (Discord): if you installed Kimaki, verify bot is online
-
-## Installation modes
-
-| mode     | components                            | use case                |
-| -------- | ------------------------------------- | ----------------------- |
-| minimal  | ET, OpenCode/Claude, UFW              | headless servers, CI/CD |
-| standard | + Agent-OS, ccmanager, plugins        | recommended             |
-| full     | + Kimaki, LunaRoute, worktree-session | power users             |
-| custom   | pick components                       | specific needs          |
-
-### Optional components
-
-TUI installer: pick these in the UI.
-
-Manual VPS setup: `./scripts/setup-vps.sh` supports flags:
+## Manage sessions
 
 ```bash
---agent=claude             # use Claude Code instead of OpenCode
---with-kimaki              # discord bot for voice/text control
---with-lunaroute           # ai proxy with token tracking
---with-worktree-session    # git worktree per session
---with-session-handoff     # context continuation
---with-agent-of-empires    # alternative session manager
+sinc --list
+sinc --kill <id>
+```
 
---no-agent-os              # skip web ui
---no-ccmanager             # skip session manager
---no-plugins               # skip opencode plugins
+If you disconnect and want to resume:
+
+```bash
+sinc -r
+```
+
+## Verify
+
+- Sync sessions:
+
+```bash
+mutagen sync list
+```
+
+- VPS sessions:
+
+```bash
+ssh user@hostname "tmux ls || true"
 ```
 
 ## Next
 
+- [Installation](/installation)
+- [VPS setup](/vps-setup)
 - [Architecture](/architecture)
 - [Configuration](/configuration)
-- [Plugins](/plugins)
-- [Mobile access](/mobile-access)
+- [Troubleshooting](/troubleshooting)

@@ -1,0 +1,49 @@
+---
+title: Architecture
+description: How local editing and remote execution fit together.
+---
+
+Sincronizado keeps your editor local and moves the AI agent + heavy execution to a VPS.
+
+## High-level diagram
+
+```mermaid
+graph TB
+  subgraph Local["Local machine"]
+    Editor["Editor (VS Code / JetBrains)"]
+    Sinc["sinc CLI"]
+    Files["Project files"]
+  end
+
+  subgraph Sync["Sync"]
+    Mut["Mutagen (bi-directional sync)"]
+  end
+
+  subgraph VPS["VPS"]
+    RemoteDir["Workspace dir (remoteBase/project)"]
+    Tmux["tmux session"]
+    Agent["AI agent (opencode / claude)"]
+  end
+
+  Files --> Mut
+  Mut --> RemoteDir
+
+  Sinc -->|"SSH / ET / mosh"| Tmux
+  Tmux --> Agent
+```
+
+## What happens when you run `sinc`
+
+1. Computes a stable session name from your project path: `sinc-<project>-<hash>`.
+2. Starts/attaches a Mutagen sync session.
+3. Creates (or resumes) a `tmux` session on the VPS.
+4. Runs your chosen agent command (`opencode` or `claude`) inside that session.
+
+## Paths and naming
+
+- **Remote project path:** `${sync.remoteBase}/${projectName}`
+- **Session name:** `sinc-${projectName}-${sha256(path).slice(0,6)}`
+
+## Why tmux
+
+tmux gives you session persistence so disconnects don't kill your agent session.

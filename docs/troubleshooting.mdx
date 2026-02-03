@@ -11,24 +11,33 @@ mutagen sync list
 
 Check ignores: `~/.config/sincronizado/config.json` -> `sync.ignore`, plus any project `.syncignore`.
 
-## ET disconnects
+## Mutagen not found
+
+If `sinc` prints "Mutagen is required for file sync":
+
+- run `sinc --setup` to install it automatically
+- or install manually from https://mutagen.io/
+
+## Session already exists
+
+If you see "Session ... already exists":
 
 ```bash
-sudo systemctl restart et
+sinc -r
 ```
 
-## Agent-OS 502
+## Can't connect to VPS
 
-Agent not running or crashed.
+1. Verify SSH works:
 
 ```bash
-sudo systemctl status agent-os
-sudo journalctl -u agent-os -f
+ssh user@hostname "echo ok"
 ```
 
-## Port 3000 blocked
+2. If you configured an SSH key in the setup wizard, ensure the path exists and permissions are correct.
+
+## Disable update checks
 
 ```bash
-sudo ufw allow 3000/tcp
-sudo ufw status
+SINC_NO_UPDATE_CHECK=1 sinc
 ```

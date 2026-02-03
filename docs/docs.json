@@ -58,7 +58,7 @@
       {
         "group": "Getting started",
         "icon": "play",
-        "pages": ["index", "quick-start", "installation"]
+        "pages": ["index", "quick-start", "installation", "vps-setup", "architecture"]
       },
       {
         "group": "Reference",

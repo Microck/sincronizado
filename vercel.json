@@ -9,11 +9,6 @@
       "source": "/install.ps1",
       "destination": "https://raw.githubusercontent.com/Microck/install-scripts/main/install.ps1",
       "headers": [{ "key": "Content-Type", "value": "text/plain; charset=utf-8" }]
-    },
-    {
-      "source": "/launcher/(.*)",
-      "destination": "https://raw.githubusercontent.com/Microck/sincronizado/main/legacy/unused/launcher/:match",
-      "headers": [{ "key": "Content-Type", "value": "text/plain; charset=utf-8" }]
     }
   ],
   "headers": [
@@ -23,10 +18,6 @@
     },
     {
       "source": "/install.ps1",
-      "headers": [{ "key": "Content-Type", "value": "text/plain; charset=utf-8" }]
-    },
-    {
-      "source": "/launcher/(.*)",
       "headers": [{ "key": "Content-Type", "value": "text/plain; charset=utf-8" }]
     }
   ]
