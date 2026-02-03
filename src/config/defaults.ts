@@ -16,4 +16,12 @@ export const DEFAULT_CONFIG: Config = {
     connectTimeout: 10,
     keepaliveInterval: 60,
   },
+  connection: {
+    protocols: ["ssh", "et", "mosh"],
+    reconnect: {
+      maxAttempts: 5,
+      baseDelayMs: 1000,
+      maxDelayMs: 10000,
+    },
+  },
 };

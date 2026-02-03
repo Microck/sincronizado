@@ -13,3 +13,9 @@ export {
   type ConnectionState,
   type ConnectionStatus,
 } from "./state";
+export {
+  detectAvailableProtocols,
+  selectProtocol,
+  buildRemoteCommand,
+  type ConnectionProtocol,
+} from "./protocol";

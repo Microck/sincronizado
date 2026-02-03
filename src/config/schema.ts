@@ -22,6 +22,20 @@ export const configSchema = z.object({
       keepaliveInterval: z.number().int().positive().default(60),
     })
     .default({}),
+  connection: z
+    .object({
+      protocols: z
+        .array(z.enum(["ssh", "et", "mosh"]))
+        .default(["ssh", "et", "mosh"]),
+      reconnect: z
+        .object({
+          maxAttempts: z.number().int().positive().default(5),
+          baseDelayMs: z.number().int().positive().default(1000),
+          maxDelayMs: z.number().int().positive().default(10000),
+        })
+        .default({}),
+    })
+    .default({}),
 });
 
 export type Config = z.infer<typeof configSchema>;
