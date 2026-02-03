@@ -16,6 +16,8 @@
 
 ---
 
+**Sincronizado** ("Synchronized") is the missing link for AI-native development. It allows you to use your favorite local tools (VS Code, Cursor, JetBrains, Neovim) while running your heavy AI agents and code execution on a powerful VPS.
+
 ## the problem
 
 local machines have good editors but weak compute. running multiple ai agents locally kills battery and blocks your terminal.
@@ -26,15 +28,15 @@ vps instances have the compute but editing on them is painful. ssh latency lags.
 
 sincronizado bridges the gap.
 
-1. keep your files on your local machine.
-2. sync them instantly to a vps using mutagen.
+1. keep your editor (vscode, jetbrains, neovim) on your local machine.
+2. sync your files instantly to a vps using mutagen.
 3. run your ai agent (claude, opencode) on the vps in a persistent tmux session.
 
 you get local editor speed with server-grade compute.
 
 ## what it actually does
 
-sincronizado is a cli wrapper around `mutagen`, `ssh`, and `tmux`.
+`sinc` is the CLI for sincronizado. It orchestrates `mutagen`, `ssh`, and `tmux`.
 
 when you run `sinc` in a project folder:
 1. checks if a sync session exists. if not, creates one.
@@ -226,4 +228,4 @@ mutagen is fast but big `node_modules` folders slow it down. ignore them in `con
 
 ## license
 
-mit ᕙ(⇀‸↼‶)ᕗ
+MIT
