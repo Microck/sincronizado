@@ -1,0 +1,27 @@
+---
+title: "Configuration"
+description: "Config file path and schema overview."
+---
+
+# Configuration
+
+Config file path:
+
+```text
+~/.config/sincronizado/config.json
+```
+
+## Schema overview
+
+- `vps.hostname` - VPS hostname or IP
+- `vps.user` - SSH user (default: ubuntu)
+- `vps.port` - SSH port (default: 22)
+- `sync.mode` - none | pull | push | both
+- `sync.ignore` - array of ignore patterns
+- `sync.remoteBase` - remote workspace root (default: ~/workspace)
+- `agent` - opencode | claude
+- `ssh.connectTimeout` - connection timeout seconds
+- `ssh.keepaliveInterval` - keepalive interval seconds
+- `ssh.identityFile` - optional SSH key path
+- `connection.protocols` - ordered list (ssh, et, mosh)
+- `connection.reconnect` - reconnect settings

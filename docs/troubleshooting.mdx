@@ -1,0 +1,26 @@
+---
+title: "Troubleshooting"
+description: "Common issues and fixes."
+---
+
+# Troubleshooting
+
+## Connection timed out
+
+- Verify VPS hostname, port, and firewall rules.
+- Confirm SSH key permissions and that the key exists on the VPS.
+
+## Permission denied
+
+- Ensure the SSH key path is correct in the config.
+- Confirm the VPS user has access to the target directory.
+
+## Mutagen not found
+
+- Re-run `sinc --setup` to install dependencies.
+- Confirm `mutagen` is on PATH.
+
+## `sinc` not found
+
+- Ensure `~/.local/bin` is on PATH (macOS/Linux).
+- Restart your terminal after running the installer.
