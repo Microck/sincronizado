@@ -92,7 +92,6 @@ installs the binary to `~/.local/bin` (or similar) and sets up config.
 
 ```bash
 curl -fsSL https://sync.micr.dev/install.sh | bash
-sinc --setup
 ```
 
 ### automated (windows powershell)
@@ -101,7 +100,6 @@ requires powershell 5+ and administrative privileges for symlinks if you don't u
 
 ```powershell
 irm https://sync.micr.dev/install.ps1 | iex
-sinc --setup
 ```
 
 ### manual (from source)
