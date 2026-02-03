@@ -20,3 +20,16 @@ export async function runVpsSetup(config: Config): Promise<{ success: boolean; e
   }
   return { success: true };
 }
+
+export async function runVpsHardening(config: Config): Promise<{ success: boolean; error?: string }> {
+  const scriptPath = join(process.cwd(), "scripts", "harden-vps.sh");
+  const script = await fs.readFile(scriptPath, "utf8");
+  const encoded = Buffer.from(script, "utf8").toString("base64");
+  const command = `bash -c "echo ${encoded} | base64 -d | sudo bash -s -- --yes"`;
+
+  const result = await sshExec(config, command);
+  if (!result.success) {
+    return { success: false, error: result.stderr.trim() || result.stdout.trim() };
+  }
+  return { success: true };
+}

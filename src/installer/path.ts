@@ -138,3 +138,23 @@ export async function removePath(binDir: string): Promise<boolean> {
   }
   return removeUnixPath(binDir);
 }
+
+export async function createAlias(name: string, target: string): Promise<void> {
+  const binDir = getDefaultBinDir();
+  const aliasPath = join(binDir, name + (process.platform === "win32" ? ".cmd" : ""));
+  
+  if (process.platform === "win32") {
+    // Windows wrapper
+    const wrapper = `@echo off\r\n"${target}" %*`;
+    await fs.writeFile(aliasPath, wrapper);
+  } else {
+    // Symlink on Unix
+    await fs.symlink(target, aliasPath).catch(async (err) => {
+        // Fallback if symlink fails (e.g., cross-device)
+        if (err.code === 'EEXIST') {
+            await fs.unlink(aliasPath);
+            await fs.symlink(target, aliasPath);
+        }
+    });
+  }
+}

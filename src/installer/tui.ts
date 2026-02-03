@@ -15,8 +15,8 @@ import { configSchema, type Config } from "../config/schema";
 import { DEFAULT_CONFIG, saveConfig } from "../config";
 import { testConnection } from "../connection/ssh";
 import { ensureDependencies } from "./deps";
-import { ensurePath, getDefaultBinDir } from "./path";
-import { runVpsSetup } from "./vps-setup";
+import { ensurePath, getDefaultBinDir, createAlias } from "./path";
+import { runVpsSetup, runVpsHardening } from "./vps-setup";
 
 function resolveHomePath(value: string): string {
   if (value.startsWith("~/")) {
@@ -242,8 +242,34 @@ export async function runSetupTui(): Promise<Config | null> {
   await ensurePath(getDefaultBinDir());
   pathSpinner.stop("PATH updated");
 
+  // Custom Alias Setup
+  const createAliasChoice = await confirm({
+    message: `Create a custom alias? (e.g. type '${agent}' to run sinc)`,
+    initialValue: true,
+  });
+  if (isCancel(createAliasChoice)) {
+    cancel("Setup cancelled");
+    return null;
+  }
+  if (createAliasChoice) {
+    const aliasName = await text({
+      message: "Alias name",
+      initialValue: agent as string,
+      validate: (val) => (val && val.trim().length > 0 ? undefined : "Alias required"),
+    });
+    if (isCancel(aliasName)) {
+      cancel("Setup cancelled");
+      return null;
+    }
+    const aliasSpinner = spinner();
+    aliasSpinner.start(`Creating alias '${aliasName}'...`);
+    // 'sinc' is the target binary name in the bin dir
+    await createAlias(aliasName, join(getDefaultBinDir(), "sinc"));
+    aliasSpinner.stop(`Alias '${aliasName}' created`);
+  }
+
   const runSetup = await confirm({
-    message: "Run VPS setup script now?",
+    message: "Run VPS setup script now? (Installs tmux, creates workspace)",
     initialValue: true,
   });
   if (isCancel(runSetup)) {
@@ -262,6 +288,28 @@ export async function runSetupTui(): Promise<Config | null> {
     vpsSpinner.stop("VPS setup complete");
   }
 
-  outro("Setup complete. You can now run `sinc`. ");
+  // Hardening
+  const runHardening = await confirm({
+    message: "Run VPS security hardening? (Firewall, Fail2Ban, Updates)",
+    initialValue: false,
+  });
+  if (isCancel(runHardening)) {
+    cancel("Setup cancelled");
+    return null;
+  }
+  if (runHardening) {
+    const hardenSpinner = spinner();
+    hardenSpinner.start("Hardening VPS (this may take a minute)...");
+    const hardenResult = await runVpsHardening(config);
+    if (!hardenResult.success) {
+      hardenSpinner.stop("Hardening failed");
+      // Don't fail the whole setup for hardening
+      console.error(hardenResult.error);
+    } else {
+      hardenSpinner.stop("VPS hardened successfully");
+    }
+  }
+
+  outro("Setup complete. You can now run `sinc` (or your custom alias). ");
   return config;
 }
