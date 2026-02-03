@@ -1,119 +1,115 @@
 ---
 title: Configuration
-description: Configuration reference for the sinc CLI.
+description: Complete reference for configuring Sincronizado.
 ---
 
-This file controls how `sinc` connects to your VPS and how syncing behaves.
+Sincronizado uses a single JSON configuration file located at:
+`~/.config/sincronizado/config.json`
 
-## Location
+This file is created automatically when you run `sinc --setup`, but you can edit it manually to fine-tune your experience.
 
-The CLI reads a single global config file:
+## The Config Object
 
-- `~/.config/sincronizado/config.json`
-
-The setup wizard (`sinc --setup`) creates/updates it for you.
-
-## Schema
+Here is the full schema with default values:
 
 ```json
 {
   "vps": {
-    "hostname": "string",
-    "user": "ubuntu",
-    "port": 22
+    "hostname": "192.168.1.100",  // Required: IP or Domain
+    "user": "ubuntu",             // Default: ubuntu
+    "port": 22,                   // Default: 22
+    "keyPath": "~/.ssh/id_ed25519" // Optional: Force specific key
   },
   "sync": {
-    "mode": "both",
-    "ignore": ["node_modules", ".venv", ".git"],
-    "remoteBase": "~/workspace"
+    "mode": "both",               // options: both, push, pull, none
+    "remoteBase": "~/workspace",  // Where projects live on VPS
+    "ignore": [                   // Global ignore list
+      ".git",
+      "node_modules",
+      ".next",
+      "dist",
+      "coverage",
+      "*.log"
+    ]
   },
-  "agent": "opencode",
+  "agent": "opencode",            // options: opencode, claude
   "ssh": {
-    "connectTimeout": 10,
-    "keepaliveInterval": 60,
-    "identityFile": "~/.ssh/id_ed25519"
-  },
-  "connection": {
-    "protocols": ["ssh", "et", "mosh"],
-    "reconnect": {
-      "maxAttempts": 5,
-      "baseDelayMs": 1000,
-      "maxDelayMs": 10000
-    }
+    "connectTimeout": 10,         // Seconds to wait for connection
+    "keepaliveInterval": 60       // Seconds between keepalive packets
   }
 }
 ```
 
-## Options
+## Detailed Options
 
-### vps.hostname
+### `vps` Section
 
-- required
-- the host name or IP for SSH (tailscale hostname recommended)
+| Option | Type | Description |
+| :--- | :--- | :--- |
+| `hostname` | `string` | **Required**. The IP address or domain name of your VPS. |
+| `user` | `string` | The SSH username. Defaults to `ubuntu`. Common alternatives: `root`, `debian`, `ec2-user`. |
+| `port` | `number` | The SSH port. Defaults to `22`. |
+| `keyPath` | `string` | Path to a specific private key file. If omitted, `ssh` uses its default resolution (checking `~/.ssh/config`, `id_rsa`, etc.). |
 
-### vps.user
+### `sync` Section
 
-- default: `ubuntu`
+Controls how files are synchronized between your machine and the VPS.
 
-### vps.port
+#### `mode`
+-   `both` (Default): **Two-way Safe Sync**. Changes on either side are synced. Conflicts are detected. Recommended.
+-   `push`: **One-way**. Local changes overwrite remote. Remote changes are ignored/overwritten. Good if you treat the VPS strictly as a build runner.
+-   `pull`: **One-way**. Remote changes overwrite local.
+-   `none`: **Disabled**. No files are synced. Useful if you're just using `sinc` as a glorified `ssh+tmux` wrapper.
 
-- default: `22`
+#### `remoteBase`
+The parent directory on the VPS where your projects will be stored.
+-   Example: If `remoteBase` is `~/workspace` and you are in `~/projects/my-app` locally, `sinc` will sync to `~/workspace/my-app` remotely.
 
-### sync.mode
+#### `ignore`
+A global list of file patterns to ignore. **Crucial for performance.**
+-   **Why?** Syncing `node_modules` (often 100k+ files) is slow and unnecessary if you run `npm install` on the VPS.
+-   **Syntax**: Uses [Mutagen ignore syntax](https://mutagen.io/documentation/synchronization/ignores) (very similar to `.gitignore`).
 
-- one of: `none`, `pull`, `push`, `both`
-- default: `both`
+### `agent`
+The command to run inside the remote tmux session.
+-   `opencode`: Runs the OpenCode interpreter.
+-   `claude`: Runs Anthropic's Claude Code CLI.
+-   *Custom*: You can theoretically put any command here (e.g., `bash`), but `sinc` is optimized for AI agents.
 
-### sync.ignore
+## Per-Project Configuration
 
-- list of ignore patterns (applied in addition to any `.syncignore` in the project)
+### `.syncignore`
+You can create a `.syncignore` file in the root of your project to add project-specific ignores. These are **appended** to the global ignore list.
 
-### sync.remoteBase
-
-- base directory on the VPS to place projects
-- default: `~/workspace`
-
-### agent
-
-- one of: `opencode`, `claude`
-- default: `opencode`
-
-### ssh.identityFile
-
-- optional
-- path to a private key (if you want to force a specific key)
-
-### connection.protocols
-
-- ordered list of protocols to attempt
-- default: `ssh`, `et`, `mosh`
-
-## Example
-
-```json
-{
-  "vps": {
-    "hostname": "oracle.tail1234.ts.net",
-    "user": "ubuntu",
-    "port": 22
-  },
-  "sync": {
-    "mode": "both",
-    "ignore": ["node_modules", ".venv", ".git"],
-    "remoteBase": "~/workspace"
-  },
-  "agent": "opencode"
-}
+```gitignore
+# .syncignore example
+build/
+tmp/
+*.mp4
+test-data/
 ```
 
-## Troubleshooting
+### Advanced: Multiple VPS Hosts?
+Currently, `sinc` supports one global VPS configuration. If you need to switch between multiple VPSs, you can use environment variables or aliases to swap config files:
 
-### Config not loading
+```bash
+# Alias for prod VPS
+alias sinc-prod="cp ~/.config/sincronizado/prod.json ~/.config/sincronizado/config.json && sinc"
+```
+*(Native multi-host support is planned for v3).*
 
-1. Validate JSON: `node -e "JSON.parse(require('fs').readFileSync(process.env.HOME+'/.config/sincronizado/config.json','utf8'))"`
-2. Ensure the file is readable
+## Optimization Tips
 
-### VPS connection failing
+1.  **Ignore Heavy Folders**: Always ignore build artifacts (`dist`, `build`, `.next`) and dependency folders (`node_modules`, `venv`, `target`).
+2.  **Use Tailscale**: Instead of public IPs, use Tailscale IPs. They are stable and don't change if you restart your cloud instance (usually).
+3.  **SSH Config**: Instead of putting complex SSH settings in `sinc`'s config, configure them in `~/.ssh/config` and just use the `Host` alias in `sinc`.
 
-1. Verify SSH works: `ssh user@hostname "echo ok"`
-2. If you use Tailscale, confirm both sides are connected: `tailscale status`
+```ssh
+# ~/.ssh/config
+Host my-gpu-box
+    HostName 123.45.67.89
+    User ubuntu
+    IdentityFile ~/.ssh/gpu_key
+    ForwardAgent no
+```
+Then in `sinc` config, just set `"hostname": "my-gpu-box"`.

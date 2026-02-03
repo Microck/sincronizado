@@ -1,49 +1,112 @@
 ---
-title: VPS setup
-description: Prepare your VPS for sinc sessions.
+title: VPS Setup
+description: Preparing your remote environment for Sincronizado.
 ---
 
-`sinc` needs a VPS it can SSH into and a place to run sessions.
+Your VPS is the "engine" where the heavy lifting happens. Sincronizado is flexible, but it expects a standard Linux environment to function correctly.
 
-## Requirements
+## Minimum Requirements
 
-- Linux VPS (Ubuntu/Debian recommended)
-- SSH access (key-based recommended)
-- `tmux` installed
-- your AI agent installed on the VPS (`opencode` or `claude`)
+-   **OS**: Linux (Ubuntu 20.04+, Debian 11+, Fedora, CentOS). **Ubuntu 22.04 LTS** or **24.04 LTS** is highly recommended.
+-   **RAM**: At least 4GB is recommended for running AI agents comfortably. 8GB+ is better.
+-   **CPU**: 2+ vCPUs recommended.
+-   **Disk**: 20GB+ (AI models and node_modules can be heavy).
 
-## One-time setup
+## The Golden Path (Automated)
 
-If you're using the setup wizard, it can run VPS setup for you.
+The easiest way to set up a fresh VPS is using our bootstrap script. You can run this directly from the `sinc --setup` wizard, or manually.
 
-```bash
-sinc --setup
-```
+**What the script does:**
+1.  Updates `apt` packages.
+2.  Installs `tmux`, `git`, `curl`, `wget`, `unzip`.
+3.  Creates the `~/workspace` directory.
+4.  Installs `bun` (often needed for modern JS tooling).
+5.  Checks for `opencode` or `claude` and warns if missing.
 
-When prompted, choose **Run VPS setup script now**.
-
-## Manual setup
-
+**Run it manually:**
 SSH into your VPS and run:
-
 ```bash
-git clone https://github.com/Microck/sincronizado.git
-cd sincronizado
-sudo ./scripts/setup-vps.sh
+curl -fsSL https://raw.githubusercontent.com/Microck/sincronizado/main/scripts/setup-vps.sh | bash
 ```
 
-What it does:
+## Manual Setup Guide
 
-- installs `tmux` (via apt/yum/dnf if available)
-- creates the workspace directory used by `sinc`
-- prints warnings if `opencode`/`claude` aren't installed
+If you prefer to configure things yourself, here is the checklist.
 
-## Verify
+### 1. SSH Access
+You need passwordless SSH access.
+-   **Local**: Ensure you have a key pair (`ssh-keygen -t ed25519`).
+-   **Remote**: Add your public key (`id_ed25519.pub`) to `~/.ssh/authorized_keys` on the VPS.
+-   **Test**: `ssh user@vps-ip` should let you in without a password.
 
-On the VPS:
+*Tip: Use [Tailscale](https://tailscale.com/) for easy, secure, private networking. It avoids exposing port 22 to the public internet.*
 
+### 2. Install Tmux
+Required for session persistence.
 ```bash
-tmux -V
-which opencode || true
-which claude || true
+# Ubuntu/Debian
+sudo apt update && sudo apt install -y tmux
+
+# Fedora/CentOS
+sudo dnf install -y tmux
 ```
+
+### 3. Create Workspace
+Create the folder where `sinc` will sync your projects.
+```bash
+mkdir -p ~/workspace
+```
+*(You can change this path in your local `config.json` via `sync.remoteBase`)*
+
+### 4. Install Your Agent
+Sincronizado launches an agent command. You need to install the one you plan to use.
+
+#### Option A: OpenCode (Recommended)
+OpenCode is an open-source interpreter.
+```bash
+npm install -g opencode
+# OR
+bun add -g opencode
+```
+
+#### Option B: Claude Code
+Anthropic's CLI tool.
+```bash
+npm install -g @anthropic-ai/claude-code
+```
+*Note: The binary name is usually `claude`.*
+
+### 5. Install Runtime Dependencies
+Your agent will likely need to run code. Install common runtimes:
+-   **Node.js**: [Use nvm](https://github.com/nvm-sh/nvm) or `sudo apt install nodejs npm`.
+-   **Python**: `sudo apt install python3-full python3-pip`.
+-   **Rust**: `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`
+
+## Cloud Provider Guides
+
+### Hetzner
+Great performance/price ratio.
+1.  Create a "Cloud" server (CPX21 or CPX31 recommended).
+2.  Select "Ubuntu 24.04".
+3.  Add your SSH key during creation.
+4.  Use the public IPv4 address as your `hostname`.
+
+### DigitalOcean
+1.  Create a Droplet (Basic -> Premium Intel/AMD).
+2.  Select Ubuntu 24.04.
+3.  Add SSH keys.
+4.  Use the Droplet IP.
+
+### AWS Lightsail
+Simpler than EC2.
+1.  Create an instance (OS Only -> Ubuntu 22.04).
+2.  Download the default key pair (or upload yours).
+3.  **Important**: You must allow port 22 in the networking firewall (enabled by default).
+4.  User is usually `ubuntu`.
+
+## Advanced: Secure Hardening
+
+For production-grade security, we recommend:
+1.  **Disable Password Auth**: Edit `/etc/ssh/sshd_config` and set `PasswordAuthentication no`.
+2.  **Use a Firewall**: `sudo ufw allow ssh`, `sudo ufw enable`.
+3.  **Fail2Ban**: Install `fail2ban` to ban IPs that spam login attempts.

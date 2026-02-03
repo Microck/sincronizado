@@ -1,67 +1,47 @@
 ---
-title: sincronizado
-description: Hyper-local dev with remote AI execution.
+title: Introduction
+description: Local editor speed. Remote compute power.
 ---
 
-sincronizado is a hyper-local development stack that combines local file editing with remote AI execution.
+**Sincronizado** ("Synchronized") is the missing link for AI-native development. It allows you to use your favorite local tools (VS Code, Cursor, JetBrains, Neovim) while running your heavy AI agents and code execution on a powerful VPS.
 
-## What it is
+<img src="/images/docs-architecture.png" alt="Sincronizado Architecture" className="rounded-xl border border-gray-200 dark:border-gray-800" />
 
-Edit locally (VS Code / JetBrains). Run AI + heavy execution on a VPS. Keep latency low. Keep compute high.
+## The Problem
 
-## Key features
+AI development has a hardware problem:
 
-- Local-first development
-- Remote AI execution (OpenCode or Claude Code)
-- Zero-lag sync: file sync completes in &lt;500ms via Mutagen
-- Interactive setup wizard (`sinc --setup`)
-- `sinc` CLI for connect/list/kill/setup
-- Session persistence on VPS via tmux
-- Auto-reconnect and protocol fallback (ssh / et / mosh)
+1.  **Local is weak**: Running Claude Code, OpenCode, or other agents locally drains your battery, heats up your laptop, and consumes massive amounts of RAM.
+2.  **Remote is laggy**: Coding directly on a VPS over SSH introduces typing latency. Remote development extensions (like VS Code Remote) are heavy and can disconnect when your internet blips.
 
-## Install
+## The Solution
 
-### One-liner (recommended)
+Sincronizado gives you the best of both worlds:
 
-Linux / macOS:
+-   **Zero-Latency Editing**: You edit files on your local machine. No SSH lag.
+-   **Instant Sync**: [Mutagen](https://mutagen.io/) syncs your changes to the VPS in milliseconds.
+-   **Persistent Execution**: Your AI agent runs in a remote `tmux` session. If you close your laptop, the agent keeps working.
 
-```bash
-curl -fsSL https://sync.micr.dev/install.sh | bash
-```
+## How it Works
 
-Windows (PowerShell):
+When you run `sinc` in your project folder:
 
-```powershell
-irm https://sync.micr.dev/install.ps1 | iex
-```
+1.  **Syncs**: Creates a real-time, two-way sync session between your local folder and `~/workspace/<project>` on the VPS.
+2.  **Connects**: SSHs into the VPS transparently.
+3.  **Attaches**: Drops you into a persistent `tmux` session where your environment is ready.
 
-Then run:
+## Get Started
 
-```bash
-sinc --setup
-```
+-   [**Quick Start**](/quick-start): Set up in 5 minutes.
+-   [**Installation**](/installation): Detailed install guide for Mac, Linux, and Windows.
+-   [**Architecture**](/architecture): Understand the tech stack (Mutagen + SSH + Tmux).
+-   [**VPS Setup**](/vps-setup): How to provision a server for AI dev.
 
-From source:
+## Is this for me?
 
-```bash
-git clone https://github.com/Microck/sincronizado.git
-cd sincronizado
-bun install
-bun run dev -- --setup
-```
-
-## Quick links
-
-- [Quick start](/quick-start)
-- [Installation](/installation)
-- [VPS setup](/vps-setup)
-- [Architecture](/architecture)
-- [CLI reference](/cli)
-- [Configuration](/configuration)
-- [Troubleshooting](/troubleshooting)
-
-## Help
-
-- **LLM Installation Guide**: https://raw.githubusercontent.com/microck/sincronizado/main/INSTALL.md
-- GitHub issues: https://github.com/Microck/sincronizado/issues
-- OpenCode Discord: https://discord.gg/opencode
+| You will love Sincronizado if... | You might not need it if... |
+| :--- | :--- |
+| You use an AI agent (Claude, OpenCode) heavily. | You only write code manually. |
+| You have a powerful desktop/VPS but want to code from a laptop. | You already have a perfect cloud dev environment (Codespaces/Gitpod). |
+| You hate SSH latency when typing. | You are happy with VS Code Remote - SSH. |
+| You want your agent to keep running when you go offline. | You don't need persistent background processes. |

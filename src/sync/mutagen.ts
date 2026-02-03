@@ -13,40 +13,65 @@ async function mutagenExec(args: string[]): Promise<{
   stdout: string;
   stderr: string;
 }> {
-  const proc = Bun.spawn(["mutagen", ...args], {
-    stdout: "pipe",
-    stderr: "pipe",
-  });
+  try {
+    const proc = Bun.spawn(["mutagen", ...args], {
+      stdout: "pipe",
+      stderr: "pipe",
+    });
 
-  const [stdout, stderr] = await Promise.all([
-    new Response(proc.stdout).text(),
-    new Response(proc.stderr).text(),
-  ]);
+    const [stdout, stderr] = await Promise.all([
+      new Response(proc.stdout).text(),
+      new Response(proc.stderr).text(),
+    ]);
 
-  const exitCode = await proc.exited;
-  return { success: exitCode === 0, stdout, stderr };
+    const exitCode = await proc.exited;
+    return { success: exitCode === 0, stdout, stderr };
+  } catch (error) {
+    return {
+      success: false,
+      stdout: "",
+      stderr: (error as Error).message || "mutagen invocation failed",
+    };
+  }
 }
+
+type MutagenSyncMode = "two-way-safe" | "two-way-resolved" | "one-way-safe" | "one-way-replica";
+type SyncDirection = "local-to-remote" | "remote-to-local";
 
 export async function createSyncSession(
   config: Config,
   name: string,
   localPath: string,
   remotePath: string,
-  ignore: string[]
+  ignore: string[],
+  options?: {
+    mode?: MutagenSyncMode;
+    direction?: SyncDirection;
+  }
 ): Promise<{ success: boolean; error?: string }> {
   const sshHost = `${config.vps.user}@${config.vps.hostname}`;
 
   const ignoreFlags = ignore.flatMap((pattern) => ["--ignore", pattern]);
 
+  const mode: MutagenSyncMode = options?.mode ?? "two-way-safe";
+  const direction: SyncDirection = options?.direction ?? "local-to-remote";
+
+  const localEndpoint = localPath;
+  const remoteEndpoint = `${sshHost}:${remotePath}`;
+  const [alphaEndpoint, betaEndpoint] =
+    direction === "remote-to-local"
+      ? [remoteEndpoint, localEndpoint]
+      : [localEndpoint, remoteEndpoint];
+
   const result = await mutagenExec([
     "sync",
     "create",
     `--name=${name}`,
-    "--sync-mode=two-way-safe",
+    `--sync-mode=${mode}`,
     ...ignoreFlags,
     "--ignore-vcs",
-    localPath,
-    `${sshHost}:${remotePath}`,
+    alphaEndpoint,
+    betaEndpoint,
   ]);
 
   if (result.success) {

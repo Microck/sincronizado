@@ -4,7 +4,7 @@
   </a>
 </p>
 
-<p align="center">Edit locally. Run your AI agent on a VPS. Keep files synced.</p>
+<p align="center"><strong>edit local. run remote. keep files synced.</strong></p>
 
 <p align="center">
   <a href="LICENSE"><img alt="license" src="https://img.shields.io/badge/license-MIT-blue.svg" /></a>
@@ -14,178 +14,214 @@
 
 ---
 
-## why
+## the problem
 
-local machines have great editors but limited resources. running multiple ai instances locally is intensive and hard to manage while doing other work. cloud vps has compute but terrible latency for editing. _sincronizado_ bridges this: edit locally, execute remotely.
+local machines have good editors but weak compute. running multiple ai agents locally kills battery and blocks your terminal.
+
+vps instances have the compute but editing on them is painful. ssh latency lags. remote vscode connections drop. vim over ssh is fine until you need a real lsp.
+
+## the fix
+
+sincronizado bridges the gap.
+
+1. keep your editor (vscode, jetbrains, neovim) on your local machine.
+2. sync your files instantly to a vps using mutagen.
+3. run your ai agent (claude, opencode) on the vps in a persistent tmux session.
+
+you get local editor speed with server-grade compute.
+
+## what it actually does
+
+`sinc` is a cli wrapper around `mutagen`, `ssh`, and `tmux`.
+
+when you run `sinc` in a project folder:
+1. checks if a sync session exists. if not, creates one.
+2. syncs local files to `~/workspace/<folder_name>` on remote.
+3. opens an ssh connection.
+4. attaches to a tmux session named after your project.
+5. drops you into a shell where your agent is ready to run.
+
+if you disconnect, the session stays alive. run `sinc -r` to reattach. files keep syncing in the background.
 
 ## architecture
 
 ```mermaid
 graph TB
-    subgraph Local["Local Dev Machine"]
-        VS[VS Code / JetBrains]
-        CLI[sinc CLI<br/>sessions + sync]
+    subgraph local ["local machine"]
+        vs[editor]
+        cli[sinc cli]
     end
 
-    subgraph Sync["Sync"]
-        Mut[Mutagen<br/>bi-directional]
+    subgraph sync ["tunnel"]
+        mut[mutagen daemon]
     end
 
-    subgraph VPS["VPS"]
-        AI[AI Agent<br/>OpenCode or Claude]
-        TM[Tmux Sessions]
+    subgraph vps ["remote vps"]
+        agent[ai agent]
+        tmux[tmux session]
+        fs[file system]
     end
 
-    VS <-->|Mut| AI
-    CLI <-->|ET/SSH| TM
+    vs <-->|file changes| cli
+    cli <-->|mutagen protocol| mut
+    mut <-->|ssh tunnel| fs
+    cli <-->|ssh stream| tmux
+    tmux <--> agent
+    agent <--> fs
 ```
 
 ## installation
 
-### one-liner install (recommended)
+### automated (linux / macos)
 
-installs the `sinc` cli from github releases.
-
-**linux / macos:**
+installs the binary to `~/.local/bin` (or similar) and sets up config.
 
 ```bash
 curl -fsSL https://sync.micr.dev/install.sh | bash
-```
-
-**windows (powershell):**
-
-```powershell
-irm https://sync.micr.dev/install.ps1 | iex
-```
-
-then run:
-
-```bash
 sinc --setup
 ```
 
-**from source (developer):**
+### automated (windows powershell)
+
+requires powershell 5+ and administrative privileges for symlinks if you don't use developer mode.
+
+```powershell
+irm https://sync.micr.dev/install.ps1 | iex
+sinc --setup
+```
+
+### manual (from source)
+
+requires `bun` runtime.
 
 ```bash
 git clone https://github.com/Microck/sincronizado.git
 cd sincronizado
 bun install
-bun run dev -- --setup
+bun run build
+# binary is in ./dist/sinc
 ```
 
-### llm agent install
+## usage
 
-paste this into your ai agent session:
+### initial setup
 
-```
-install and configure sincronizado by following instructions here:
-https://raw.githubusercontent.com/microck/sincronizado/main/INSTALL.md
-```
-
-see [INSTALL.md](./INSTALL.md) for detailed setup options including:
-
-- vps bootstrap with `./scripts/setup-vps.sh`
-- troubleshooting
-
-## quick start
-
-### 1. install + setup (one-time)
+run this once. it creates `~/.config/sincronizado/config.json` and checks for ssh keys.
 
 ```bash
-curl -fsSL https://sync.micr.dev/install.sh | bash
 sinc --setup
 ```
 
-### 2. connect
+### start a session
 
-from your project directory:
+navigate to your project. run sync.
 
 ```bash
+cd ~/my-project
 sinc
 ```
 
-### 3. manage sessions
+this creates the remote folder `~/workspace/my-project` and starts syncing.
+
+### resume a session
+
+detached? network drop? reattach to the existing tmux session.
+
+```bash
+sinc -r
+```
+
+### kill a session
+
+stop the sync and kill the remote tmux session.
+
+```bash
+sinc --kill <session_name>
+```
+
+list active sessions:
 
 ```bash
 sinc --list
-sinc --kill <id>
-```
-
-## what you need
-
-local:
-
-- mutagen installed and running
-
-vps:
-
-- ssh access
-- `tmux`
-- your agent installed (`opencode` or `claude`) and available in `$PATH`
-
-to bootstrap a fresh vps, use:
-
-```bash
-sudo ./scripts/setup-vps.sh
-```
-
-## cli reference
-
-```bash
-sinc --help
-sinc --setup
-sinc --list
-sinc --kill <id>
-sinc --uninstall
 ```
 
 ## configuration
 
+config lives at `~/.config/sincronizado/config.json`.
+
+example:
+
 ```json
 {
   "vps": {
-    "hostname": "oracle.tail1234.ts.net",
+    "hostname": "192.168.1.50",
     "user": "ubuntu",
-    "port": 22
+    "port": 22,
+    "keyPath": "~/.ssh/id_ed25519"
   },
   "sync": {
-    "mode": "both",
-    "ignore": [".git", "node_modules", ".next"],
+    "mode": "two-way-safe",
+    "ignore": [
+      ".git",
+      "node_modules",
+      "dist",
+      ".next",
+      "coverage"
+    ],
     "remoteBase": "~/workspace"
   },
   "agent": "opencode"
 }
 ```
 
-save as `~/.config/sincronizado/config.json`.
+### remote base
 
-see `docs/configuration.mdx`.
+`remoteBase` defines where projects live on the vps. default is `~/workspace`.
+if you sync `~/code/my-app` locally, it lands at `~/workspace/my-app` remotely.
+
+### ignore files
+
+create a `.syncignore` file in your project root to override global ignores. syntax matches `.gitignore`.
+
+```text
+# .syncignore
+build/
+tmp/
+*.log
+```
+
+## dependencies
+
+local:
+- `mutagen`: handles file synchronization. `sinc --setup` attempts to install this.
+- `ssh`: standard openssh client.
+
+remote (vps):
+- `tmux`: required for session persistence.
+- `opencode` or `claude`: the agent you want to run.
+- `git`: recommended for version control operations.
+
+bootstrap a fresh vps with our script:
+
+```bash
+# runs on your local machine, targets the vps
+./scripts/setup-vps.sh
+```
 
 ## troubleshooting
 
-| issue         | fix                       |
-| ------------ | ------------------------- |
-| sync slow    | check `mutagen sync list` |
-| ssh fails    | `ssh user@host "echo ok"` |
-| setup issues | re-run `sinc --setup`     |
+**sync conflicts**
+run `mutagen sync list` to see status. if stuck, run `mutagen sync terminate <id>` and restart `sinc`.
 
-## project structure
+**ssh permission denied**
+check your key is loaded: `ssh-add -l`. verify you can ssh manually: `ssh user@host`.
 
-```
-sincronizado/
-├── src/               # `sinc` cli (bun/typescript)
-├── docs/              # mintlify docs content
-├── scripts/           # vps setup + automation
-├── tests/             # bun tests
-└── legacy/unused/     # old launcher/installer/packages (not used)
-```
+**agent not found**
+ensure your agent binary is in the remote `$PATH`. check `.bashrc` or `.zshrc` on the vps.
 
-## status
-
-v2 cli is merged on `main` and shipped via github releases.
-
-docs: https://sincronizado.micr.dev
+**latency**
+mutagen is fast but big `node_modules` folders slow it down. ignore them in `config.json` or `.syncignore`. run `npm install` on the vps side instead.
 
 ## license
 
-mit ᕙ(⇀‸↼‶)ᕗ
+MIT

@@ -5,6 +5,7 @@ import { loadConfig } from "../../config";
 import { generateSessionId, getProjectName, EXIT_CODES } from "../../utils";
 import {
   testConnection,
+  sshExec,
   hasSession,
   attachTmuxSession,
   selectProtocol,
@@ -24,6 +25,18 @@ interface ConnectOptions {
   resume?: boolean;
 }
 
+function quoteRemotePathForShell(path: string): string {
+  if (path === "~") {
+    return '"$HOME"';
+  }
+  if (path.startsWith("~/")) {
+    const rest = path.slice(2).replace(/"/g, "\\\"");
+    return `"$HOME/${rest}"`;
+  }
+  const escaped = path.replace(/"/g, "\\\"");
+  return `"${escaped}"`;
+}
+
 async function attachWithReconnect(
   config: Awaited<ReturnType<typeof loadConfig>>,
   sessionName: string,
@@ -32,7 +45,7 @@ async function attachWithReconnect(
 ): Promise<number> {
   const { maxAttempts, baseDelayMs, maxDelayMs } = config.connection.reconnect;
   let attempt = 0;
-  let lastExitCode = EXIT_CODES.GENERAL_ERROR;
+  let lastExitCode: number = EXIT_CODES.GENERAL_ERROR;
 
   while (attempt < maxAttempts) {
     const protocol = selectProtocol(config);
@@ -86,7 +99,10 @@ export async function connect(options: ConnectOptions = {}): Promise<number> {
   const spinner = createSpinner("Checking prerequisites...");
   spinner.start();
 
-  if (!(await isMutagenInstalled())) {
+  const syncMode = config.sync.mode;
+  const syncEnabled = syncMode !== "none";
+
+  if (syncEnabled && !(await isMutagenInstalled())) {
     spinner.fail("Mutagen not found");
     log(formatError("Mutagen is required for file sync", "Install from https://mutagen.io/"));
     return EXIT_CODES.UNAVAILABLE;
@@ -117,66 +133,96 @@ export async function connect(options: ConnectOptions = {}): Promise<number> {
   }
 
   const remotePath = `${config.sync.remoteBase}/${projectName}`;
-  const syncStatus = await getSyncStatus(sessionName);
+  // Ensure the remote work directory exists. This avoids tmux failing when
+  // creating a new session with -c.
+  const mkdir = await sshExec(config, `mkdir -p ${quoteRemotePathForShell(remotePath)}`);
+  if (!mkdir.success) {
+    log(formatError("Failed to prepare remote workspace", mkdir.stderr.trim() || mkdir.stdout.trim()));
+    return EXIT_CODES.CONNECT_ERROR;
+  }
 
-  if (isJson()) {
-    emitJson({
-      event: "sync-status",
-      session: sessionName,
-      exists: syncStatus.exists,
-      status: syncStatus.status,
-      watching: syncStatus.watching,
-    });
+  if (syncEnabled) {
+    const syncStatus = await getSyncStatus(sessionName);
+
+    if (isJson()) {
+      emitJson({
+        event: "sync-status",
+        session: sessionName,
+        exists: syncStatus.exists,
+        status: syncStatus.status,
+        watching: syncStatus.watching,
+      });
+    } else {
+      log(`Sync status: ${syncStatus.exists ? syncStatus.status : "not found"}`);
+    }
+
+    const syncSpinner = createSpinner("Starting file sync...");
+    syncSpinner.start();
+
+    if (!syncStatus.exists) {
+      const fileIgnore = await loadSyncIgnore(projectPath);
+      const ignorePatterns = mergeIgnorePatterns(config.sync.ignore, fileIgnore);
+
+      const mode = syncMode === "both" ? "two-way-safe" : "one-way-safe";
+      const direction = syncMode === "pull" ? "remote-to-local" : "local-to-remote";
+
+      const syncResult = await createSyncSession(
+        config,
+        sessionName,
+        projectPath,
+        remotePath,
+        ignorePatterns,
+        { mode, direction }
+      );
+      if (!syncResult.success) {
+        syncSpinner.fail("Sync setup failed");
+        log(formatError(syncResult.error || "Unknown sync error"));
+        return EXIT_CODES.GENERAL_ERROR;
+      }
+    }
+
+    let attempts = 0;
+    while (attempts < 30) {
+      const status = await getSyncStatus(sessionName);
+      if (status.watching) {
+        break;
+      }
+      await new Promise((resolveWait) => setTimeout(resolveWait, 1000));
+      attempts++;
+    }
+
+    syncSpinner.succeed("File sync active");
   } else {
-    log(`Sync status: ${syncStatus.exists ? syncStatus.status : "not found"}`);
-  }
-
-  const syncSpinner = createSpinner("Starting file sync...");
-  syncSpinner.start();
-
-  if (!syncStatus.exists) {
-    const fileIgnore = await loadSyncIgnore(projectPath);
-    const ignorePatterns = mergeIgnorePatterns(config.sync.ignore, fileIgnore);
-    const syncResult = await createSyncSession(
-      config,
-      sessionName,
-      projectPath,
-      remotePath,
-      ignorePatterns
-    );
-    if (!syncResult.success) {
-      syncSpinner.fail("Sync setup failed");
-      log(formatError(syncResult.error || "Unknown sync error"));
-      return EXIT_CODES.GENERAL_ERROR;
+    if (isJson()) {
+      emitJson({
+        event: "sync-status",
+        session: sessionName,
+        exists: false,
+        status: "disabled",
+        watching: false,
+      });
+    } else {
+      log("Sync status: disabled (sync.mode=none)");
     }
   }
-
-  let attempts = 0;
-  while (attempts < 30) {
-    const status = await getSyncStatus(sessionName);
-    if (status.watching) {
-      break;
-    }
-    await new Promise((resolveWait) => setTimeout(resolveWait, 1000));
-    attempts++;
-  }
-
-  syncSpinner.succeed("File sync active");
 
   const agentCommand = config.agent === "opencode" ? "opencode" : "claude";
 
-  const seenConflicts = new Set<string>();
-  const conflictMonitor = setInterval(async () => {
-    const conflicts = await getSyncConflicts(sessionName);
-    const newConflicts = conflicts.filter((conflict) => !seenConflicts.has(conflict.path));
-    if (newConflicts.length === 0) {
-      return;
-    }
-    for (const conflict of newConflicts) {
-      seenConflicts.add(conflict.path);
-    }
-    log(`Sync conflict detected:\n${formatConflicts(newConflicts)}`);
-  }, 5000);
+  let conflictMonitor: ReturnType<typeof setInterval> | null = null;
+  if (syncEnabled) {
+    const seenConflicts = new Set<string>();
+    conflictMonitor = setInterval(async () => {
+      const conflicts = await getSyncConflicts(sessionName);
+      const newConflicts = conflicts.filter((conflict) => !seenConflicts.has(conflict.path));
+      if (newConflicts.length === 0) {
+        return;
+      }
+      for (const conflict of newConflicts) {
+        seenConflicts.add(conflict.path);
+      }
+      log(`Sync conflict detected:\n${formatConflicts(newConflicts)}`);
+    }, 5000);
+  }
 
   logVerbose(`Attaching ${sessionName} in ${remotePath}`);
 
@@ -187,23 +233,27 @@ export async function connect(options: ConnectOptions = {}): Promise<number> {
     agentCommand
   );
 
-  clearInterval(conflictMonitor);
-
-  const sessionStillExists = await hasSession(config, sessionName);
-  if (!sessionStillExists) {
-    logVerbose("Session ended; cleaning up sync session");
+  if (conflictMonitor) {
+    clearInterval(conflictMonitor);
   }
 
-  const exitSpinner = createSpinner("Syncing final changes...");
-  exitSpinner.start();
+  if (syncEnabled) {
+    const sessionStillExists = await hasSession(config, sessionName);
+    if (!sessionStillExists) {
+      logVerbose("Session ended; cleaning up sync session");
+    }
 
-  await flushSync(sessionName);
+    const exitSpinner = createSpinner("Syncing final changes...");
+    exitSpinner.start();
 
-  if (!sessionStillExists) {
-    await terminateSync(sessionName);
+    await flushSync(sessionName);
+
+    if (!sessionStillExists) {
+      await terminateSync(sessionName);
+    }
+
+    exitSpinner.succeed("Sync complete");
   }
-
-  exitSpinner.succeed("Sync complete");
 
   return exitCode;
 }

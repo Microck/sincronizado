@@ -3,6 +3,14 @@ set -euo pipefail
 
 WORKSPACE="${SINC_WORKSPACE:-$HOME/workspace}"
 
+# Expand a leading ~ so callers can pass "~/workspace" safely.
+# Note: we intentionally only expand the current user's home (~ or ~/...).
+if [[ "$WORKSPACE" == "~" ]]; then
+  WORKSPACE="$HOME"
+elif [[ "$WORKSPACE" == "~/"* ]]; then
+  WORKSPACE="$HOME/${WORKSPACE:2}"
+fi
+
 echo "Setting up VPS dependencies..."
 
 if ! command -v tmux >/dev/null 2>&1; then

@@ -6,9 +6,13 @@ Thank you for your interest in contributing to Sincronizado! This document provi
 
 ### Prerequisites
 
-- Node.js 18+ (for documentation site)
 - Git 2.30+
+- Bun (for running the CLI from source)
 - PowerShell 7+ (Windows) or Bash (macOS/Linux)
+
+Optional:
+
+- Node.js 18+ (for running the Mintlify docs dev server)
 
 ### Local Setup
 
@@ -18,10 +22,27 @@ git clone https://github.com/Microck/sincronizado.git
 cd sincronizado
 
 # Install dependencies
-npm install
+bun install
 
-# Start documentation site locally
-cd docs && npm install && npm start
+# Run the CLI from source
+bun run dev -- --help
+```
+
+### Docs (Mintlify)
+
+Docs content lives in `docs/`.
+
+If you want to preview docs locally, install/run the Mintlify CLI:
+
+```bash
+npx mintlify dev
+```
+
+If that doesn't detect the project automatically, run it from the docs folder:
+
+```bash
+cd docs
+npx mintlify dev
 ```
 
 ## How to Contribute
@@ -105,6 +126,12 @@ docs: update quick-start guide
 - Ensure existing tests pass
 - Test on both Windows and macOS when applicable
 - Validate scripts with `shellcheck` or PSScriptAnalyzer
+
+Run tests:
+
+```bash
+bun test
+```
 
 ## Questions?
 

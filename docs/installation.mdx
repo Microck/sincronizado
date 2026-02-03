@@ -1,54 +1,105 @@
 ---
 title: Installation
-description: Install sincronizado and run the setup wizard.
+description: Comprehensive guide to installing Sincronizado.
 ---
 
-Install `sinc`, then run the setup wizard once.
+Sincronizado is a single binary executable, but it relies on a few external tools to work its magic.
 
-## One-liner install
+## Supported Platforms
 
-macOS / Linux:
+- **macOS** (Intel & Apple Silicon)
+- **Linux** (x64 & ARM64)
+- **Windows** (via PowerShell or WSL2)
+
+## Automated Installation
+
+The easiest way to install is via our shell script. This script detects your OS, downloads the correct binary from GitHub Releases, and puts it in your PATH.
+
+### macOS / Linux
 
 ```bash
 curl -fsSL https://sync.micr.dev/install.sh | bash
 ```
 
-Windows (PowerShell):
+**What this does:**
+1.  Downloads the latest `sinc` binary to `~/.local/bin/` (or `/usr/local/bin` if you use sudo).
+2.  Attempts to add that directory to your `$PATH` in `.bashrc` or `.zshrc`.
+3.  Checks for dependencies (`mutagen`).
+
+### Windows (PowerShell)
+
+Requires PowerShell 5.0+ and administrative privileges (to create symlinks, unless Developer Mode is enabled).
 
 ```powershell
 irm https://sync.micr.dev/install.ps1 | iex
 ```
 
-## Setup
+## Manual Installation
+
+If you prefer to install manually or the script fails:
+
+1.  **Download the Binary**: Go to the [GitHub Releases page](https://github.com/Microck/sincronizado/releases/latest) and download the archive for your OS/Arch.
+    -   `sinc-linux-x64.zip`
+    -   `sinc-macos-arm64.zip`
+    -   etc.
+2.  **Unzip**: Extract the executable (`sinc` or `sinc.exe`).
+3.  **Move to PATH**: Move the binary to a location in your system `$PATH`.
+    -   Linux/Mac: `/usr/local/bin/` or `~/.local/bin/`.
+    -   Windows: A folder like `C:\Program Files\sinc\` and add it to your User PATH environment variable.
+4.  **Verify**: Open a new terminal and run `sinc --version`.
+
+## Installing Dependencies
+
+Sincronizado requires **Mutagen** locally to handle file synchronization.
+
+### 1. Mutagen (Required)
+
+**The easy way:**
+Run `sinc --setup`. It will attempt to download and install Mutagen automatically if it's missing.
+
+**The manual way:**
+If automatic installation fails, install Mutagen via your package manager:
+
+-   **macOS**: `brew install mutagen-io/mutagen/mutagen`
+-   **Linux**: Download from [Mutagen Releases](https://github.com/mutagen-io/mutagen/releases), extract `mutagen`, and move it to `/usr/local/bin`.
+-   **Windows**: `winget install Mutagen.Mutagen` or `choco install mutagen`.
+
+### 2. SSH Client (Required)
+
+You almost certainly already have this.
+-   **Linux/Mac**: `openssh-client` (pre-installed).
+-   **Windows**: `OpenSSH Client` (enable via "Optional Features" if missing).
+
+## Post-Install Setup
+
+Once `sinc` is installed, you need to run the one-time configuration wizard:
 
 ```bash
 sinc --setup
 ```
 
-The wizard:
+This wizard will:
+1.  Create the config directory: `~/.config/sincronizado/`.
+2.  Ask for your VPS details (Host, User, Port).
+3.  Help you generate an SSH key if you don't have one.
+4.  Offer to "Bootstrap" your VPS (install tmux, setup directories).
 
-- collects VPS details (hostname/user/port)
-- configures SSH key usage (use existing or generate new)
-- installs local dependencies (Bun + Mutagen) if missing
-- writes `~/.config/sincronizado/config.json`
-- optionally runs the VPS setup script (`./scripts/setup-vps.sh`) over SSH
+## Troubleshooting Installation
 
-## Verify
+### "Command not found: sinc"
+This means the directory where `sinc` was installed is not in your shell's `$PATH`.
+-   **Fix**: Add `export PATH="$HOME/.local/bin:$PATH"` to your `~/.bashrc` or `~/.zshrc`, then restart your terminal.
 
-```bash
-sinc --version
+### "Mutagen not found"
+Run `mutagen version` to check. If it fails, install Mutagen manually using the steps above. Note that Mutagen v0.17+ is required.
+
+### Windows: "Script execution disabled"
+If PowerShell complains about execution policies, run:
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
-From a project directory:
-
-```bash
-sinc
-```
-
-## Uninstall
-
-```bash
-sinc --uninstall
-```
-
-This removes local config and terminates the sync session for the current project.
+### Windows: "Symlink permission denied"
+Mutagen requires symlink permissions on Windows.
+-   **Fix 1**: Enable "Developer Mode" in Windows Settings -> Update & Security -> For developers.
+-   **Fix 2**: Run your terminal as Administrator (not recommended for daily use).

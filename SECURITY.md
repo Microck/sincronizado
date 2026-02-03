@@ -2,18 +2,16 @@
 
 ## Supported Versions
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 1.0.x   | :white_check_mark: |
-| < 1.0   | :x:                |
+We currently support the latest released version on GitHub.
 
 ## Reporting a Vulnerability
 
 If you discover a security vulnerability, please report it responsibly:
 
 1. **DO NOT** open a public issue
-2. Email security concerns to: [microck@example.com] (replace with actual email)
-3. Include detailed reproduction steps
+2. Report it via GitHub Security Advisories:
+   https://github.com/Microck/sincronizado/security/advisories/new
+3. Include detailed reproduction steps and impact
 4. Allow time for assessment before public disclosure
 
 We will:

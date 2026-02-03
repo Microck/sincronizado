@@ -1,43 +1,130 @@
 ---
 title: Troubleshooting
-description: Fast fixes for common failures.
+description: Solutions for common errors and issues.
 ---
 
-## Sync slow
+If things aren't working as expected, this guide will help you diagnose and fix the problem.
+
+## Diagnostic Commands
+
+Before diving into specific issues, these commands are your best friends:
 
 ```bash
+# 1. Check current status of all sessions
+sinc --list
+
+# 2. Check the raw Mutagen sync status (detailed)
 mutagen sync list
+
+# 3. Test SSH connectivity manually
+ssh user@hostname "echo connection successful"
+
+# 4. Run sinc with verbose logging
+sinc --verbose
 ```
 
-Check ignores: `~/.config/sincronizado/config.json` -> `sync.ignore`, plus any project `.syncignore`.
+## Common Issues
 
-## Mutagen not found
+### 1. "Permission denied (publickey)"
 
-If `sinc` prints "Mutagen is required for file sync":
+**Symptoms:** `sinc` fails immediately when trying to connect.
+**Cause:** The VPS is rejecting your SSH key.
 
-- run `sinc --setup` to install it automatically
-- or install manually from https://mutagen.io/
+**Fix:**
+1.  Check which key is being used: `ssh -v user@hostname`
+2.  Ensure your public key is in `~/.ssh/authorized_keys` on the VPS.
+3.  If you use a specific key, make sure it's added to your SSH agent: `ssh-add ~/.ssh/my_key`.
 
-## Session already exists
+### 2. "Mutagen is not installed" or "Mutagen version mismatch"
 
-If you see "Session ... already exists":
+**Symptoms:** Error message about missing dependency.
+**Cause:** `sinc` relies on the `mutagen` binary being in your PATH.
 
+**Fix:**
+Run `sinc --setup` again to let it try installing. Or install manually:
 ```bash
-sinc -r
+# macOS
+brew install mutagen-io/mutagen/mutagen
+
+# Linux/Windows
+# Download from https://mutagen.io/
 ```
 
-## Can't connect to VPS
+### 3. Sync Conflicts ("Conflicts detected")
 
-1. Verify SSH works:
+**Symptoms:** `mutagen sync list` shows "Conflicts". Files aren't updating.
+**Cause:** A file was modified on both the local machine and the VPS at roughly the same time. Mutagen pauses to prevent data loss.
 
+**Fix:**
+1.  List the conflicts: `mutagen sync list`
+2.  Resolve them (Mutagen usually requires manual resolution). The easiest "nuclear" option if you trust your local version:
+    ```bash
+    # WARNING: Overwrites remote changes with local version
+    sinc --kill <session>
+    sinc    # Restarting usually resets the sync state
+    ```
+    *Better resolution support is coming in future versions.*
+
+### 4. "Session already exists"
+
+**Symptoms:** You run `sinc` and it complains.
+**Cause:** You detached from a session previously, and it's still running in the background.
+
+**Fix:**
+-   **Resume it:** `sinc -r`
+-   **Kill it:** `sinc --kill <session-name>` (get name from `sinc --list`)
+
+### 5. High Latency / Sluggish Sync
+
+**Symptoms:** Changes take 5+ seconds to appear. CPU usage is high.
+**Cause:** You are likely syncing `node_modules`, `.git`, or other massive directories.
+
+**Fix:**
+1.  Check your ignores.
+2.  Run `mutagen sync list` and look at "Scanned files". If it's > 50,000, you are syncing too much.
+3.  Add heavy folders to `.syncignore` or the global config.
+
+### 6. "Command not found: opencode" (on remote)
+
+**Symptoms:** You connect, but the tmux session just shows an error or a plain shell.
+**Cause:** The agent is not installed on the VPS, or not in the PATH.
+
+**Fix:**
+SSH into the VPS and install the agent globally:
 ```bash
-ssh user@hostname "echo ok"
+npm install -g opencode
 ```
+Ensure `npm bin -g` is in your PATH in `.bashrc`.
 
-2. If you configured an SSH key in the setup wizard, ensure the path exists and permissions are correct.
+### 7. File Permission Errors on Remote
 
-## Disable update checks
+**Symptoms:** "EACCES" or "Permission denied" when the agent tries to write files.
+**Cause:** The folder on the VPS is owned by `root` or another user.
 
+**Fix:**
 ```bash
-SINC_NO_UPDATE_CHECK=1 sinc
+# On VPS
+sudo chown -R $USER:$USER ~/workspace
 ```
+
+## Advanced Debugging
+
+### Inspecting the Mutagen Daemon
+Mutagen runs as a background daemon. If it's stuck:
+```bash
+mutagen daemon stop
+mutagen daemon start
+```
+
+### Inspecting the Sync Session
+For a specific session, you can see detailed transfer info:
+```bash
+mutagen sync list <session-name>
+```
+
+### Kill Everything
+If `sinc` state gets completely desynchronized from reality:
+
+1.  Kill local process: Ctrl+C
+2.  Terminate all mutagen sessions: `mutagen sync terminate --all`
+3.  Kill remote tmux (on VPS): `tmux kill-server` (Warning: kills ALL tmux sessions)

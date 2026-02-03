@@ -1,65 +1,99 @@
 ---
 title: CLI
-description: Commands and flags for sincronizado.
+description: Command-line interface reference.
 ---
 
-The `sinc` CLI is the main entrypoint.
+The `sinc` CLI is designed to be simple and mnemonic. Most of the time, you just run `sinc`.
 
 ## Usage
 
 ```bash
-sinc [--setup] [--list] [--kill <id>] [--uninstall] [--resume] [--quiet] [--verbose] [--json]
+sinc [flags]
 ```
 
-## Commands
+## Core Commands
 
-- `sinc` - Connect to the VPS from the current project directory
-- `sinc --setup` - interactive setup (writes config + checks dependencies)
-- `sinc --list` - list active sessions
-- `sinc --kill <id>` - kill a session
-- `sinc --uninstall` - remove local config and sync sessions
+### `sinc` (Connect)
+**The main command.**
+-   Checks if a session exists for the **current directory**.
+-   If yes, attaches to it (if `-r` is implied or auto-detected).
+-   If no, creates a new sync session and new tmux session.
+-   **Behavior**: Syncs local files -> Remote, then drops you into the remote shell.
+
+### `sinc -r` / `sinc --resume`
+**Explicit Resume.**
+-   Only tries to attach to an existing session.
+-   Fails if no session exists for the current directory.
+-   Use this when you know you have a session running and want to jump back in.
+
+### `sinc --setup`
+**Configuration Wizard.**
+-   Interactive prompt to set up `config.json`.
+-   Checks and installs dependencies (`mutagen`).
+-   Can trigger the VPS bootstrap script.
+
+### `sinc --list`
+**Status Check.**
+-   Lists all active Sincronizado sessions.
+-   Shows: Session Name, Local Path, Remote Path, Sync Status.
+
+### `sinc --kill <session_name>`
+**Cleanup.**
+-   Terminates the Mutagen sync session.
+-   Kills the remote `tmux` session.
+-   *Does NOT delete the files on the VPS.*
+
+### `sinc --uninstall`
+**Local Cleanup.**
+-   Removes `~/.config/sincronizado`.
+-   Stops the sync session for the current project.
+-   Useful if you want to reset everything on your machine.
 
 ## Flags
 
-- `-h, --help` - show help
-- `-V, --version` - show version
-- `-r, --resume` - resume an existing session
-- `-q, --quiet` - suppress non-essential output
-- `-v, --verbose` - show diagnostic output
-- `--json` - emit machine-readable output
-- `--completions <shell>` - print shell completions (`bash`, `zsh`, `fish`)
+| Flag | Short | Description |
+| :--- | :--- | :--- |
+| `--help` | `-h` | Show help text. |
+| `--version` | `-V` | Show version number. |
+| `--resume` | `-r` | Resume existing session. |
+| `--quiet` | `-q` | Suppress logs (useful for scripts). |
+| `--verbose` | `-v` | Show debug logs (SSH commands, Mutagen output). |
+| `--json` | | Output status as JSON (for tool integration). |
 
-## Output modes
+## JSON Output
 
-- `--quiet` suppresses non-essential output
-- `--verbose` includes diagnostic output
-- `--json` emits machine-readable events (useful for wrappers)
+For developers building tools on top of `sinc`, use `--json`.
 
-## Environment variables
-
-- `SINC_NO_UPDATE_CHECK=1` disables GitHub release checks
-
-## Exit codes
-
-- `0` success
-- `1` general error
-- `2` misuse (bad flags, trying to resume when no session exists, etc.)
-- `69` dependency unavailable
-- `76` connect error
-- `78` config error
-
-## Examples
-
-```bash
-# first-time setup
-sinc --setup
-
-# connect
-sinc
-
-# list sessions
-sinc --list
-
-# kill a session
-sinc --kill abc123
+**Connect Event:**
+```json
+{
+  "event": "sync-status",
+  "session": "sinc-myapp-7f8a9d",
+  "exists": true,
+  "status": "Watching for changes",
+  "watching": true
+}
 ```
+
+**List Output:**
+```json
+[
+  {
+    "name": "sinc-myapp-7f8a9d",
+    "sync": {
+      "exists": true,
+      "status": "Watching for changes",
+      "conflicts": []
+    }
+  }
+]
+```
+
+## Exit Codes
+
+-   `0`: Success
+-   `1`: Generic Error
+-   `2`: Usage Error (invalid flags)
+-   `69`: Dependency Missing (Mutagen not found)
+-   `76`: Connection Error (SSH failed)
+-   `78`: Config Error (Invalid JSON or missing fields)

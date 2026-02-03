@@ -3,83 +3,63 @@ title: Quick start
 description: Get up and running in minutes.
 ---
 
-Get up and running with `sinc` in a few minutes.
+Follow these steps to get a supercharged local-remote workflow.
 
-## Prereqs
+## 1. Install
 
-Local:
-
-- SSH client
-- Git
-
-VPS:
-
-- Linux (Ubuntu/Debian recommended)
-- SSH access (key-based recommended)
-
-## Install
-
-Linux / macOS:
-
+**Mac / Linux:**
 ```bash
 curl -fsSL https://sync.micr.dev/install.sh | bash
 ```
 
-Windows (PowerShell):
-
+**Windows (PowerShell):**
 ```powershell
 irm https://sync.micr.dev/install.ps1 | iex
 ```
 
-## Setup
+## 2. Setup
 
-Run the setup wizard once:
+Run the wizard. It will help you configure your VPS connection and SSH keys.
 
 ```bash
 sinc --setup
 ```
 
-It writes `~/.config/sincronizado/config.json`, verifies SSH, installs local dependencies (Bun + Mutagen) if missing, and can run VPS bootstrap.
+## 3. Connect
 
-## Connect
-
-From your project directory:
+Navigate to any project on your machine and run `sinc`.
 
 ```bash
+cd ~/my-projects/awesome-app
 sinc
 ```
 
-## Manage sessions
+**What just happened?**
+-   Created `~/workspace/awesome-app` on your VPS.
+-   Synced your files instantly.
+-   Connected via SSH.
+-   Started an AI agent in a persistent tmux session.
 
-```bash
-sinc --list
-sinc --kill <id>
-```
+## 4. Workflow
 
-If you disconnect and want to resume:
+-   **Edit code locally** in VS Code / Cursor / Neovim.
+-   **Run commands remotely** in the `sinc` terminal.
+-   **Detach** with `Ctrl+B, D`. The session stays alive.
+-   **Resume** later with `sinc -r`.
 
-```bash
-sinc -r
-```
+## Commands Cheat Sheet
 
-## Verify
+| Command | Action |
+| :--- | :--- |
+| `sinc` | Connect (or create) session for current folder |
+| `sinc -r` | Resume existing session |
+| `sinc --list` | Show all active sessions |
+| `sinc --kill <id>` | Stop sync and kill remote session |
+| `sinc --setup` | Re-run configuration wizard |
 
-- Sync sessions:
+## Next Steps
 
-```bash
-mutagen sync list
-```
-
-- VPS sessions:
-
-```bash
-ssh user@hostname "tmux ls || true"
-```
-
-## Next
-
-- [Installation](/installation)
-- [VPS setup](/vps-setup)
-- [Architecture](/architecture)
-- [Configuration](/configuration)
-- [Troubleshooting](/troubleshooting)
+-   [Installation Guide](/installation) - Detailed install & dependencies.
+-   [VPS Setup](/vps-setup) - How to prepare your server.
+-   [Configuration](/configuration) - Customize ignores, paths, and agents.
+-   [Architecture](/architecture) - How it works under the hood.

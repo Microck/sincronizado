@@ -9,7 +9,7 @@ Setup and automation scripts for Sincronizado.
 **setup-vps.sh** - One-command VPS setup for Ubuntu 20.04+ and Debian 11+
 
 ```bash
-sudo ./scripts/setup-vps.sh
+./scripts/setup-vps.sh
 ```
 
 Installs:
@@ -19,8 +19,18 @@ Installs:
 
 Notes:
 
+- run the script as your normal user; it uses `sudo` internally to install packages
 - it does not install your AI agent; install `opencode` or `claude` on the VPS separately
 - it prints warnings if `opencode`/`claude` are missing
+
+### Custom workspace path
+
+By default, the script creates `$HOME/workspace` on the VPS. You can override this by
+setting `SINC_WORKSPACE`:
+
+```bash
+SINC_WORKSPACE=~/workspace ./scripts/setup-vps.sh
+```
 
 ## Quick Start
 
@@ -28,7 +38,7 @@ Notes:
 2. SSH into the VPS
 3. Download and run setup:
    ```bash
-   curl -fsSL https://raw.githubusercontent.com/Microck/sincronizado/main/scripts/setup-vps.sh | sudo bash
+   curl -fsSL https://raw.githubusercontent.com/Microck/sincronizado/main/scripts/setup-vps.sh | bash
    ```
 
 See https://sincronizado.micr.dev/quick-start for full instructions.

@@ -12,7 +12,7 @@ import { homedir } from "os";
 import { dirname, join } from "path";
 import { promises as fs } from "fs";
 import { configSchema, type Config } from "../config/schema";
-import { saveConfig } from "../config";
+import { DEFAULT_CONFIG, saveConfig } from "../config";
 import { testConnection } from "../connection/ssh";
 import { ensureDependencies } from "./deps";
 import { ensurePath, getDefaultBinDir } from "./path";
@@ -192,6 +192,9 @@ export async function runSetupTui(): Promise<Config | null> {
   }
 
   const ignorePatterns = parseCommaList(ignoreInput);
+  const mergedIgnore = ignorePatterns
+    ? Array.from(new Set([...DEFAULT_CONFIG.sync.ignore, ...ignorePatterns]))
+    : undefined;
 
   const config = configSchema.parse({
     vps: {
@@ -202,7 +205,7 @@ export async function runSetupTui(): Promise<Config | null> {
     sync: {
       mode: syncMode,
       remoteBase,
-      ...(ignorePatterns ? { ignore: ignorePatterns } : {}),
+      ...(mergedIgnore ? { ignore: mergedIgnore } : {}),
     },
     agent,
     ssh: {
