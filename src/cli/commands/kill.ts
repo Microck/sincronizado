@@ -2,7 +2,8 @@ import { loadConfig } from "../../config";
 import { killSession } from "../../connection";
 import { terminateSync } from "../../sync";
 import { EXIT_CODES } from "../../utils";
-import { log, formatError, formatSuccess } from "../output";
+import { emitJson, formatError, formatSuccess, log } from "../output";
+import { isJson } from "../output-context";
 
 export async function kill(sessionName: string): Promise<number> {
   let config;
@@ -17,10 +18,23 @@ export async function kill(sessionName: string): Promise<number> {
   const syncTerminated = await terminateSync(sessionName);
 
   if (tmuxKilled || syncTerminated) {
-    log(formatSuccess(`Session ${sessionName} terminated`));
+    if (isJson()) {
+      emitJson({
+        session: sessionName,
+        terminated: true,
+        tmux: tmuxKilled,
+        sync: syncTerminated,
+      });
+    } else {
+      log(formatSuccess(`Session ${sessionName} terminated`));
+    }
     return EXIT_CODES.SUCCESS;
   }
 
-  log(formatError(`Session ${sessionName} not found`));
+  if (isJson()) {
+    emitJson({ session: sessionName, terminated: false, error: "not found" });
+  } else {
+    log(formatError(`Session ${sessionName} not found`));
+  }
   return EXIT_CODES.GENERAL_ERROR;
 }

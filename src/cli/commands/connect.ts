@@ -1,5 +1,5 @@
 import { resolve } from "path";
-import { createSpinner, emitJson, formatError, log } from "../output";
+import { createSpinner, emitJson, formatError, log, logVerbose } from "../output";
 import { isJson } from "../output-context";
 import { loadConfig } from "../../config";
 import { generateSessionId, getProjectName, EXIT_CODES } from "../../utils";
@@ -8,6 +8,7 @@ import {
   createSyncSession,
   getSyncStatus,
   flushSync,
+  terminateSync,
   isMutagenInstalled,
 } from "../../sync";
 import { loadSyncIgnore, mergeIgnorePatterns } from "../../sync/ignore";
@@ -54,7 +55,13 @@ export async function connect(options: ConnectOptions = {}): Promise<number> {
   const hasExisting = await hasSession(config, sessionName);
 
   if (hasExisting && !options.resume) {
-    log(`Session ${sessionName} already exists. Use -r to resume.`);
+    log(formatError(`Session ${sessionName} already exists`, "Use -r to resume"));
+    return EXIT_CODES.MISUSE;
+  }
+
+  if (!hasExisting && options.resume) {
+    log(formatError(`Session ${sessionName} does not exist`, "Run without -r to start"));
+    return EXIT_CODES.MISUSE;
   }
 
   const remotePath = `${config.sync.remoteBase}/${projectName}`;
@@ -106,6 +113,8 @@ export async function connect(options: ConnectOptions = {}): Promise<number> {
 
   const agentCommand = config.agent === "opencode" ? "opencode" : "claude";
 
+  logVerbose(`Attaching ${sessionName} in ${remotePath}`);
+
   const exitCode = await attachTmuxSession(
     config,
     sessionName,
@@ -113,10 +122,19 @@ export async function connect(options: ConnectOptions = {}): Promise<number> {
     agentCommand
   );
 
+  const sessionStillExists = await hasSession(config, sessionName);
+  if (!sessionStillExists) {
+    logVerbose("Session ended; cleaning up sync session");
+  }
+
   const exitSpinner = createSpinner("Syncing final changes...");
   exitSpinner.start();
 
   await flushSync(sessionName);
+
+  if (!sessionStillExists) {
+    await terminateSync(sessionName);
+  }
 
   exitSpinner.succeed("Sync complete");
 
