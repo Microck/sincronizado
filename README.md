@@ -6,9 +6,11 @@
 
 <p align="center"><strong>edit local. run remote. keep files synced.</strong></p>
 
+
 <p align="center">
   <a href="LICENSE"><img alt="license" src="https://img.shields.io/badge/license-MIT-blue.svg" /></a>
-  <a href="https://mutagen.io/"><img alt="mutagen" src="https://img.shields.io/badge/sync-mutagen-6E56CF.svg" /></a>
+  <a href="https://bun.sh/"><img alt="bun" src="https://img.shields.io/badge/bun-1.0+-yellow.svg" /></a>
+  <a href="https://nodejs.org/"><img alt="node" src="https://img.shields.io/badge/node-18+-green.svg" /></a>
   <a href="https://sincronizado.micr.dev"><img alt="docs" src="https://img.shields.io/badge/docs-mintlify-00C7B7.svg" /></a>
 </p>
 
@@ -24,15 +26,15 @@ vps instances have the compute but editing on them is painful. ssh latency lags.
 
 sincronizado bridges the gap.
 
-1. keep your editor (vscode, jetbrains, neovim) on your local machine.
-2. sync your files instantly to a vps using mutagen.
+1. keep your files on your local machine.
+2. sync them instantly to a vps using mutagen.
 3. run your ai agent (claude, opencode) on the vps in a persistent tmux session.
 
 you get local editor speed with server-grade compute.
 
 ## what it actually does
 
-`sinc` is a cli wrapper around `mutagen`, `ssh`, and `tmux`.
+sincronizado is a cli wrapper around `mutagen`, `ssh`, and `tmux`.
 
 when you run `sinc` in a project folder:
 1. checks if a sync session exists. if not, creates one.
@@ -224,4 +226,4 @@ mutagen is fast but big `node_modules` folders slow it down. ignore them in `con
 
 ## license
 
-MIT
+mit ᕙ(⇀‸↼‶)ᕗ
