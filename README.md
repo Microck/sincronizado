@@ -6,7 +6,6 @@
 
 <p align="center"><strong>edit local. run remote. keep files synced.</strong></p>
 
-
 <p align="center">
   <a href="LICENSE"><img alt="license" src="https://img.shields.io/badge/license-MIT-blue.svg" /></a>
   <a href="https://bun.sh/"><img alt="bun" src="https://img.shields.io/badge/bun-1.0+-yellow.svg" /></a>
@@ -16,7 +15,7 @@
 
 ---
 
-**sincronizado** ("synchronized") is the missing link for AI-native development. it allows you to use your own local files while running your heavy AI agents and code execution on a powerful VPS.
+**Sincronizado** ("Synchronized") is the missing link for AI-native development. It allows you to use your favorite local tools (VS Code, Cursor, JetBrains, Neovim) while running your heavy AI agents and code execution on a powerful VPS.
 
 ## the problem
 
@@ -28,11 +27,22 @@ vps instances have the compute but editing on them is painful. ssh latency lags.
 
 sincronizado bridges the gap.
 
-1. keep your files on your local machine.
-2. sync them instantly to a vps using mutagen.
-3. run your ai agent (claude code, opencode) on the vps in a persistent tmux session.
+1. keep your editor (vscode, jetbrains, neovim) on your local machine.
+2. sync your files instantly to a vps using mutagen.
+3. run your ai agent (claude, opencode) on the vps in a persistent tmux session.
 
 you get local editor speed with server-grade compute.
+
+## workflow scenarios
+
+### scenario a: the "macbook air + h100"
+you love macos but need serious gpu power. edit your training script locally in cursor or vs code. `sinc` pushes it to the vps instantly. you run `python train.py` in the remote session. your laptop stays cool and silent.
+
+### scenario b: the "digital nomad"
+bad hotel wifi? no problem. mutagen syncs when the connection allows. tmux keeps your heavy compilation or long-running agent alive even if you disconnect for hours. resume with `sinc -r` exactly where you left off.
+
+### scenario c: the "battery saver"
+running `ollama` or huge node builds locally kills battery in 2 hours. offload it all to a cheap hetzner box. keep your local machine purely for editing and browsing.
 
 ## what it actually does
 
@@ -110,11 +120,18 @@ bun run build
 
 ### initial setup
 
-run this once. it creates `~/.config/sincronizado/config.json` and checks for ssh keys.
+run this once. it creates `~/.config/sincronizado/config.json`, checks for ssh keys, and sets up your environment.
 
 ```bash
 sinc --setup
 ```
+
+**setup features:**
+- **vps connection**: configure host, user, and port.
+- **ssh keys**: use existing or generate new ed25519 keys.
+- **custom alias**: create a shortcut (e.g. type `opencode` to run `sinc`).
+- **vps bootstrap**: auto-install tmux and create workspace folders.
+- **security hardening**: optional firewall (ufw), fail2ban, and auto-updates setup.
 
 ### start a session
 
@@ -228,4 +245,4 @@ mutagen is fast but big `node_modules` folders slow it down. ignore them in `con
 
 ## license
 
-mit ᕙ(⇀‸↼‶)ᕗ
+MIT

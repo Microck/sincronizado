@@ -29,6 +29,29 @@ SSH into your VPS and run:
 curl -fsSL https://raw.githubusercontent.com/Microck/sincronizado/main/scripts/setup-vps.sh | bash
 ```
 
+## Security Hardening
+
+During `sinc --setup`, you can optionally enable "Security Hardening". This runs an additional script that prepares your VPS for the wild internet.
+
+**What Hardening Does:**
+1.  **Updates System**: Runs `apt update && apt upgrade`.
+2.  **Configures Firewall (UFW)**:
+    *   Denies incoming traffic by default.
+    *   Allows outgoing traffic.
+    *   Allows SSH (port 22) and alternative ports (2222, 3000).
+3.  **Installs Fail2Ban**: Bans IP addresses that repeatedly fail SSH login attempts (3 strikes = 1 hour ban).
+4.  **Hardens SSH**:
+    *   Disables root login.
+    *   Disables password authentication (keys only).
+    *   *Note: It only does this if you create a non-root user or confirm it.*
+5.  **Creates User**: Optionally creates a non-root user (e.g. `deployer`) with sudo access.
+
+**Run it manually:**
+```bash
+# WARNING: This changes SSH config. Make sure you have a key added first!
+curl -fsSL https://raw.githubusercontent.com/Microck/sincronizado/main/scripts/harden-vps.sh | sudo bash
+```
+
 ## Manual Setup Guide
 
 If you prefer to configure things yourself, here is the checklist.
@@ -103,10 +126,3 @@ Simpler than EC2.
 2.  Download the default key pair (or upload yours).
 3.  **Important**: You must allow port 22 in the networking firewall (enabled by default).
 4.  User is usually `ubuntu`.
-
-## Advanced: Secure Hardening
-
-For production-grade security, we recommend:
-1.  **Disable Password Auth**: Edit `/etc/ssh/sshd_config` and set `PasswordAuthentication no`.
-2.  **Use a Firewall**: `sudo ufw allow ssh`, `sudo ufw enable`.
-3.  **Fail2Ban**: Install `fail2ban` to ban IPs that spam login attempts.

@@ -48,6 +48,23 @@ If you prefer to install manually or the script fails:
     -   Windows: A folder like `C:\Program Files\sinc\` and add it to your User PATH environment variable.
 4.  **Verify**: Open a new terminal and run `sinc --version`.
 
+## Interactive Setup Options
+
+After installation, you run `sinc --setup`. Here is every option available in the wizard:
+
+1.  **AI Agent**: Choose `opencode` (recommended) or `claude`.
+2.  **Sync Mode**:
+    -   `both`: Two-way sync (default).
+    -   `pull`: VPS changes overwrite local.
+    -   `push`: Local changes overwrite VPS.
+    -   `none`: Disable file sync (ssh/tmux only).
+3.  **VPS Connection**: Hostname (IP/domain), User, and Port.
+4.  **SSH Key**: Use an existing key (`~/.ssh/id_ed25519`) or generate a new one.
+5.  **Workspace Path**: Where projects live on the VPS (default: `~/workspace`).
+6.  **Custom Alias**: Create a shortcut command (e.g. `opencode`) to run `sinc`.
+7.  **VPS Setup**: Automatically install `tmux` and create directories on the remote server.
+8.  **Security Hardening**: Optionally run a hardening script to set up a firewall (UFW), Fail2Ban, and automatic updates.
+
 ## Installing Dependencies
 
 Sincronizado requires **Mutagen** locally to handle file synchronization.
@@ -69,20 +86,6 @@ If automatic installation fails, install Mutagen via your package manager:
 You almost certainly already have this.
 -   **Linux/Mac**: `openssh-client` (pre-installed).
 -   **Windows**: `OpenSSH Client` (enable via "Optional Features" if missing).
-
-## Post-Install Setup
-
-Once `sinc` is installed, you need to run the one-time configuration wizard:
-
-```bash
-sinc --setup
-```
-
-This wizard will:
-1.  Create the config directory: `~/.config/sincronizado/`.
-2.  Ask for your VPS details (Host, User, Port).
-3.  Help you generate an SSH key if you don't have one.
-4.  Offer to "Bootstrap" your VPS (install tmux, setup directories).
 
 ## Troubleshooting Installation
 
