@@ -15,15 +15,14 @@ Edit locally (VS Code / JetBrains). Run AI + heavy execution on a VPS. Keep late
 - Remote AI execution (OpenCode or Claude Code)
 - Zero-lag sync: file sync completes in &lt;500ms via Mutagen
 - Mobile access via Agent-OS (web) or Kimaki (Discord)
-- Interactive installer (TUI)
+- Interactive setup wizard (`sinc --setup`)
 - `sinc` CLI for connect/list/kill/setup
 - Tiered installation: minimal / standard / full / custom
-- AI agent selection in TUI (OpenCode or Claude Code)
 - SSH MCP server for AI-powered VPS management
 
 ## Install
 
-### TUI (recommended)
+### One-liner (recommended)
 
 Linux / macOS:
 
@@ -47,25 +46,18 @@ From source:
 
 ```bash
 git clone https://github.com/Microck/sincronizado.git
-cd sincronizado/installer
+cd sincronizado
 bun install
-bun run src/index.ts
+bun run dev -- --setup
 ```
-
-**TUI features:**
-
-- Interactive mode and agent selection
-- **One-click shell alias** - type "opencode" from anywhere (or customize the command name)
-- **OpenSync integration** - track all sessions and costs
-- Automatic VPS configuration
 
 ## Quick links
 
 - [Quick start](/quick-start)
-- [Architecture](/architecture)
+- [Installation](/installation)
+- [CLI reference](/cli)
 - [Configuration](/configuration)
-- [Plugins](/plugins)
-- [Mobile access](/mobile-access)
+- [Troubleshooting](/troubleshooting)
 
 ## Help
 

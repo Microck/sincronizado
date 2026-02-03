@@ -1,85 +1,77 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "name": "sincronizado",
   "theme": "maple",
-  "description": "Hyper-local development stack with remote AI execution",
+  "name": "sincronizado",
+  "description": "hyper-local dev with remote ai execution",
   "colors": {
     "primary": "#D4C96E",
-    "light": "#F5F0C4",
+    "light": "#FFFFC5",
     "dark": "#8B7D2E"
   },
-  "logo": {
-    "dark": "/logo-dark.svg",
-    "light": "/logo-light.svg"
+  "fonts": {
+    "heading": {
+      "family": "Google Sans",
+      "weight": 700
+    },
+    "body": {
+      "family": "Google Sans",
+      "weight": 400
+    }
   },
-  "favicon": "/logo.png",
+  "background": {
+    "decoration": "grid",
+    "color": {
+      "light": "#FFFFF2",
+      "dark": "#141414"
+    }
+  },
+  "styling": {
+    "eyebrows": "breadcrumbs",
+    "codeblocks": {
+      "theme": {
+        "light": "github-light",
+        "dark": "github-dark"
+      }
+    }
+  },
   "navbar": {
     "links": [
       {
         "label": "GitHub",
-        "href": "https://github.com/microck/sincronizado"
+        "href": "https://github.com/Microck/sincronizado",
+        "icon": "github"
       }
     ],
     "primary": {
-      "type": "button",
-      "label": "Get Started",
-      "href": "https://github.com/microck/sincronizado#quick-start"
+      "type": "github",
+      "href": "https://github.com/Microck/sincronizado"
     }
-  },
-  "navigation": {
-    "tabs": [
-      {
-        "tab": "Documentation",
-        "groups": [
-          {
-            "group": "Getting Started",
-            "pages": ["index", "quick-start", "architecture"]
-          },
-          {
-            "group": "Configuration",
-            "pages": ["configuration", "plugins", "mobile-access"]
-          },
-          {
-            "group": "Reference",
-            "pages": ["workflow", "troubleshooting"]
-          }
-        ]
-      }
-    ]
   },
   "footer": {
     "socials": {
-      "github": "https://github.com/microck/sincronizado",
+      "github": "https://github.com/Microck/sincronizado",
       "discord": "https://discord.gg/opencode"
     }
   },
-  "scripts": [
-    {
-      "src": "https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js",
-      "defer": true
-    },
-    {
-      "src": "https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js",
-      "defer": true
-    },
-    {
-      "src": "/gsap-animations.js",
-      "defer": true
-    }
-  ]
-},
-  "rewrites": [
-    {
-      "source": "/install.ps1",
-      "destination": "https://raw.githubusercontent.com/Microck/sincronizado/main/scripts/install.ps1"
-    },
-    {
-      "source": "/install.sh",
-      "destination": "https://raw.githubusercontent.com/Microck/sincronizado/main/scripts/setup-vps.sh"
-    },
-    {
-      "source": "/launcher/(.*)",
-      "destination": "https://raw.githubusercontent.com/Microck/sincronizado/main/launcher/:match"
-    }
+  "navigation": {
+    "groups": [
+      {
+        "group": "Getting started",
+        "icon": "play",
+        "pages": ["index", "quick-start", "installation"]
+      },
+      {
+        "group": "Reference",
+        "icon": "wrench",
+        "pages": ["cli", "configuration", "troubleshooting"]
+      }
+    ]
+  },
+  "redirects": [
+    { "source": "/docs", "destination": "/" },
+    { "source": "/docs/", "destination": "/" },
+    { "source": "/docs/intro", "destination": "/" },
+    { "source": "/docs/:slug*", "destination": "/:slug*" },
+    { "source": "/index", "destination": "/" }
   ]
 }

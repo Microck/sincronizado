@@ -58,11 +58,9 @@ graph TB
 
 ## installation
 
-### tui installer (recommended)
+### one-liner install (recommended)
 
-interactive 8-screen installer. requires [bun](https://bun.sh):
-
-**one-liner (fastest - does everything):**
+installs the `sinc` cli from github releases.
 
 **linux / macos:**
 
@@ -76,25 +74,20 @@ curl -fsSL https://sync.micr.dev/install.sh | bash
 irm https://sync.micr.dev/install.ps1 | iex
 ```
 
-**manual:**
+then run:
+
+```bash
+sinc --setup
+```
+
+**from source (developer):**
 
 ```bash
 git clone https://github.com/Microck/sincronizado.git
-cd sincronizado/installer
+cd sincronizado
 bun install
-bun run src/index.ts
+bun run dev -- --setup
 ```
-
-**features:**
-
-- mode selection (minimal / standard / full / custom)
-- ai agent selection (opencode or claude)
-- **vps security hardening** - automated ssh key setup, firewall, fail2ban protection
-- **one-click shell alias setup** - type "opencode" from anywhere (or pick your own command name)
-- **opensync integration** - track sessions and token usage
-- component checkboxes (discord bot, ai proxy, worktree sessions)
-- vps provider templates
-- real-time installation progress
 
 ### llm agent install
 
@@ -158,30 +151,9 @@ sinc --kill <id>
 --no-plugins               # skip opencode plugins
 ```
 
-## tui installer
+## setup wizard
 
-requires [bun](https://bun.sh).
-
-```bash
-# clone and run
-git clone https://github.com/Microck/sincronizado.git
-cd sincronizado/installer
-bun install
-bun run src/index.ts
-```
-
-10-screen flow:
-
-1. welcome
-2. agent select (opencode/claude)
-3. mode select (minimal/standard/full/custom)
-4. addons (checkboxes)
-5. security hardening (optional)
-6. vps provider (oracle/hetzner/do/aws)
-7. config (hostname, user, root)
-8. confirm
-9. install (real-time ssh progress)
-10. complete
+run `sinc --setup` to write config, check ssh access, and validate local dependencies.
 
 ## core components
 
@@ -199,7 +171,7 @@ bun run src/index.ts
 
 ```bash
 # install
-sudo ./setup-vps.sh --with-kimaki
+sudo ./scripts/setup-vps.sh --with-kimaki
 
 # configure
 npx kimaki  # interactive discord bot setup
@@ -212,7 +184,7 @@ text your codebase from discord. voice messages transcribed via gemini. each pro
 
 ```bash
 # install
-sudo ./setup-vps.sh --with-lunaroute
+sudo ./scripts/setup-vps.sh --with-lunaroute
 
 # run
 eval $(lunaroute-server env)
@@ -224,7 +196,7 @@ proxy all ai calls. track token usage. debug conversations. web ui at port 8082.
 
 ```bash
 # install
-sudo ./setup-vps.sh --with-worktree-session
+sudo ./scripts/setup-vps.sh --with-worktree-session
 
 # usage
 opencode  # prompts for branch suffix, auto-creates worktree
@@ -284,16 +256,16 @@ journalctl -u agent-os -f
 
 ```
 sincronizado/
-├── launcher/          # windows (ps1) + mac/linux (sh)
-├── scripts/           # vps setup, rollback
-├── installer/         # opentui-based tui
-├── config/            # templates
-└── docs/              # docusaurus site
+├── src/               # `sinc` cli (bun/typescript)
+├── docs/              # mintlify docs content
+├── scripts/           # vps setup + automation
+├── tests/             # bun tests
+└── legacy/unused/     # old launcher/installer/packages (not used)
 ```
 
 ## status
 
-phases 1-15 complete. v1.1.0 ready.
+v2 cli is merged on `main` and shipped via github releases.
 
 see [.planning/ROADMAP.md](.planning/ROADMAP.md) for details.
 

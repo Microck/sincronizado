@@ -9,7 +9,7 @@ Setup and automation scripts for Sincronizado.
 **setup-vps.sh** - One-command VPS setup for Ubuntu 20.04+ and Debian 11+
 
 ```bash
-sudo ./setup-vps.sh
+sudo ./scripts/setup-vps.sh
 ```
 
 Installs:
@@ -23,13 +23,8 @@ Installs:
 **rollback-vps.sh** - Remove Sincronizado from VPS
 
 ```bash
-sudo ./rollback-vps.sh
+sudo ./scripts/rollback-vps.sh
 ```
-
-### Local Setup (Coming in Phase 3 & 4)
-
-- `setup.ps1` - Windows local setup
-- `setup.sh` - macOS local setup
 
 ## Quick Start
 
@@ -41,4 +36,4 @@ sudo ./rollback-vps.sh
    ```
 4. Access Agent-OS at `http://your-vps-ip:3000`
 
-See [Quick Start Guide](../docs/docs/quick-start.md) for full instructions.
+See https://sincronizado.micr.dev/quick-start for full instructions.

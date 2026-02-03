@@ -14,9 +14,9 @@ Get up and running with sincronizado in 5 minutes.
 
 ## Install
 
-### Option 1: TUI installer (recommended)
+### Option 1: One-liner install (recommended)
 
-The interactive installer guides you through component selection.
+Installs the `sinc` CLI.
 
 Linux / macOS:
 
@@ -37,24 +37,6 @@ sinc --setup
 ```
 
 This writes your config to `~/.config/sincronizado/config.json` and verifies SSH + Mutagen.
-
-Note: the TUI uses @clack/prompts and requires bun to run.
-
-TUI provides:
-
-- Mode selection (minimal / standard / full / custom)
-- Component checkboxes
-- VPS provider templates
-- Real-time installation progress
-
-### Option 2: Run TUI from source
-
-```bash
-git clone https://github.com/Microck/sincronizado.git
-cd sincronizado/installer
-bun install
-bun run src/index.ts
-```
 
 ### Option 3: Manual setup
 
