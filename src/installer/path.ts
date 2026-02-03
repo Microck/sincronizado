@@ -78,3 +78,63 @@ export async function ensurePath(binDir: string): Promise<boolean> {
   await fs.mkdir(binDir, { recursive: true });
   return ensureUnixPath(binDir);
 }
+
+async function removePathFromFile(path: string, needle: string): Promise<boolean> {
+  try {
+    const contents = await fs.readFile(path, "utf8");
+    const lines = contents.split(/\r?\n/);
+    const filtered = lines.filter((line) => !line.includes(needle));
+    if (filtered.length === lines.length) {
+      return false;
+    }
+    await fs.writeFile(path, filtered.join("\n"));
+    return true;
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") {
+      return false;
+    }
+    throw error;
+  }
+}
+
+async function removeUnixPath(binDir: string): Promise<boolean> {
+  const bashrc = join(homedir(), ".bashrc");
+  const zshrc = join(homedir(), ".zshrc");
+  const fishConfig = join(homedir(), ".config", "fish", "config.fish");
+
+  const removed = await Promise.all([
+    removePathFromFile(bashrc, binDir),
+    removePathFromFile(zshrc, binDir),
+    removePathFromFile(fishConfig, binDir),
+  ]);
+
+  return removed.some(Boolean);
+}
+
+async function removeWindowsPath(binDir: string): Promise<boolean> {
+  const command = `
+    $current = [Environment]::GetEnvironmentVariable('Path','User');
+    if ($null -eq $current) { $current = '' }
+    if ($current -like '*${binDir}*') {
+      $newPath = $current -replace [Regex]::Escape('${binDir}'), '';
+      $newPath = ($newPath -replace ';;', ';').Trim(';');
+      [Environment]::SetEnvironmentVariable('Path',$newPath,'User');
+      Write-Output 'removed';
+    }
+  `;
+
+  const proc = Bun.spawn(["powershell", "-NoProfile", "-Command", command], {
+    stdout: "pipe",
+    stderr: "pipe",
+  });
+  const output = await new Response(proc.stdout).text();
+  await proc.exited;
+  return output.includes("removed");
+}
+
+export async function removePath(binDir: string): Promise<boolean> {
+  if (process.platform === "win32") {
+    return removeWindowsPath(binDir);
+  }
+  return removeUnixPath(binDir);
+}

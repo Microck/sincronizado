@@ -7,6 +7,8 @@ const requiredFlags = [
   "--resume",
   "--list",
   "--kill",
+  "--setup",
+  "--uninstall",
   "--quiet",
   "--verbose",
   "--json",

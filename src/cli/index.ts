@@ -4,10 +4,13 @@ import { connect } from "./commands/connect";
 import { list } from "./commands/list";
 import { kill } from "./commands/kill";
 import { setup } from "./commands/setup";
+import { uninstall } from "./commands/uninstall";
 import { getCompletionScript } from "./completions";
 import { EXIT_CODES } from "../utils";
 import { log, formatError } from "./output";
 import { initOutput } from "./output-context";
+import { notifyIfUpdateAvailable } from "../updates/check";
+import { getCliVersion } from "../utils/version";
 
 const HELP_TEXT = `sinc - Connect to VPS AI agent with synced files
 
@@ -24,11 +27,10 @@ Options:
       --list      List active sessions
       --kill <id> Kill a session
       --setup     Run interactive setup
+      --uninstall Remove sincronizado configuration
 
 Run without options to connect to VPS in current project directory.
 `;
-
-const VERSION = "2.0.0";
 
 async function main(): Promise<number> {
   let args;
@@ -46,6 +48,7 @@ async function main(): Promise<number> {
         list: { type: "boolean" },
         kill: { type: "string" },
         setup: { type: "boolean" },
+        uninstall: { type: "boolean" },
       },
       strict: true,
       allowPositionals: false,
@@ -65,7 +68,8 @@ async function main(): Promise<number> {
   }
 
   if (values.version) {
-    console.log(`sinc version ${VERSION}`);
+    const version = await getCliVersion();
+    console.log(`sinc version ${version}`);
     return EXIT_CODES.SUCCESS;
   }
 
@@ -79,6 +83,10 @@ async function main(): Promise<number> {
     }
   }
 
+  if (process.env.SINC_NO_UPDATE_CHECK !== "1") {
+    await notifyIfUpdateAvailable();
+  }
+
   if (values.list) {
     return await list();
   }
@@ -89,6 +97,10 @@ async function main(): Promise<number> {
 
   if (values.setup) {
     return await setup();
+  }
+
+  if (values.uninstall) {
+    return await uninstall();
   }
 
   return await connect({ resume: values.resume });

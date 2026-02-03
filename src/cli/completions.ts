@@ -4,6 +4,8 @@ const flags = [
   "--resume",
   "--list",
   "--kill",
+  "--setup",
+  "--uninstall",
   "--quiet",
   "--verbose",
   "--json",
