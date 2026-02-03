@@ -3,6 +3,11 @@
   "theme": "maple",
   "name": "sincronizado",
   "description": "hyper-local dev with remote ai execution",
+  "logo": {
+    "light": "/docs/logo.svg",
+    "dark": "/docs/logo.svg",
+    "href": "/"
+  },
   "colors": {
     "primary": "#D4C96E",
     "light": "#FFFFC5",
