@@ -4,19 +4,12 @@
   </a>
 </p>
 
-<p align="center">hyper-local development stack that runs your AI coding assistant on a VPS for zero friction.</p>
+<p align="center">Edit locally. Run your AI agent on a VPS. Keep files synced.</p>
 
 <p align="center">
   <a href="LICENSE"><img alt="license" src="https://img.shields.io/badge/license-MIT-blue.svg" /></a>
-  <a href="https://bun.sh/"><img alt="bun" src="https://img.shields.io/badge/bun-1.0+-yellow.svg" /></a>
-  <a href="https://nodejs.org/"><img alt="node" src="https://img.shields.io/badge/node-18+-green.svg" /></a>
+  <a href="https://mutagen.io/"><img alt="mutagen" src="https://img.shields.io/badge/sync-mutagen-6E56CF.svg" /></a>
   <a href="https://sincronizado.micr.dev"><img alt="docs" src="https://img.shields.io/badge/docs-mintlify-00C7B7.svg" /></a>
-</p>
-
-<p align="center">
-  <a href="https://sincronizado.micr.dev/">
-    <img src="https://github.com/user-attachments/assets/964890fc-d9f8-4cc5-b16d-47b118ee2f53" alt="TUI demo" width="700">
-  </a>
 </p>
 
 ---
@@ -34,26 +27,17 @@ graph TB
         CLI[sinc CLI<br/>sessions + sync]
     end
 
-    subgraph Network["Secure Network"]
-        TS[Tailscale VPN]
-        Mut[Mutagen Sync<br/><500ms]
+    subgraph Sync["Sync"]
+        Mut[Mutagen<br/>bi-directional]
     end
 
-    subgraph VPS["Oracle VPS"]
+    subgraph VPS["VPS"]
         AI[AI Agent<br/>OpenCode or Claude]
         TM[Tmux Sessions]
-        AO[Agent-OS<br/>port 3000]
-    end
-
-    subgraph Mobile["Mobile Access"]
-        Phone[Phone Browser]
     end
 
     VS <-->|Mut| AI
     CLI <-->|ET/SSH| TM
-    TS -.->|encrypts| VS
-    TS -.->|encrypts| VPS
-    Phone -->|http| AO
 ```
 
 ## installation
@@ -100,9 +84,8 @@ https://raw.githubusercontent.com/Microck/sincronizado/main/INSTALL.md
 
 see [INSTALL.md](./INSTALL.md) for detailed setup options including:
 
-- ssh mcp server for ai-powered vps management
-- manual installation steps
-- troubleshooting guide
+- vps bootstrap with `./scripts/setup-vps.sh`
+- troubleshooting
 
 ## quick start
 
@@ -128,85 +111,33 @@ sinc --list
 sinc --kill <id>
 ```
 
-## tiered installation
+## what you need
 
-| mode         | components                            | use case                |
-| ------------ | ------------------------------------- | ----------------------- |
-| **minimal**  | et, opencode/claude, ufw              | headless servers, ci/cd |
-| **standard** | + agent-os, ccmanager, plugins        | **recommended**         |
-| **full**     | + kimaki, lunaroute, worktree-session | power users             |
-| **custom**   | pick components                       | specific needs          |
+local:
 
-### optional components
+- mutagen installed and running
 
-```bash
---with-kimaki              # discord bot for voice/text control
---with-lunaroute           # ai proxy with token tracking
---with-worktree-session    # git worktree per session
---with-session-handoff     # context continuation
---with-agent-of-empires    # alt to ccmanager (tmux+worktree)
+vps:
 
---no-agent-os              # skip web ui
---no-ccmanager             # skip session manager
---no-plugins               # skip opencode plugins
-```
+- ssh access
+- `tmux`
+- your agent installed (`opencode` or `claude`) and available in `$PATH`
 
-## setup wizard
-
-run `sinc --setup` to write config, check ssh access, and validate local dependencies.
-
-## core components
-
-| tool                 | purpose            | why it matters                        |
-| -------------------- | ------------------ | ------------------------------------- |
-| **tailscale**        | zero-config vpn    | no port forwarding, secure by default |
-| **eternal terminal** | resilient ssh      | survives wifi/5g handoffs             |
-| **mutagen**          | bidirectional sync | <500ms file sync                      |
-| **opencode/claude**  | ai agent           | the actual ai doing work              |
-| **agent-os**         | web ui             | mobile access, session browser        |
-
-## advanced features
-
-### kimaki (discord integration)
+to bootstrap a fresh vps, use:
 
 ```bash
-# install
-sudo ./scripts/setup-vps.sh --with-kimaki
-
-# configure
-npx kimaki  # interactive discord bot setup
-systemctl start kimaki
+sudo ./scripts/setup-vps.sh
 ```
 
-text your codebase from discord. voice messages transcribed via gemini. each project = channel, each session = thread.
-
-### lunaroute (ai debugging)
+## cli reference
 
 ```bash
-# install
-sudo ./scripts/setup-vps.sh --with-lunaroute
-
-# run
-eval $(lunaroute-server env)
+sinc --help
+sinc --setup
+sinc --list
+sinc --kill <id>
+sinc --uninstall
 ```
-
-proxy all ai calls. track token usage. debug conversations. web ui at port 8082.
-
-### worktree sessions
-
-```bash
-# install
-sudo ./scripts/setup-vps.sh --with-worktree-session
-
-# usage
-opencode  # prompts for branch suffix, auto-creates worktree
-```
-
-each task gets isolated git worktree. auto-commits on exit. no main branch pollution.
-
-### session handoff
-
-say "handoff" in opencode → new session starts with compact continuation prompt. critical for long sessions on mobile.
 
 ## configuration
 
@@ -230,27 +161,13 @@ save as `~/.config/sincronizado/config.json`.
 
 see `docs/configuration.mdx`.
 
-## mobile access
-
-agent-os runs on vps port 3000. access via tailscale or expose through nginx.
-
-```bash
-# status
-systemctl status agent-os
-
-# logs
-journalctl -u agent-os -f
-```
-
 ## troubleshooting
 
-| issue             | fix                              |
-| ----------------- | -------------------------------- |
-| sync slow         | check `mutagen sync list`        |
-| et disconnects    | restart: `systemctl restart et`  |
-| agent-os 502      | opencode not running, check logs |
-| kimaki offline    | `systemctl restart kimaki`       |
-| port 3000 blocked | `ufw allow 3000/tcp`             |
+| issue         | fix                       |
+| ------------ | ------------------------- |
+| sync slow    | check `mutagen sync list` |
+| ssh fails    | `ssh user@host "echo ok"` |
+| setup issues | re-run `sinc --setup`     |
 
 ## project structure
 
@@ -267,7 +184,7 @@ sincronizado/
 
 v2 cli is merged on `main` and shipped via github releases.
 
-see [.planning/ROADMAP.md](.planning/ROADMAP.md) for details.
+docs: https://sincronizado.micr.dev
 
 ## license
 
