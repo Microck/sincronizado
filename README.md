@@ -120,10 +120,6 @@ bun run build
 
 run this once. it creates `~/.config/sincronizado/config.json`, checks for ssh keys, and sets up your environment.
 
-```bash
-sinc --setup
-```
-
 **setup features:**
 - **vps connection**: configure host, user, and port.
 - **ssh keys**: use existing or generate new ed25519 keys.
