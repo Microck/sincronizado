@@ -3,7 +3,12 @@ import { createSpinner, emitJson, formatError, log, logVerbose } from "../output
 import { isJson } from "../output-context";
 import { loadConfig } from "../../config";
 import { generateSessionId, getProjectName, EXIT_CODES } from "../../utils";
-import { testConnection, hasSession, attachTmuxSession } from "../../connection";
+import {
+  testConnection,
+  hasSession,
+  attachTmuxSession,
+  selectProtocol,
+} from "../../connection";
 import {
   createSyncSession,
   getSyncStatus,
@@ -15,6 +20,51 @@ import { loadSyncIgnore, mergeIgnorePatterns } from "../../sync/ignore";
 
 interface ConnectOptions {
   resume?: boolean;
+}
+
+async function attachWithReconnect(
+  config: Awaited<ReturnType<typeof loadConfig>>,
+  sessionName: string,
+  remotePath: string,
+  agentCommand: string
+): Promise<number> {
+  const { maxAttempts, baseDelayMs, maxDelayMs } = config.connection.reconnect;
+  let attempt = 0;
+  let lastExitCode = EXIT_CODES.GENERAL_ERROR;
+
+  while (attempt < maxAttempts) {
+    const protocol = selectProtocol(config);
+    log(`Using protocol: ${protocol}`);
+
+    lastExitCode = await attachTmuxSession(
+      config,
+      protocol,
+      sessionName,
+      remotePath,
+      agentCommand
+    );
+
+    if (lastExitCode === 0) {
+      return lastExitCode;
+    }
+
+    attempt += 1;
+    if (attempt >= maxAttempts) {
+      break;
+    }
+
+    const delay = Math.min(baseDelayMs * 2 ** (attempt - 1), maxDelayMs);
+    log(`Connection lost. Reconnecting in ${Math.ceil(delay / 1000)}s...`);
+    await new Promise((resolveWait) => setTimeout(resolveWait, delay));
+  }
+
+  log(
+    formatError(
+      "Connection lost",
+      `Failed to reconnect after ${maxAttempts} attempts`
+    )
+  );
+  return lastExitCode;
 }
 
 export async function connect(options: ConnectOptions = {}): Promise<number> {
@@ -115,7 +165,7 @@ export async function connect(options: ConnectOptions = {}): Promise<number> {
 
   logVerbose(`Attaching ${sessionName} in ${remotePath}`);
 
-  const exitCode = await attachTmuxSession(
+  const exitCode = await attachWithReconnect(
     config,
     sessionName,
     remotePath,

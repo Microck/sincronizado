@@ -1,4 +1,5 @@
 import type { Config } from "../config/schema";
+import { buildRemoteCommand, type ConnectionProtocol } from "./protocol";
 import { sshExec } from "./ssh";
 
 export async function hasSession(
@@ -31,33 +32,34 @@ export async function killSession(
 
 export function buildTmuxAttachCommand(
   config: Config,
+  protocol: ConnectionProtocol,
   sessionName: string,
   workDir: string,
   initialCommand: string
 ): string[] {
   const tmuxCmd = `tmux new-session -A -s ${sessionName} -c ${workDir} '${initialCommand}'`;
 
-  return [
-    "ssh",
-    "-o",
-    `ServerAliveInterval=${config.ssh.keepaliveInterval}`,
-    "-o",
-    "ServerAliveCountMax=3",
-    "-t",
-    "-p",
-    String(config.vps.port),
-    `${config.vps.user}@${config.vps.hostname}`,
-    tmuxCmd,
-  ];
+  const args = buildRemoteCommand(config, protocol, tmuxCmd);
+  if (protocol === "ssh" && !args.includes("-t")) {
+    args.splice(1, 0, "-t");
+  }
+  return args;
 }
 
 export async function attachTmuxSession(
   config: Config,
+  protocol: ConnectionProtocol,
   sessionName: string,
   workDir: string,
   initialCommand: string
 ): Promise<number> {
-  const args = buildTmuxAttachCommand(config, sessionName, workDir, initialCommand);
+  const args = buildTmuxAttachCommand(
+    config,
+    protocol,
+    sessionName,
+    workDir,
+    initialCommand
+  );
 
   const proc = Bun.spawn(args, {
     stdin: "inherit",
