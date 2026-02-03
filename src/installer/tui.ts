@@ -14,6 +14,9 @@ import { promises as fs } from "fs";
 import { configSchema, type Config } from "../config/schema";
 import { saveConfig } from "../config";
 import { testConnection } from "../connection/ssh";
+import { ensureDependencies } from "./deps";
+import { ensurePath, getDefaultBinDir } from "./path";
+import { runVpsSetup } from "./vps-setup";
 
 function resolveHomePath(value: string): string {
   if (value.startsWith("~/")) {
@@ -220,6 +223,42 @@ export async function runSetupTui(): Promise<Config | null> {
   connectionCheck.stop("Connection verified");
 
   await saveConfig(config);
+
+  const depsSpinner = spinner();
+  depsSpinner.start("Ensuring dependencies...");
+  const deps = await ensureDependencies();
+  if (!deps.bunInstalled || !deps.mutagenInstalled) {
+    depsSpinner.stop("Dependency installation failed");
+    cancel("Unable to install required dependencies");
+    return null;
+  }
+  depsSpinner.stop("Dependencies ready");
+
+  const pathSpinner = spinner();
+  pathSpinner.start("Updating PATH...");
+  await ensurePath(getDefaultBinDir());
+  pathSpinner.stop("PATH updated");
+
+  const runSetup = await confirm({
+    message: "Run VPS setup script now?",
+    initialValue: true,
+  });
+  if (isCancel(runSetup)) {
+    cancel("Setup cancelled");
+    return null;
+  }
+  if (runSetup) {
+    const vpsSpinner = spinner();
+    vpsSpinner.start("Running VPS setup...");
+    const vpsResult = await runVpsSetup(config);
+    if (!vpsResult.success) {
+      vpsSpinner.stop("VPS setup failed");
+      cancel(vpsResult.error || "Unable to run VPS setup");
+      return null;
+    }
+    vpsSpinner.stop("VPS setup complete");
+  }
+
   outro("Setup complete. You can now run `sinc`. ");
   return config;
 }
