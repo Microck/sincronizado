@@ -5,7 +5,7 @@ This is the complete installation and setup guide for **Sincronizado (v2)**.
 ## Quick Links
 
 - **[For Humans](#for-humans)**: Simple copy-paste commands.
-- **[For LLM Agents](#for-llm-agents-guided-setup)**: A rigorous, step-by-step protocol for AI agents setting up Sincronizado for a user.
+- **[For LLM Agents (Guided Setup)](#for-llm-agents-guided-setup)**: A rigorous, step-by-step protocol for AI agents setting up Sincronizado for a user.
 
 ---
 
@@ -81,22 +81,24 @@ sinc
 ```text
 Step 0: Discovery & Prerequisites (Local OS, VPS details, SSH access)
 Step 1: Install Sincronizado (Local binary)
-Step 2: Run Setup Wizard (Config + Mutagen + VPS Bootstrap)
-Step 3: Verify Connection (SSH + Tmux + Agent)
-Step 4: First Run (Sync a project)
+Step 2: Install Mutagen (Local Dependency)
+Step 3: Configure Sincronizado (Manual Config Creation)
+Step 4: Bootstrap VPS (Remote Dependencies)
+Step 5: Verification (Full System Check)
 ```
 
 ---
 
 ### Step 0: Discovery & Prerequisites
 
-**Goal:** Ensure the environment is compatible before installing anything.
+**Goal:** Ensure the environment is compatible and gather necessary details.
 
 **1. Ask for inputs:**
 > "To set up Sincronizado, I need a few details:
 > 1.  **VPS Hostname** (IP address or domain/Tailscale name)
 > 2.  **SSH Username** (e.g., `ubuntu`, `root`)
-> 3.  **Which Agent** do you use? (`opencode` or `claude`)
+> 3.  **SSH Port** (usually 22)
+> 4.  **Which Agent** do you use? (`opencode` or `claude`)
 >
 > Do you have these ready?"
 
@@ -109,9 +111,6 @@ uname -a || ver
 
 # Check SSH Client
 ssh -V
-
-# Check if Mutagen is already installed (optional, sinc handles this)
-mutagen version || echo "Mutagen not found (will be installed)"
 ```
 
 **3. Verify VPS Connectivity:**
@@ -119,7 +118,7 @@ mutagen version || echo "Mutagen not found (will be installed)"
 
 ```bash
 # Replace with user provided details
-ssh -o BatchMode=yes -o ConnectTimeout=5 <USER>@<HOST> "echo SSH_CONNECTION_OK"
+ssh -o BatchMode=yes -o ConnectTimeout=5 <USER>@<HOST> -p <PORT> "echo SSH_CONNECTION_OK"
 ```
 
 **Error Handling (Step 0):**
@@ -161,66 +160,119 @@ sinc --version
 
 ---
 
-### Step 2: Run Setup Wizard
+### Step 2: Install Mutagen (Manual)
 
-**Goal:** Configure `config.json`, install Mutagen, and prep the VPS.
+**Goal:** Install the sync engine. (We do this manually so the LLM has control, rather than relying on the TUI wizard).
 
 **Action:**
-> "I will now run `sinc --setup`. This interactive wizard configures your VPS connection and can automatically bootstrap the server (install tmux, create workspace). Proceed? (y/n)"
+> "Checking for Mutagen (required for file sync)..."
 
 **Execute:**
 ```bash
-sinc --setup
-```
-
-*Note: As an LLM, you cannot interact with the TUI easily. Instruct the user to complete the wizard.*
-
-**Instructions for User:**
-1.  Enter VPS Hostname: `<HOST>`
-2.  Enter VPS User: `<USER>`
-3.  Agent: Select `<AGENT>`
-4.  **"Run VPS setup script now?"**: Say **YES**. This is critical for installing `tmux` and setting up permissions.
-
-**Alternative: Manual VPS Bootstrap**
-If `sinc --setup` fails to bootstrap the VPS (e.g., because of sudo password requirements), run this manually:
-
-```bash
-# Run this via interactive SSH
-ssh <USER>@<HOST> "curl -fsSL https://raw.githubusercontent.com/Microck/sincronizado/main/scripts/setup-vps.sh | bash"
-```
-
----
-
-### Step 3: Verify Components
-
-**Goal:** Ensure all moving parts (SSH, Tmux, Agent, Mutagen) are ready.
-
-**Execute (Local Checks):**
-```bash
-# Check config existence
-ls -l ~/.config/sincronizado/config.json
-
-# Check Mutagen daemon
-mutagen daemon start
 mutagen version
 ```
 
-**Execute (Remote Checks):**
+**If missing, install:**
+
+*macOS:*
 ```bash
-# Check Tmux and Agent on VPS
-ssh <USER>@<HOST> "tmux -V && command -v <AGENT> || echo 'AGENT_MISSING'"
+brew install mutagen-io/mutagen/mutagen
 ```
 
-**Error Handling (Step 3):**
--   **"AGENT_MISSING":** The AI agent is not in the remote PATH.
-    -   *Fix (OpenCode):* `npm install -g opencode`
-    -   *Fix (Claude):* `npm install -g @anthropic-ai/claude-code`
--   **"tmux: command not found":** Bootstrap failed.
-    -   *Fix:* `sudo apt install tmux` (Ubuntu) / `sudo dnf install tmux` (Fedora).
+*Linux (Manual Install):*
+```bash
+# Download latest (example version, check latest dynamically if possible)
+curl -L https://github.com/mutagen-io/mutagen/releases/download/v0.17.0/mutagen_linux_amd64.tar.gz -o mutagen.tar.gz
+tar -xzf mutagen.tar.gz
+sudo mv mutagen /usr/local/bin/
+rm mutagen.tar.gz
+```
+
+*Windows:*
+```powershell
+winget install Mutagen.Mutagen
+```
 
 ---
 
-### Step 4: First Connection
+### Step 3: Configure Sincronizado (Manual)
+
+**Goal:** Create `config.json` without using the interactive TUI. This ensures the configuration is exactly what we expect.
+
+**Action:**
+> "I will create the Sincronizado configuration file at `~/.config/sincronizado/config.json`. Proceed? (y/n)"
+
+**Execute:**
+
+First, ensure the directory exists:
+```bash
+mkdir -p ~/.config/sincronizado
+```
+
+Then, write the file (replace placeholders with user inputs):
+
+```bash
+cat > ~/.config/sincronizado/config.json <<EOF
+{
+  "vps": {
+    "hostname": "<HOST>",
+    "user": "<USER>",
+    "port": <PORT>,
+    "keyPath": "~/.ssh/id_ed25519"
+  },
+  "sync": {
+    "mode": "both",
+    "remoteBase": "~/workspace",
+    "ignore": [
+      ".git",
+      "node_modules",
+      ".next",
+      "dist",
+      "coverage"
+    ]
+  },
+  "agent": "<AGENT>",
+  "ssh": {
+    "connectTimeout": 10,
+    "keepaliveInterval": 60
+  }
+}
+EOF
+```
+
+*Note: Adjust `keyPath` if the user uses a different key.*
+
+---
+
+### Step 4: Bootstrap VPS
+
+**Goal:** Install `tmux` and dependencies on the VPS.
+
+**Action:**
+> "I will now bootstrap the VPS. This installs `tmux` and sets up the workspace directory. Proceed? (y/n)"
+
+**Execute:**
+Run the setup script remotely over SSH.
+
+```bash
+ssh <USER>@<HOST> "curl -fsSL https://raw.githubusercontent.com/Microck/sincronizado/main/scripts/setup-vps.sh | bash"
+```
+
+**Verify Remote Components:**
+```bash
+ssh <USER>@<HOST> "tmux -V && command -v <AGENT> || echo 'AGENT_MISSING'"
+```
+
+**Error Handling (Step 4):**
+-   **"AGENT_MISSING":** The AI agent is not in the remote PATH.
+    -   *Fix (OpenCode):* `npm install -g opencode`
+    -   *Fix (Claude):* `npm install -g @anthropic-ai/claude-code`
+-   **"sudo: password is required":** The setup script failed because it needs a sudo password.
+    -   *Fix:* Tell the user: "Please SSH into your VPS (`ssh <USER>@<HOST>`) and run this command manually: `curl -fsSL https://raw.githubusercontent.com/Microck/sincronizado/main/scripts/setup-vps.sh | bash`"
+
+---
+
+### Step 5: Final Verification
 
 **Goal:** Prove the system works by syncing a dummy project.
 
@@ -250,8 +302,6 @@ sinc
 | **"Session already exists"** | Previous session detached. | Run `sinc -r` to resume. |
 | **"EADDRINUSE"** | Port conflict. | Check `config.json` settings. |
 | **"Too many redirects"** | Docs site DNS issue. | Use the markdown files in `docs/` directly. |
-
----
 
 ### Power User Commands
 

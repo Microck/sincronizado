@@ -66,12 +66,5 @@
         "pages": ["cli", "configuration", "troubleshooting"]
       }
     ]
-  },
-  "redirects": [
-    { "source": "/docs", "destination": "/" },
-    { "source": "/docs/", "destination": "/" },
-    { "source": "/docs/intro", "destination": "/" },
-    { "source": "/docs/:slug*", "destination": "/:slug*" },
-    { "source": "/index", "destination": "/" }
-  ]
+  }
 }
