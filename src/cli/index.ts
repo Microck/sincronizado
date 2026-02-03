@@ -1,6 +1,9 @@
 #!/usr/bin/env bun
 import { parseArgs } from "util";
-import { EXIT_CODES } from "../utils/exit-codes";
+import { connect } from "./commands/connect";
+import { list } from "./commands/list";
+import { kill } from "./commands/kill";
+import { EXIT_CODES } from "../utils";
 import { log, formatError } from "./output";
 
 const HELP_TEXT = `sinc - Connect to VPS AI agent with synced files
@@ -52,8 +55,15 @@ async function main(): Promise<number> {
     return EXIT_CODES.SUCCESS;
   }
 
-  log("Connecting...");
-  return EXIT_CODES.SUCCESS;
+  if (values.list) {
+    return await list();
+  }
+
+  if (values.kill) {
+    return await kill(values.kill);
+  }
+
+  return await connect({ resume: values.resume });
 }
 
 main()
