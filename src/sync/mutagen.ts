@@ -1,9 +1,11 @@
 import type { Config } from "../config/schema";
+import { extractConflicts, type SyncConflict } from "./conflicts";
 
 export interface SyncStatus {
   exists: boolean;
   status: string;
   watching: boolean;
+  conflicts: SyncConflict[];
 }
 
 async function mutagenExec(args: string[]): Promise<{
@@ -57,23 +59,37 @@ export async function getSyncStatus(name: string): Promise<SyncStatus> {
   const result = await mutagenExec(["sync", "list", `--name=${name}`, "--output=json"]);
 
   if (!result.success) {
-    return { exists: false, status: "not found", watching: false };
+    return { exists: false, status: "not found", watching: false, conflicts: [] };
   }
 
   try {
     const data = JSON.parse(result.stdout);
     const session = data.sessions?.[0];
     if (!session) {
-      return { exists: false, status: "not found", watching: false };
+      return { exists: false, status: "not found", watching: false, conflicts: [] };
     }
     return {
       exists: true,
       status: session.status || "unknown",
       watching: session.status === "Watching for changes",
+      conflicts: extractConflicts(data),
     };
   } catch {
-    return { exists: true, status: result.stdout.trim(), watching: false };
+    return {
+      exists: true,
+      status: result.stdout.trim(),
+      watching: false,
+      conflicts: [],
+    };
   }
+}
+
+export async function getSyncConflicts(name: string): Promise<SyncConflict[]> {
+  const result = await mutagenExec(["sync", "list", `--name=${name}`, "--output=json"]);
+  if (!result.success) {
+    return [];
+  }
+  return extractConflicts(result.stdout);
 }
 
 export async function flushSync(name: string): Promise<boolean> {
