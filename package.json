@@ -1,0 +1,22 @@
+{
+  "name": "sincronizado",
+  "version": "2.0.0",
+  "type": "module",
+  "bin": {
+    "sinc": "./src/cli/index.ts"
+  },
+  "scripts": {
+    "dev": "bun src/cli/index.ts",
+    "build": "bun build ./src/cli/index.ts --outdir dist",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "ora": "^8.1.0",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.7.0"
+  }
+}
