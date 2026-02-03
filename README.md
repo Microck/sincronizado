@@ -15,28 +15,28 @@
 
 ---
 
-**Sincronizado** ("Synchronized") is the missing link for AI-native development. It allows you to use your favorite local tools (VS Code, Cursor, JetBrains, Neovim) while running your heavy AI agents and code execution on a powerful VPS.
+**sincronizado** ("synchronized") is the missing link for ai-native development. it allows you to use your own local files while running your heavy ai agents and code execution on a powerful vps.
 
 ## the problem
 
 local machines have good editors but weak compute. running multiple ai agents locally kills battery and blocks your terminal.
 
-vps instances have the compute but editing on them is painful. ssh latency lags. remote vscode connections drop. vim over ssh is fine until you need a real lsp.
+vps instances have the compute but editing on them is painful. ssh latency lags. remote connections drop. terminal-only editing is limiting when you need rich gui tools.
 
 ## the fix
 
 sincronizado bridges the gap.
 
-1. keep your editor (vscode, jetbrains, neovim) on your local machine.
-2. sync your files instantly to a vps using mutagen.
+1. keep your files on your local machine.
+2. sync them instantly to a vps using mutagen.
 3. run your ai agent (claude, opencode) on the vps in a persistent tmux session.
 
-you get local editor speed with server-grade compute.
+you get local speed with server-grade compute.
 
 ## workflow scenarios
 
 ### scenario a: the "macbook air + h100"
-you love macos but need serious gpu power. edit your training script locally in cursor or vs code. `sinc` pushes it to the vps instantly. you run `python train.py` in the remote session. your laptop stays cool and silent.
+you love macos but need serious gpu power. edit your training script locally. `sinc` pushes it to the vps instantly. you run `python train.py` in the remote session. your laptop stays cool and silent.
 
 ### scenario b: the "digital nomad"
 bad hotel wifi? no problem. mutagen syncs when the connection allows. tmux keeps your heavy compilation or long-running agent alive even if you disconnect for hours. resume with `sinc -r` exactly where you left off.
@@ -46,7 +46,7 @@ running `ollama` or huge node builds locally kills battery in 2 hours. offload i
 
 ## what it actually does
 
-`sinc` is the CLI for sincronizado. It orchestrates `mutagen`, `ssh`, and `tmux`.
+`sinc` is the cli for sincronizado. it orchestrates `mutagen`, `ssh`, and `tmux`.
 
 when you run `sinc` in a project folder:
 1. checks if a sync session exists. if not, creates one.
@@ -245,4 +245,4 @@ mutagen is fast but big `node_modules` folders slow it down. ignore them in `con
 
 ## license
 
-MIT
+MIT ᕙ(⇀‸↼‶)ᕗ
