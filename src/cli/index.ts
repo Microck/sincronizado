@@ -3,6 +3,7 @@ import { parseArgs } from "util";
 import { connect } from "./commands/connect";
 import { list } from "./commands/list";
 import { kill } from "./commands/kill";
+import { getCompletionScript } from "./completions";
 import { EXIT_CODES } from "../utils";
 import { log, formatError } from "./output";
 import { initOutput } from "./output-context";
@@ -18,6 +19,7 @@ Options:
   -q, --quiet     Suppress non-essential output
   -v, --verbose   Show diagnostic output
       --json      Emit machine-readable output
+      --completions <shell> Print shell completions (bash|zsh|fish)
       --list      List active sessions
       --kill <id> Kill a session
 
@@ -38,6 +40,7 @@ async function main(): Promise<number> {
         quiet: { type: "boolean", short: "q" },
         verbose: { type: "boolean", short: "v" },
         json: { type: "boolean" },
+        completions: { type: "string" },
         list: { type: "boolean" },
         kill: { type: "string" },
       },
@@ -61,6 +64,16 @@ async function main(): Promise<number> {
   if (values.version) {
     console.log(`sinc version ${VERSION}`);
     return EXIT_CODES.SUCCESS;
+  }
+
+  if (values.completions) {
+    try {
+      console.log(getCompletionScript(values.completions));
+      return EXIT_CODES.SUCCESS;
+    } catch (err) {
+      log(formatError((err as Error).message));
+      return EXIT_CODES.MISUSE;
+    }
   }
 
   if (values.list) {
