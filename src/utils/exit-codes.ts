@@ -1,0 +1,8 @@
+export const EXIT_CODES = {
+  SUCCESS: 0,
+  GENERAL_ERROR: 1,
+  MISUSE: 2,
+  CONFIG_ERROR: 78,
+  UNAVAILABLE: 69,
+  CONNECT_ERROR: 76,
+} as const;
