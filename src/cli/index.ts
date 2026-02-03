@@ -3,6 +3,7 @@ import { parseArgs } from "util";
 import { connect } from "./commands/connect";
 import { list } from "./commands/list";
 import { kill } from "./commands/kill";
+import { setup } from "./commands/setup";
 import { getCompletionScript } from "./completions";
 import { EXIT_CODES } from "../utils";
 import { log, formatError } from "./output";
@@ -22,6 +23,7 @@ Options:
       --completions <shell> Print shell completions (bash|zsh|fish)
       --list      List active sessions
       --kill <id> Kill a session
+      --setup     Run interactive setup
 
 Run without options to connect to VPS in current project directory.
 `;
@@ -43,6 +45,7 @@ async function main(): Promise<number> {
         completions: { type: "string" },
         list: { type: "boolean" },
         kill: { type: "string" },
+        setup: { type: "boolean" },
       },
       strict: true,
       allowPositionals: false,
@@ -82,6 +85,10 @@ async function main(): Promise<number> {
 
   if (values.kill) {
     return await kill(values.kill);
+  }
+
+  if (values.setup) {
+    return await setup();
   }
 
   return await connect({ resume: values.resume });

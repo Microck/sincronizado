@@ -20,6 +20,7 @@ export const configSchema = z.object({
     .object({
       connectTimeout: z.number().int().positive().default(10),
       keepaliveInterval: z.number().int().positive().default(60),
+      identityFile: z.string().min(1).optional(),
     })
     .default({}),
   connection: z

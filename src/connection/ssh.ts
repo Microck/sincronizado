@@ -20,6 +20,7 @@ export async function sshExec(
     "ServerAliveCountMax=3",
     "-o",
     "BatchMode=yes",
+    ...(config.ssh.identityFile ? ["-i", config.ssh.identityFile] : []),
     "-p",
     String(config.vps.port),
     `${config.vps.user}@${config.vps.hostname}`,

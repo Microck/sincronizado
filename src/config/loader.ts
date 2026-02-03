@@ -1,4 +1,5 @@
 import { promises as fs } from "fs";
+import { dirname } from "path";
 import { configSchema, type Config } from "./schema";
 import { DEFAULT_CONFIG } from "./defaults";
 import { getConfigPath as getConfigPathUtil } from "../utils/paths";
@@ -43,4 +44,14 @@ export async function loadConfig(): Promise<Config> {
   }
 
   return result.data;
+}
+
+export async function saveConfig(config: Config): Promise<void> {
+  const configPath = getConfigPath();
+  const dir = dirname(configPath);
+
+  await fs.mkdir(dir, { recursive: true });
+  const serialized = JSON.stringify(config, null, 2);
+  await fs.writeFile(configPath, `${serialized}\n`, { mode: 0o600 });
+  await fs.chmod(configPath, 0o600);
 }

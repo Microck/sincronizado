@@ -41,6 +41,7 @@ export function buildRemoteCommand(
         `ServerAliveInterval=${config.ssh.keepaliveInterval}`,
         "-o",
         "ServerAliveCountMax=3",
+        ...(config.ssh.identityFile ? ["-i", config.ssh.identityFile] : []),
         "-p",
         String(config.vps.port),
         host,
