@@ -1,6 +1,6 @@
 # Installation
 
-This is the complete installation and setup guide for **sincronizado (v2)**.
+This is the complete installation and setup guide for **sincronizado**.
 
 ## Quick Links
 

@@ -102,6 +102,14 @@ requires powershell 5+ and administrative privileges for symlinks if you don't u
 irm https://sync.micr.dev/install.ps1 | iex
 ```
 
+### llm-guided setup
+
+want an ai assistant to walk you through install + vps setup? use the guided protocol in `INSTALL.md`:
+
+```text
+## For LLM Agents (Guided Setup)
+```
+
 ### manual (from source)
 
 requires `bun` runtime.
