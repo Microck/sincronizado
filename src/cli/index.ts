@@ -2,6 +2,8 @@
 import { connect } from "./commands/connect";
 import { list } from "./commands/list";
 import { kill } from "./commands/kill";
+import { push } from "./commands/push";
+import { pull } from "./commands/pull";
 import { setup } from "./commands/setup";
 import { uninstall } from "./commands/uninstall";
 import { getCompletionScript } from "./completions";
@@ -19,8 +21,8 @@ Usage: sinc [options] [command]
 Commands:
   list          List active sessions
   kill <id>     Kill a session
-  push          Push local state to remote (coming soon)
-  pull          Pull remote state to local (coming soon)
+  push          Push local state to remote
+  pull          Pull remote state to local
 
 Options:
   -h, --help      Show this help message
@@ -29,6 +31,7 @@ Options:
   -q, --quiet     Suppress non-essential output
   -v, --verbose   Show diagnostic output
       --json      Emit machine-readable output
+      --yes       Skip confirmation prompts
       --completions <shell> Print shell completions (bash|zsh|fish)
   -l, --list      List active sessions
   -k, --kill <id> Kill a session
@@ -79,6 +82,14 @@ async function main(): Promise<number> {
 
   if (action === "kill") {
     return await kill(values.kill ?? "");
+  }
+
+  if (action === "push") {
+    return await push({ yes: values.yes });
+  }
+
+  if (action === "pull") {
+    return await pull({ yes: values.yes });
   }
 
   if (action === "setup") {

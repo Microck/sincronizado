@@ -9,6 +9,7 @@ const flags = [
   "--quiet",
   "--verbose",
   "--json",
+  "--yes",
   "--completions",
   "-h",
   "-V",

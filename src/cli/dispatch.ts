@@ -10,6 +10,8 @@ export type CliAction =
   | "uninstall"
   | "list"
   | "kill"
+  | "push"
+  | "pull"
   | "connect";
 
 export interface CliValues {
@@ -19,6 +21,7 @@ export interface CliValues {
   quiet: boolean;
   verbose: boolean;
   json: boolean;
+  yes: boolean;
   completions?: string;
   list: boolean;
   kill?: string;
@@ -51,6 +54,7 @@ export function resolveCliAction(argv: string[]): CliActionResult {
         quiet: { type: "boolean", short: "q" },
         verbose: { type: "boolean", short: "v" },
         json: { type: "boolean" },
+        yes: { type: "boolean" },
         completions: { type: "string" },
         list: { type: "boolean", short: "l" },
         kill: { type: "string", short: "k" },
@@ -71,6 +75,7 @@ export function resolveCliAction(argv: string[]): CliActionResult {
     quiet: Boolean(parsed.values.quiet),
     verbose: Boolean(parsed.values.verbose),
     json: Boolean(parsed.values.json),
+    yes: Boolean(parsed.values.yes),
     completions:
       typeof parsed.values.completions === "string"
         ? parsed.values.completions
@@ -95,6 +100,7 @@ export function resolveCliAction(argv: string[]): CliActionResult {
   }
 
   const [command, ...rest] = positionals;
+  let actionFromCommand: CliAction | null = null;
   if (command) {
     if (command === "list") {
       if (rest.length !== 0) {
@@ -110,7 +116,10 @@ export function resolveCliAction(argv: string[]): CliActionResult {
       }
       values.kill = rest[0];
     } else if (command === "push" || command === "pull") {
-      return misuse(`'sinc ${command}' is not implemented yet`);
+      if (rest.length !== 0) {
+        return misuse(`'sinc ${command}' takes no arguments`);
+      }
+      actionFromCommand = command;
     } else {
       return misuse(`Unknown command: ${command}`);
     }
@@ -120,7 +129,8 @@ export function resolveCliAction(argv: string[]): CliActionResult {
     Number(Boolean(values.list)) +
     Number(Boolean(values.kill)) +
     Number(Boolean(values.setup)) +
-    Number(Boolean(values.uninstall));
+    Number(Boolean(values.uninstall)) +
+    Number(Boolean(actionFromCommand));
 
   if (actionCount > 1) {
     return misuse("Only one command may be used at a time");
@@ -132,6 +142,10 @@ export function resolveCliAction(argv: string[]): CliActionResult {
 
   if (values.kill) {
     return { ok: true, action: "kill", values };
+  }
+
+  if (actionFromCommand) {
+    return { ok: true, action: actionFromCommand, values };
   }
 
   if (values.setup) {
