@@ -1,5 +1,6 @@
 .planning/
 node_modules/
 dist/
+.cache/
 .env
 *.log

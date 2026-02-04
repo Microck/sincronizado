@@ -7,7 +7,7 @@ Follow these steps to get a supercharged local-remote workflow.
 
 ## 1. Install & Setup
 
-Run the installer. It will set up the binary and automatically launch the configuration wizard (connecting to VPS, SSH keys, etc).
+Run the installer. It will set up the binary, then run `sinc --setup` to configure your VPS, SSH keys, and sync.
 
 **Mac / Linux:**
 ```bash
@@ -17,6 +17,12 @@ curl -fsSL https://sync.micr.dev/install.sh | bash
 **Windows (PowerShell):**
 ```powershell
 irm https://sync.micr.dev/install.ps1 | iex
+```
+
+Then run:
+
+```bash
+sinc --setup
 ```
 
 ## 2. Connect
