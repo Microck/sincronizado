@@ -141,3 +141,86 @@ export async function isMutagenInstalled(): Promise<boolean> {
   const result = await mutagenExec(["version"]);
   return result.success;
 }
+
+export async function forceSyncDirection(
+  config: Config,
+  sessionName: string,
+  localPath: string,
+  remotePath: string,
+  ignore: string[],
+  direction: SyncDirection
+): Promise<{ success: boolean; error?: string }> {
+  const tempName = `${sessionName}-force-${direction}`;
+  let created = false;
+
+  try {
+    const existing = await getSyncStatus(tempName);
+    if (existing.exists) {
+      await terminateSync(tempName);
+    }
+
+    const createResult = await createSyncSession(
+      config,
+      tempName,
+      localPath,
+      remotePath,
+      ignore,
+      {
+        mode: "one-way-replica",
+        direction,
+      }
+    );
+
+    if (!createResult.success) {
+      return {
+        success: false,
+        error: createResult.error || "Failed to create force sync session",
+      };
+    }
+
+    created = true;
+    const flushed = await flushSync(tempName);
+    if (!flushed) {
+      return {
+        success: false,
+        error: "Failed to flush force sync session",
+      };
+    }
+
+    const timeoutMs = 30000;
+    const start = Date.now();
+    while (Date.now() - start < timeoutMs) {
+      const status = await getSyncStatus(tempName);
+      if (!status.exists) {
+        return {
+          success: false,
+          error: "Force sync session not found after creation",
+        };
+      }
+      if (status.watching) {
+        return { success: true };
+      }
+      if (status.status.toLowerCase().includes("error")) {
+        return {
+          success: false,
+          error: `Force sync session error: ${status.status}`,
+        };
+      }
+      await new Promise((resolveWait) => setTimeout(resolveWait, 1000));
+    }
+
+    return {
+      success: false,
+      error: "Timed out waiting for force sync session to start",
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: (error as Error).message || "Force sync failed",
+    };
+  } finally {
+    if (created) {
+      await terminateSync(tempName);
+    }
+  }
+}

@@ -7,6 +7,7 @@ export {
   resumeSync,
   terminateSync,
   isMutagenInstalled,
+  forceSyncDirection,
   type SyncStatus,
 } from "./mutagen";
 export { extractConflicts, formatConflicts, type SyncConflict } from "./conflicts";
