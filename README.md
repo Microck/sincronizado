@@ -104,11 +104,14 @@ irm https://sync.micr.dev/install.ps1 | iex
 
 ### llm-guided setup
 
-want an ai assistant to walk you through install + vps setup? use the guided protocol in `INSTALL.md`:
+want an ai assistant to walk you through install + vps setup? paste this into your llm agent session:
 
 ```text
-## For LLM Agents (Guided Setup)
+Install and configure sincronizado by following the instructions here:
+https://raw.githubusercontent.com/Microck/sincronizado/refs/heads/main/INSTALL.md
 ```
+
+if this helped, consider starring the repo ᕙ(⇀‸↼‶)ᕗ
 
 ### manual (from source)
 
