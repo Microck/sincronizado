@@ -105,13 +105,12 @@ describe("resolveCliAction", () => {
     }
   });
 
-  test("push and pull are recognized but not implemented", () => {
-    for (const cmd of ["push", "pull"]) {
+  test("push and pull are recognized", () => {
+    for (const cmd of ["push", "pull"] as const) {
       const result = resolveCliAction([cmd]);
-      expect(result.ok).toBe(false);
-      if (!result.ok) {
-        expect(result.exitCode).toBe(EXIT_CODES.MISUSE);
-        expect(result.message).toContain("not implemented");
+      expect(result.ok).toBe(true);
+      if (result.ok) {
+        expect(result.action).toBe(cmd);
       }
     }
   });
