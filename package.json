@@ -5,6 +5,13 @@
   "bin": {
     "sinc": "./src/cli/index.ts"
   },
+  "files": [
+    "src/**",
+    "scripts/**",
+    "README.md",
+    "INSTALL.md",
+    "LICENSE"
+  ],
   "scripts": {
     "dev": "bun src/cli/index.ts",
     "build": "bun build ./src/cli/index.ts --outdir dist",
