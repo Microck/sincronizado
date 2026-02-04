@@ -13,6 +13,8 @@ const requiredFlags = [
   "--verbose",
   "--json",
   "--completions",
+  "-l",
+  "-k",
 ];
 
 describe("completion scripts", () => {
