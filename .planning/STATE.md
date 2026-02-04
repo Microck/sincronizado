@@ -2,13 +2,13 @@
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-02-03 — Milestone v1.1 started
+Phase: 5 of 7 (CLI Ergonomics & Command Dispatch)
+Plan: Not started
+Status: Ready for planning
+Last activity: 2026-02-04 — Roadmap created for milestone v1.1
 
 ## Project Reference
-See: .planning/PROJECT.md (updated 2026-02-03)
+See: .planning/PROJECT.md (updated 2026-02-04)
 **Core value:** Run `sinc` anywhere -> instantly connected to VPS AI agent with synced files
 **Current focus:** v1.1 CLI & Sync Control
 

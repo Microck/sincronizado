@@ -1,9 +1,9 @@
 ---
 title: Architecture
-description: Deep dive into how Sincronizado works.
+description: Deep dive into how sincronizado works.
 ---
 
-Sincronizado is designed to bridge the gap between **local developer experience** (low latency, familiar tools, custom configuration) and **remote execution power** (heavy AI models, specific OS environments, massive compute).
+sincronizado is designed to bridge the gap between **local files** (your normal workflow) and **remote execution power** (heavy agents, builds, and compute).
 
 It achieves this by orchestrating three main components: **Mutagen** for file synchronization, **SSH** for secure connectivity, and **Tmux** for session persistence.
 
@@ -12,9 +12,8 @@ It achieves this by orchestrating three main components: **Mutagen** for file sy
 ```mermaid
 graph TB
   subgraph Local["Local Machine"]
-    Editor["Your Editor (VS Code / JetBrains / Neovim)"]
+    Files["Local Files"]
     Sinc["sinc CLI"]
-    Files["Local File System"]
     MutDaemon["Mutagen Daemon"]
   end
 
@@ -29,7 +28,6 @@ graph TB
     Shell["Shell Environment"]
   end
 
-  Editor <-->|Writes| Files
   Files <-->|Real-time Sync| MutDaemon
   MutDaemon <-->|SSH Forwarding| Transport
   Transport <-->|SSHD| RemoteDir
@@ -55,14 +53,14 @@ When you run `sinc`, it checks for an existing Mutagen session named `sinc-<proj
 
 ### 2. Connectivity (SSH)
 
-SSH is the backbone of Sincronizado. It's used for:
+SSH is the backbone of sincronizado. It's used for:
 
 - **Control Plane**: `sinc` runs commands on the VPS (like `mkdir`, `tmux ls`, `command -v`) via non-interactive SSH.
 - **Data Plane**: The Mutagen sync stream is tunneled over SSH.
 - **Interactive Plane**: When you "connect", `sinc` actually executes an SSH command that attaches to the remote tmux session.
 
 **Security Model:**
-- **Standard SSH Auth**: Sincronizado uses your existing SSH configuration (`~/.ssh/config`) and keys. It doesn't invent its own auth.
+- **Standard SSH Auth**: sincronizado uses your existing SSH configuration (`~/.ssh/config`) and keys. It doesn't invent its own auth.
 - **No Agent Forwarding**: By default, we do *not* enable SSH agent forwarding. This is a security best practice to prevent a compromised VPS from accessing your other servers or GitHub account.
 - **Socket Permissions**: Mutagen creates a Unix domain socket for communication, protected by standard file permissions.
 
@@ -79,7 +77,7 @@ The AI agents we run (like `opencode` or `claude`) are long-running interactive 
 
 When you type `sinc` in your terminal:
 
-1.  **Identity Check**: Sincronizado calculates a unique "Session ID" based on your *absolute local directory path*. This ensures that `~/code/project-a` always maps to the same remote session, even if you rename the folder on the VPS.
+1.  **Identity Check**: sincronizado calculates a unique "Session ID" based on your *absolute local directory path*. This ensures that `~/code/project-a` always maps to the same remote session, even if you rename the folder on the VPS.
 2.  **Health Check**: It runs `ssh <host> echo ok` to verify connectivity.
 3.  **Bootstrap**: It ensures `~/workspace/<project-name>` exists on the remote.
 4.  **Sync Check**: It queries the Mutagen daemon. Is there a sync session for this project?
@@ -90,13 +88,9 @@ When you type `sinc` in your terminal:
     -   *Yes*: Do nothing (it's already running).
 6.  **Attach**: It replaces your current process with an SSH client attached to that tmux session.
 
-## Why not VS Code Remote - SSH?
+## why not a fully remote editor?
 
-VS Code Remote - SSH is fantastic, but it has a few limitations that Sincronizado addresses:
-
-1.  **Heavy Remote Requirements**: VS Code installs a substantial "server" component on the remote. On smaller VPS instances, this can eat up RAM that you'd rather save for your AI agent.
-2.  **Latency Sensitivity**: If the connection drops, your editor stops working. With Sincronizado, your editor is local. You can keep typing, scrolling, and searching files even if the internet goes out. Changes will just sync when you reconnect.
-3.  **Editor Agnostic**: Sincronizado works with *any* editor. Neovim, IntelliJ, Zed, Sublime Text—as long as they edit files on your disk, they work.
+remote editor integrations can be great, but sincronizado optimizes for keeping your files local. you keep your normal local-file workflow and use the vps for execution.
 
 ## Directory Structure
 

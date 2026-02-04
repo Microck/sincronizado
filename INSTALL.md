@@ -1,11 +1,11 @@
 # Installation
 
-This is the complete installation and setup guide for **Sincronizado (v2)**.
+This is the complete installation and setup guide for **sincronizado (v2)**.
 
 ## Quick Links
 
 - **[For Humans](#for-humans)**: Simple copy-paste commands.
-- **[For LLM Agents (Guided Setup)](#for-llm-agents-guided-setup)**: A rigorous, step-by-step protocol for AI agents setting up Sincronizado for a user.
+- **[For LLM Agents (Guided Setup)](#for-llm-agents-guided-setup)**: A rigorous, step-by-step protocol for AI agents setting up sincronizado for a user.
 
 ---
 
@@ -66,7 +66,7 @@ sinc
 
 ## For LLM Agents (Guided Setup)
 
-**ROLE:** You are an expert DevOps engineer assisting a user with setting up Sincronizado.
+**ROLE:** You are an expert DevOps engineer assisting a user with setting up sincronizado.
 **GOAL:** Successfully establish a sync + compute link between the user's local machine and their VPS.
 
 ### Critical Protocol
@@ -80,9 +80,9 @@ sinc
 
 ```text
 Step 0: Discovery & Prerequisites (Local OS, VPS details, SSH access)
-Step 1: Install Sincronizado (Local binary)
+Step 1: Install sincronizado (Local binary)
 Step 2: Install Mutagen (Local Dependency)
-Step 3: Configure Sincronizado (Manual Config Creation)
+Step 3: Configure sincronizado (Manual Config Creation)
 Step 4: Bootstrap VPS (Remote Dependencies)
 Step 5: Verification (Full System Check)
 ```
@@ -94,7 +94,7 @@ Step 5: Verification (Full System Check)
 **Goal:** Ensure the environment is compatible and gather necessary details.
 
 **1. Ask for inputs:**
-> "To set up Sincronizado, I need a few details:
+> "To set up sincronizado, I need a few details:
 > 1.  **VPS Hostname** (IP address or domain/Tailscale name)
 > 2.  **SSH Username** (e.g., `ubuntu`, `root`)
 > 3.  **SSH Port** (usually 22)
@@ -114,7 +114,7 @@ ssh -V
 ```
 
 **3. Verify VPS Connectivity:**
-*Crucial:* Sincronizado uses non-interactive SSH. We must verify key-based auth works.
+*Crucial:* sincronizado uses non-interactive SSH. We must verify key-based auth works.
 
 ```bash
 # Replace with user provided details
@@ -130,12 +130,12 @@ ssh -o BatchMode=yes -o ConnectTimeout=5 <USER>@<HOST> -p <PORT> "echo SSH_CONNE
 
 ---
 
-### Step 1: Install Sincronizado
+### Step 1: Install sincronizado
 
 **Goal:** Download and place the `sinc` binary.
 
 **Action:**
-> "I will download the latest Sincronizado installer script and run it. This installs the `sinc` binary to your local path. Proceed? (y/n)"
+> "I will download the latest sincronizado installer script and run it. This installs the `sinc` binary to your local path. Proceed? (y/n)"
 
 **Execute:**
 
@@ -195,12 +195,12 @@ winget install Mutagen.Mutagen
 
 ---
 
-### Step 3: Configure Sincronizado (Manual)
+### Step 3: Configure sincronizado (Manual)
 
 **Goal:** Create `config.json` without using the interactive TUI. This ensures the configuration is exactly what we expect.
 
 **Action:**
-> "I will create the Sincronizado configuration file at `~/.config/sincronizado/config.json`. Proceed? (y/n)"
+> "I will create the sincronizado configuration file at `~/.config/sincronizado/config.json`. Proceed? (y/n)"
 
 **Execute:**
 

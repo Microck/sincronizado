@@ -110,4 +110,4 @@ Rebuilding sincronizado from the ground up with a simplified, focused scope. The
 | User-configurable command name | Some may want `sync`, `s`, or other aliases | — Pending |
 
 ---
-*Last updated: 2025-02-02 after initialization*
+*Last updated: 2026-02-04 after milestone v1.1 initialization*

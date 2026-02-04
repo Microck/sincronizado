@@ -27,7 +27,7 @@ log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
 
 show_help() {
     cat << EOF
-Sincronizado VPS Security Hardening
+sincronizado vps security hardening
 Hardens VPS against common attack vectors
 
 Usage: sudo ./harden-vps.sh [OPTIONS]
@@ -327,7 +327,7 @@ print_summary() {
 
 main() {
     echo "========================================"
-    echo "  Sincronizado VPS Security Hardening"
+    echo "  sincronizado vps security hardening"
     echo "========================================"
     echo ""
     

@@ -1,47 +1,44 @@
 ---
-title: Introduction
-description: Local editor speed. Remote compute power.
+title: introduction
+description: keep files local. run remote.
 ---
 
-**sincronizado** ("synchronized") is the missing link for AI-native development. It allows you to use your favorite local tools (VS Code, Cursor, JetBrains, Neovim) while running your heavy AI agents and code execution on a powerful VPS.
+**sincronizado** ("synchronized") lets you keep your files on your local machine while running heavy compute and agents on a vps.
 
-<img src="/images/docs-architecture.png" alt="Sincronizado Architecture" className="rounded-xl border border-gray-200 dark:border-gray-800" />
+## the problem
 
-## The Problem
+ai workflows are compute-heavy, but editing directly on a remote box is fragile. you either:
 
-AI development has a hardware problem:
+1.  burn local resources running agents and builds on your laptop, or
+2.  move your workflow to a remote machine and lose the simplicity of local files.
 
-1.  **Local is weak**: Running Claude Code, OpenCode, or other agents locally drains your battery, heats up your laptop, and consumes massive amounts of RAM.
-2.  **Remote is laggy**: Coding directly on a VPS over SSH introduces typing latency. Remote development extensions (like VS Code Remote) are heavy and can disconnect when your internet blips.
+## the solution
 
-## The Solution
+sincronizado gives you a local-files-first workflow:
 
-Sincronizado gives you the best of both worlds:
+- **local files**: you keep ownership of your project directory.
+- **instant sync**: [mutagen](https://mutagen.io/) keeps the vps copy in sync.
+- **persistent remote shell**: a `tmux` session on the vps keeps your agent and commands running even if you disconnect.
 
--   **Zero-Latency Editing**: You edit files on your local machine. No SSH lag.
--   **Instant Sync**: [Mutagen](https://mutagen.io/) syncs your changes to the VPS in milliseconds.
--   **Persistent Execution**: Your AI agent runs in a remote `tmux` session. If you close your laptop, the agent keeps working.
+## how it works
 
-## How it Works
+when you run `sinc` inside a project folder:
 
-When you run `sinc` in your project folder:
+1.  it creates/ensures a mutagen sync session for that folder.
+2.  it sshs to the vps.
+3.  it attaches you to a persistent `tmux` session for that project.
 
-1.  **Syncs**: Creates a real-time, two-way sync session between your local folder and `~/workspace/<project>` on the VPS.
-2.  **Connects**: SSHs into the VPS transparently.
-3.  **Attaches**: Drops you into a persistent `tmux` session where your environment is ready.
+## get started
 
-## Get Started
+- [**quick start**](/quick-start)
+- [**installation**](/installation)
+- [**vps setup**](/vps-setup)
+- [**architecture**](/architecture)
 
--   [**Quick Start**](/quick-start): Set up in 5 minutes.
--   [**Installation**](/installation): Detailed install guide for Mac, Linux, and Windows.
--   [**Architecture**](/architecture): Understand the tech stack (Mutagen + SSH + Tmux).
--   [**VPS Setup**](/vps-setup): How to provision a server for AI dev.
+## is this for me?
 
-## Is this for me?
-
-| You will love Sincronizado if... | You might not need it if... |
+| you will love sincronizado if... | you might not need it if... |
 | :--- | :--- |
-| You use an AI agent (Claude, OpenCode) heavily. | You only write code manually. |
-| You have a powerful desktop/VPS but want to code from a laptop. | You already have a perfect cloud dev environment (Codespaces/Gitpod). |
-| You hate SSH latency when typing. | You are happy with VS Code Remote - SSH. |
-| You want your agent to keep running when you go offline. | You don't need persistent background processes. |
+| you run agents/builds that strain your local machine. | everything you run locally is lightweight. |
+| you want local-file ownership with remote compute. | you prefer a fully remote dev environment. |
+| you want sessions that survive disconnects (tmux). | you don't need long-running remote processes. |
