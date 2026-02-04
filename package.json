@@ -15,7 +15,7 @@
   ],
   "scripts": {
     "dev": "bun src/cli/index.ts",
-    "build": "bun build ./src/cli/index.ts --outdir dist",
+    "build": "bun build ./src/cli/index.ts --target=bun --outdir dist",
     "test": "bun test",
     "test:integration": "SINC_INTEGRATION=1 bun test tests/integration",
     "build:release": "bun run scripts/release-build.ts"
