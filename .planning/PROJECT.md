@@ -12,65 +12,59 @@ Run `sinc` anywhere → instantly connected to VPS AI agent with synced files.
 
 ### Validated
 
-(None yet — ship to validate)
+- [x] Cross-platform launcher (sinc.ts) in Bun — v1.0
+- [x] Session management: `sinc` (fresh), `sinc -r` (resume), `sinc --list`, `sinc --kill` — v1.0
+- [x] Hash-based session IDs: sinc-{project}-{hash} — v1.0
+- [x] Protocol fallback chain: SSH guaranteed, ET/Mosh optional (OS-aware) — v1.0
+- [x] Initial sync wait with progress, then background sync during session — v1.0
+- [x] Sync completion on exit before stopping Mutagen — v1.0
+- [x] Multiple simultaneous projects supported — v1.0
+- [x] Configurable command name (default: sinc) — v1.0
+- [x] Auto-check for updates on launch (prompt if available) — v1.0
+- [x] Uninstall command (`sinc --uninstall`) — v1.0
+- [x] Reconfigure command (`sinc --setup`) — v1.0
+- [x] @clack/prompts-based TUI (like legacy) — v1.0
+- [x] Windows: spawn CMD window for proper TUI rendering — v1.0
+- [x] Agent selection: OpenCode or Claude — v1.0
+- [x] Sync mode selection: none / pull / push / both — v1.0
+- [x] VPS config: hostname, user, port — v1.0
+- [x] SSH key handling: generate new or use existing (user specifies path) — v1.0
+- [x] Connection test before proceeding — v1.0
+- [x] Optional VPS setup: minimal by default, hardening as extra step — v1.0
+- [x] Detect + offer to install AI agent if missing on VPS — v1.0
+- [x] User-configurable sync ignores — v1.0
+- [x] User-configurable workspace path (with default choices) — v1.0
+- [x] Auto-add to PATH on all platforms — v1.0
+- [x] Auto-install dependencies (Bun, Mutagen) if missing — v1.0
+- [x] setup-vps.sh script for VPS configuration — v1.0
+- [x] Minimal default: tmux, AI agent, workspace directory — v1.0
+- [x] Optional hardening: firewall, fail2ban, non-root user — v1.0
+- [x] Works with existing VPS or helps configure new — v1.0
+- [x] Single VPS target for v1 — v1.0
+- [x] sync.micr.dev hosting on Vercel — v1.0
+- [x] One-liner install: `curl | bash` (Linux/macOS), `irm | iex` (Windows) — v1.0
+- [x] Downloads and runs TUI installer — v1.0
+- [x] Mintlify docs site at sincronizado.micr.dev — v1.0
+- [x] INSTALL.md for LLM agents (detailed step-by-step guide) — v1.0
+- [x] README with quick start — v1.0
+- [x] Config at ~/.config/sincronizado/config.json — v1.0
+- [x] Schema: VPS (hostname, user, port), sync (mode, ignores, remoteBase), session (prefix), agent, protocol preference — v1.0
+- [x] Error verbosity configurable — v1.0
+- [x] GitHub releases with semantic versioning — v1.0
+- [x] GitHub Actions CI (tests on PR, auto-release on tag) — v1.0
+- [x] Unit tests for core logic — v1.0
+- [x] Integration tests for critical paths (SSH, Mutagen) — v1.0
 
 ### Active
 
-#### Launcher
-- [ ] Cross-platform launcher (sinc.ts) in Bun
-- [ ] Session management: `sinc` (fresh), `sinc -r` (resume), `sinc --list`, `sinc --kill`
-- [ ] Hash-based session IDs: sinc-{project}-{hash}
-- [ ] Protocol fallback chain: SSH guaranteed, ET/Mosh optional (OS-aware)
-- [ ] Initial sync wait with progress, then background sync during session
-- [ ] Sync completion on exit before stopping Mutagen
-- [ ] Multiple simultaneous projects supported
-- [ ] Configurable command name (default: sinc)
-- [ ] Auto-check for updates on launch (prompt if available)
-- [ ] Uninstall command (`sinc --uninstall`)
-- [ ] Reconfigure command (`sinc --setup`)
+## Current Milestone: v1.1 CLI & Sync Control
 
-#### TUI Installer
-- [ ] @clack/prompts-based TUI (like legacy)
-- [ ] Windows: spawn CMD window for proper TUI rendering
-- [ ] Agent selection: OpenCode or Claude
-- [ ] Sync mode selection: none / pull / push / both
-- [ ] VPS config: hostname, user, port
-- [ ] SSH key handling: generate new or use existing (user specifies path)
-- [ ] Connection test before proceeding
-- [ ] Optional VPS setup: minimal by default, hardening as extra step
-- [ ] Detect + offer to install AI agent if missing on VPS
-- [ ] User-configurable sync ignores
-- [ ] User-configurable workspace path (with default choices)
-- [ ] Auto-add to PATH on all platforms
-- [ ] Auto-install dependencies (Bun, Mutagen) if missing
+**Goal:** Improve CLI ergonomics and give users manual control over file synchronization.
 
-#### VPS Setup
-- [ ] setup-vps.sh script for VPS configuration
-- [ ] Minimal default: tmux, AI agent, workspace directory
-- [ ] Optional hardening: firewall, fail2ban, non-root user
-- [ ] Works with existing VPS or helps configure new
-- [ ] Single VPS target for v1
-
-#### Web Installer
-- [ ] sync.micr.dev hosting on Vercel
-- [ ] One-liner install: `curl | bash` (Linux/macOS), `irm | iex` (Windows)
-- [ ] Downloads and runs TUI installer
-
-#### Documentation
-- [ ] Mintlify docs site at sincronizado.micr.dev
-- [ ] INSTALL.md for LLM agents (detailed step-by-step guide)
-- [ ] README with quick start
-
-#### Configuration
-- [ ] Config at ~/.config/sincronizado/config.json
-- [ ] Schema: VPS (hostname, user, port), sync (mode, ignores, remoteBase), session (prefix), agent, protocol preference
-- [ ] Error verbosity configurable
-
-#### Infrastructure
-- [ ] GitHub releases with semantic versioning
-- [ ] GitHub Actions CI (tests on PR, auto-release on tag)
-- [ ] Unit tests for core logic
-- [ ] Integration tests for critical paths (SSH, Mutagen)
+**Target features:**
+- CLI flag aliases (e.g., `-k` for `--kill`)
+- Manual sync commands (`sinc push`, `sinc pull`)
+- Standardized short flags for all commands
 
 ### Out of Scope
 
