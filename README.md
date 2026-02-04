@@ -146,18 +146,38 @@ detached? network drop? reattach to the existing tmux session.
 sinc -r
 ```
 
+### manual sync (push / pull)
+
+force a one-way sync for the current project. this requires an active session and asks for confirmation.
+
+```bash
+sinc push
+sinc pull
+```
+
+to skip the confirmation prompt:
+
+```bash
+sinc push --yes
+sinc pull --yes
+```
+
 ### kill a session
 
 stop the sync and kill the remote tmux session.
 
 ```bash
 sinc --kill <session_name>
+sinc -k <session_name>
+sinc kill <session_name>
 ```
 
 list active sessions:
 
 ```bash
 sinc --list
+sinc -l
+sinc list
 ```
 
 ## configuration

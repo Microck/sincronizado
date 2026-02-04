@@ -32,12 +32,24 @@ sinc [flags]
 -   Checks and installs dependencies (`mutagen`).
 -   Can trigger the VPS bootstrap script.
 
-### `sinc --list`
+### `sinc --list` / `sinc -l` / `sinc list`
 **Status Check.**
 -   Lists all active sincronizado sessions.
 -   Shows: Session Name, Local Path, Remote Path, Sync Status.
 
-### `sinc --kill <session_name>`
+### `sinc push`
+**Force Sync (Local -> Remote).**
+-   Forces local files to overwrite the remote side of the current session.
+-   Requires an active session for the current directory.
+-   Shows an overwrite summary and asks for confirmation unless `--yes` is provided.
+
+### `sinc pull`
+**Force Sync (Remote -> Local).**
+-   Forces remote files to overwrite the local side of the current session.
+-   Requires an active session for the current directory.
+-   Shows an overwrite summary and asks for confirmation unless `--yes` is provided.
+
+### `sinc --kill <session_name>` / `sinc -k <session_name>` / `sinc kill <session_name>`
 **Cleanup.**
 -   Terminates the Mutagen sync session.
 -   Kills the remote `tmux` session.
@@ -58,6 +70,7 @@ sinc [flags]
 | `--resume` | `-r` | Resume existing session. |
 | `--quiet` | `-q` | Suppress logs (useful for scripts). |
 | `--verbose` | `-v` | Show debug logs (SSH commands, Mutagen output). |
+| `--yes` | | Skip confirmation prompts for destructive sync actions. |
 | `--json` | | Output status as JSON (for tool integration). |
 
 ## JSON Output
