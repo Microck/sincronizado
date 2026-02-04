@@ -3,9 +3,10 @@
   "version": "2.0.1",
   "type": "module",
   "bin": {
-    "sinc": "./src/cli/index.ts"
+    "sinc": "bin/sinc.js"
   },
   "files": [
+    "bin/**",
     "src/**",
     "scripts/**",
     "README.md",
