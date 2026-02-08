@@ -164,6 +164,11 @@ Phase 1 ─────> Phase 2 ─────> Phase 3
 2. `sinc list` and `sinc --list` produce identical output and exit codes
 3. `sinc --help` clearly documents subcommands and short aliases
 
+**Plans:** 1 plan in 1 wave
+
+Plans:
+- [x] 05-01-PLAN.md — Short flags + git-like subcommands (list/kill) + help docs for push/pull
+
 ---
 
 ### Phase 6: Manual Sync Commands (push/pull)
@@ -183,6 +188,11 @@ Phase 1 ─────> Phase 2 ─────> Phase 3
 3. Running `sinc push` or `sinc pull` without an active sync session prints an actionable error
 4. Destructive actions require confirmation unless `--yes` is provided
 
+**Plans:** 1 plan in 1 wave
+
+Plans:
+- [x] 06-01-PLAN.md — Manual push/pull commands with confirmation and force sync helper
+
 ---
 
 ### Phase 7: Docs & Release
@@ -196,3 +206,8 @@ Phase 1 ─────> Phase 2 ─────> Phase 3
 **Success Criteria:**
 1. Docs show examples for `sinc push`, `sinc pull`, `sinc -k`, and `sinc kill`
 2. Tagging the milestone version publishes a GitHub release
+
+**Plans:** 1 plan in 1 wave
+
+Plans:
+- [x] 07-01-PLAN.md — Update docs for push/pull + short flags, create v1.1 release

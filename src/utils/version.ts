@@ -2,8 +2,22 @@ import { promises as fs } from "fs";
 
 let cachedVersion: string | null = null;
 
+async function getBundledVersion(): Promise<string | null> {
+  try {
+    const mod = await import("../generated/version.js");
+    return mod.SINC_VERSION ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export async function getCliVersion(): Promise<string> {
   if (cachedVersion) {
+    return cachedVersion;
+  }
+  const bundledVersion = await getBundledVersion();
+  if (bundledVersion) {
+    cachedVersion = bundledVersion;
     return cachedVersion;
   }
   const packageUrl = new URL("../../package.json", import.meta.url);

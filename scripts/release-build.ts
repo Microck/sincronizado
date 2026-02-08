@@ -1,4 +1,4 @@
-import { mkdir } from "fs/promises";
+import { mkdir, writeFile } from "fs/promises";
 import { join } from "path";
 
 const targets = [
@@ -7,7 +7,6 @@ const targets = [
   { bun: "bun-darwin-x64", os: "darwin", arch: "x64" },
   { bun: "bun-darwin-arm64", os: "darwin", arch: "arm64" },
   { bun: "bun-windows-x64", os: "windows", arch: "x64", ext: ".exe" },
-  { bun: "bun-windows-arm64", os: "windows", arch: "arm64", ext: ".exe" },
 ];
 
 async function runBuild(target: (typeof targets)[number]): Promise<void> {
@@ -16,6 +15,13 @@ async function runBuild(target: (typeof targets)[number]): Promise<void> {
 
   const outputName = `sinc-${target.os}-${target.arch}${target.ext ?? ""}`;
   const outputPath = join(distDir, outputName);
+
+  const pkg = JSON.parse(await Bun.file(join(process.cwd(), "package.json")).text()) as { version: string };
+  const version = pkg.version;
+
+  const versionFilePath = join(process.cwd(), "src", "generated", "version.ts");
+  await mkdir(join(process.cwd(), "src", "generated"), { recursive: true });
+  await writeFile(versionFilePath, `export const SINC_VERSION = "${version}" as const;\n`);
 
   const proc = Bun.spawn([
     "bun",

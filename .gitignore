@@ -5,3 +5,4 @@ dist/
 .sandbox/
 .env
 *.log
+src/generated/
