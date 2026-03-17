@@ -4,8 +4,8 @@
   "name": "sincronizado",
   "description": "hyper-local dev with remote ai execution",
   "logo": {
-    "light": "/docs/logo.svg",
-    "dark": "/docs/logo.svg",
+    "light": "https://raw.githubusercontent.com/Microck/sincronizado/main/docs/logo.svg",
+    "dark": "https://raw.githubusercontent.com/Microck/sincronizado/main/docs/logo.svg",
     "href": "/"
   },
   "colors": {
