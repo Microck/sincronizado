@@ -1,15 +1,15 @@
-import { resolve } from "path";
-import { createSpinner, emitJson, formatError, log, logVerbose } from "../output";
-import { isJson } from "../output-context";
-import { loadConfig } from "../../config";
-import { generateSessionId, getProjectName, EXIT_CODES } from "../../utils";
+import { resolve } from 'path';
+import { createSpinner, emitJson, formatError, log, logVerbose } from '../output';
+import { isJson } from '../output-context';
+import { loadConfig } from '../../config';
+import { generateSessionId, getProjectName, EXIT_CODES } from '../../utils';
 import {
   testConnection,
   sshExec,
   hasSession,
   attachTmuxSession,
   selectProtocol,
-} from "../../connection";
+} from '../../connection';
 import {
   createSyncSession,
   getSyncConflicts,
@@ -17,23 +17,23 @@ import {
   flushSync,
   terminateSync,
   isMutagenInstalled,
-} from "../../sync";
-import { formatConflicts } from "../../sync/conflicts";
-import { loadSyncIgnore, mergeIgnorePatterns } from "../../sync/ignore";
+} from '../../sync';
+import { formatConflicts } from '../../sync/conflicts';
+import { loadSyncIgnore, mergeIgnorePatterns } from '../../sync/ignore';
 
 interface ConnectOptions {
   resume?: boolean;
 }
 
 function quoteRemotePathForShell(path: string): string {
-  if (path === "~") {
+  if (path === '~') {
     return '"$HOME"';
   }
-  if (path.startsWith("~/")) {
-    const rest = path.slice(2).replace(/"/g, "\\\"");
+  if (path.startsWith('~/')) {
+    const rest = path.slice(2).replace(/"/g, '\\"');
     return `"$HOME/${rest}"`;
   }
-  const escaped = path.replace(/"/g, "\\\"");
+  const escaped = path.replace(/"/g, '\\"');
   return `"${escaped}"`;
 }
 
@@ -75,7 +75,7 @@ async function attachWithReconnect(
 
   log(
     formatError(
-      "Connection lost",
+      'Connection lost',
       `Failed to reconnect after ${maxAttempts} attempts`
     )
   );
@@ -92,43 +92,43 @@ export async function connect(options: ConnectOptions = {}): Promise<number> {
   try {
     config = await loadConfig();
   } catch (err) {
-    log(formatError("Failed to load config", (err as Error).message));
+    log(formatError('Failed to load config', (err as Error).message));
     return EXIT_CODES.CONFIG_ERROR;
   }
 
-  const spinner = createSpinner("Checking prerequisites...");
+  const spinner = createSpinner('Checking prerequisites...');
   spinner.start();
 
   const syncMode = config.sync.mode;
-  const syncEnabled = syncMode !== "none";
+  const syncEnabled = syncMode !== 'none';
 
   if (syncEnabled && !(await isMutagenInstalled())) {
-    spinner.fail("Mutagen not found");
-    log(formatError("Mutagen is required for file sync", "Install from https://mutagen.io/"));
+    spinner.fail('Mutagen not found');
+    log(formatError('Mutagen is required for file sync', 'Install from https://mutagen.io/'));
     return EXIT_CODES.UNAVAILABLE;
   }
 
-  spinner.text = "Connecting to VPS...";
+  spinner.text = 'Connecting to VPS...';
   const connResult = await testConnection(config);
 
   if (!connResult.success) {
-    spinner.fail("Connection failed");
-    log(formatError(connResult.error || "Unknown error", "Check VPS hostname and SSH key"));
+    spinner.fail('Connection failed');
+    log(formatError(connResult.error || 'Unknown error', 'Check VPS hostname and SSH key'));
     return EXIT_CODES.CONNECT_ERROR;
   }
 
-  spinner.text = "Connected to VPS";
+  spinner.text = 'Connected to VPS';
   spinner.succeed();
 
   const hasExisting = await hasSession(config, sessionName);
 
   if (hasExisting && !options.resume) {
-    log(formatError(`Session ${sessionName} already exists`, "Use -r to resume"));
+    log(formatError(`Session ${sessionName} already exists`, 'Use -r to resume'));
     return EXIT_CODES.MISUSE;
   }
 
   if (!hasExisting && options.resume) {
-    log(formatError(`Session ${sessionName} does not exist`, "Run without -r to start"));
+    log(formatError(`Session ${sessionName} does not exist`, 'Run without -r to start'));
     return EXIT_CODES.MISUSE;
   }
 
@@ -137,7 +137,7 @@ export async function connect(options: ConnectOptions = {}): Promise<number> {
   // creating a new session with -c.
   const mkdir = await sshExec(config, `mkdir -p ${quoteRemotePathForShell(remotePath)}`);
   if (!mkdir.success) {
-    log(formatError("Failed to prepare remote workspace", mkdir.stderr.trim() || mkdir.stdout.trim()));
+    log(formatError('Failed to prepare remote workspace', mkdir.stderr.trim() || mkdir.stdout.trim()));
     return EXIT_CODES.CONNECT_ERROR;
   }
 
@@ -146,25 +146,25 @@ export async function connect(options: ConnectOptions = {}): Promise<number> {
 
     if (isJson()) {
       emitJson({
-        event: "sync-status",
+        event: 'sync-status',
         session: sessionName,
         exists: syncStatus.exists,
         status: syncStatus.status,
         watching: syncStatus.watching,
       });
     } else {
-      log(`Sync status: ${syncStatus.exists ? syncStatus.status : "not found"}`);
+      log(`Sync status: ${syncStatus.exists ? syncStatus.status : 'not found'}`);
     }
 
-    const syncSpinner = createSpinner("Starting file sync...");
+    const syncSpinner = createSpinner('Starting file sync...');
     syncSpinner.start();
 
     if (!syncStatus.exists) {
       const fileIgnore = await loadSyncIgnore(projectPath);
       const ignorePatterns = mergeIgnorePatterns(config.sync.ignore, fileIgnore);
 
-      const mode = syncMode === "both" ? "two-way-safe" : "one-way-safe";
-      const direction = syncMode === "pull" ? "remote-to-local" : "local-to-remote";
+      const mode = syncMode === 'both' ? 'two-way-safe' : 'one-way-safe';
+      const direction = syncMode === 'pull' ? 'remote-to-local' : 'local-to-remote';
 
       const syncResult = await createSyncSession(
         config,
@@ -175,8 +175,8 @@ export async function connect(options: ConnectOptions = {}): Promise<number> {
         { mode, direction }
       );
       if (!syncResult.success) {
-        syncSpinner.fail("Sync setup failed");
-        log(formatError(syncResult.error || "Unknown sync error"));
+        syncSpinner.fail('Sync setup failed');
+        log(formatError(syncResult.error || 'Unknown sync error'));
         return EXIT_CODES.GENERAL_ERROR;
       }
     }
@@ -191,22 +191,22 @@ export async function connect(options: ConnectOptions = {}): Promise<number> {
       attempts++;
     }
 
-    syncSpinner.succeed("File sync active");
+    syncSpinner.succeed('File sync active');
   } else {
     if (isJson()) {
       emitJson({
-        event: "sync-status",
+        event: 'sync-status',
         session: sessionName,
         exists: false,
-        status: "disabled",
+        status: 'disabled',
         watching: false,
       });
     } else {
-      log("Sync status: disabled (sync.mode=none)");
+      log('Sync status: disabled (sync.mode=none)');
     }
   }
 
-  const agentCommand = config.agent === "opencode" ? "opencode" : "claude";
+  const agentCommand = config.agent === 'opencode' ? 'opencode' : 'claude';
 
   let conflictMonitor: ReturnType<typeof setInterval> | null = null;
   if (syncEnabled) {
@@ -240,10 +240,10 @@ export async function connect(options: ConnectOptions = {}): Promise<number> {
   if (syncEnabled) {
     const sessionStillExists = await hasSession(config, sessionName);
     if (!sessionStillExists) {
-      logVerbose("Session ended; cleaning up sync session");
+      logVerbose('Session ended; cleaning up sync session');
     }
 
-    const exitSpinner = createSpinner("Syncing final changes...");
+    const exitSpinner = createSpinner('Syncing final changes...');
     exitSpinner.start();
 
     await flushSync(sessionName);
@@ -252,7 +252,7 @@ export async function connect(options: ConnectOptions = {}): Promise<number> {
       await terminateSync(sessionName);
     }
 
-    exitSpinner.succeed("Sync complete");
+    exitSpinner.succeed('Sync complete');
   }
 
   return exitCode;

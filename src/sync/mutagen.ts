@@ -1,5 +1,5 @@
-import type { Config } from "../config/schema";
-import { extractConflicts, type SyncConflict } from "./conflicts";
+import type { Config } from '../config/schema';
+import { type SyncConflict } from './conflicts';
 
 export interface SyncStatus {
   exists: boolean;
@@ -14,9 +14,9 @@ async function mutagenExec(args: string[]): Promise<{
   stderr: string;
 }> {
   try {
-    const proc = Bun.spawn(["mutagen", ...args], {
-      stdout: "pipe",
-      stderr: "pipe",
+    const proc = Bun.spawn(['mutagen', ...args], {
+      stdout: 'pipe',
+      stderr: 'pipe',
     });
 
     const [stdout, stderr] = await Promise.all([
@@ -29,14 +29,14 @@ async function mutagenExec(args: string[]): Promise<{
   } catch (error) {
     return {
       success: false,
-      stdout: "",
-      stderr: (error as Error).message || "mutagen invocation failed",
+      stdout: '',
+      stderr: (error as Error).message || 'mutagen invocation failed',
     };
   }
 }
 
-type MutagenSyncMode = "two-way-safe" | "two-way-resolved" | "one-way-safe" | "one-way-replica";
-type SyncDirection = "local-to-remote" | "remote-to-local";
+type MutagenSyncMode = 'two-way-safe' | 'two-way-resolved' | 'one-way-safe' | 'one-way-replica';
+type SyncDirection = 'local-to-remote' | 'remote-to-local';
 
 function resolveRemoteEndpoint(config: Config, remotePath: string): string {
   // SSH endpoints are expressed using Mutagen's SCP-like syntax:
@@ -62,25 +62,25 @@ export async function createSyncSession(
     direction?: SyncDirection;
   }
 ): Promise<{ success: boolean; error?: string }> {
-  const ignoreFlags = ignore.flatMap((pattern) => ["--ignore", pattern]);
+  const ignoreFlags = ignore.flatMap((pattern) => ['--ignore', pattern]);
 
-  const mode: MutagenSyncMode = options?.mode ?? "two-way-safe";
-  const direction: SyncDirection = options?.direction ?? "local-to-remote";
+  const mode: MutagenSyncMode = options?.mode ?? 'two-way-safe';
+  const direction: SyncDirection = options?.direction ?? 'local-to-remote';
 
   const localEndpoint = localPath;
   const remoteEndpoint = resolveRemoteEndpoint(config, remotePath);
   const [alphaEndpoint, betaEndpoint] =
-    direction === "remote-to-local"
+    direction === 'remote-to-local'
       ? [remoteEndpoint, localEndpoint]
       : [localEndpoint, remoteEndpoint];
 
   const result = await mutagenExec([
-    "sync",
-    "create",
+    'sync',
+    'create',
     `--name=${name}`,
     `--mode=${mode}`,
     ...ignoreFlags,
-    "--ignore-vcs",
+    '--ignore-vcs',
     alphaEndpoint,
     betaEndpoint,
   ]);
@@ -92,25 +92,25 @@ export async function createSyncSession(
 }
 
 export async function getSyncStatus(name: string): Promise<SyncStatus> {
-  const result = await mutagenExec(["sync", "list", "--long", name]);
+  const result = await mutagenExec(['sync', 'list', '--long', name]);
 
   if (!result.success) {
-    return { exists: false, status: "not found", watching: false, conflicts: [] };
+    return { exists: false, status: 'not found', watching: false, conflicts: [] };
   }
 
-  const output = result.stdout || "";
+  const output = result.stdout || '';
   const exists = /^Name:\s+/m.test(output);
   if (!exists) {
-    return { exists: false, status: "not found", watching: false, conflicts: [] };
+    return { exists: false, status: 'not found', watching: false, conflicts: [] };
   }
 
   const match = output.match(/^Status:\s*(.*)$/m);
-  const status = match?.[1]?.trim() || "unknown";
+  const status = match?.[1]?.trim() || 'unknown';
 
   return {
     exists: true,
     status,
-    watching: status === "Watching for changes",
+    watching: status === 'Watching for changes',
     conflicts: [],
   };
 }
@@ -123,27 +123,27 @@ export async function getSyncConflicts(name: string): Promise<SyncConflict[]> {
 }
 
 export async function flushSync(name: string): Promise<boolean> {
-  const result = await mutagenExec(["sync", "flush", name]);
+  const result = await mutagenExec(['sync', 'flush', name]);
   return result.success;
 }
 
 export async function pauseSync(name: string): Promise<boolean> {
-  const result = await mutagenExec(["sync", "pause", name]);
+  const result = await mutagenExec(['sync', 'pause', name]);
   return result.success;
 }
 
 export async function resumeSync(name: string): Promise<boolean> {
-  const result = await mutagenExec(["sync", "resume", name]);
+  const result = await mutagenExec(['sync', 'resume', name]);
   return result.success;
 }
 
 export async function terminateSync(name: string): Promise<boolean> {
-  const result = await mutagenExec(["sync", "terminate", name]);
+  const result = await mutagenExec(['sync', 'terminate', name]);
   return result.success;
 }
 
 export async function isMutagenInstalled(): Promise<boolean> {
-  const result = await mutagenExec(["version"]);
+  const result = await mutagenExec(['version']);
   return result.success;
 }
 
@@ -171,7 +171,7 @@ export async function forceSyncDirection(
       remotePath,
       ignore,
       {
-        mode: "one-way-replica",
+        mode: 'one-way-replica',
         direction,
       }
     );
@@ -179,7 +179,7 @@ export async function forceSyncDirection(
     if (!createResult.success) {
       return {
         success: false,
-        error: createResult.error || "Failed to create force sync session",
+        error: createResult.error || 'Failed to create force sync session',
       };
     }
 
@@ -188,7 +188,7 @@ export async function forceSyncDirection(
     if (!flushed) {
       return {
         success: false,
-        error: "Failed to flush force sync session",
+        error: 'Failed to flush force sync session',
       };
     }
 
@@ -199,13 +199,13 @@ export async function forceSyncDirection(
       if (!status.exists) {
         return {
           success: false,
-          error: "Force sync session not found after creation",
+          error: 'Force sync session not found after creation',
         };
       }
       if (status.watching) {
         return { success: true };
       }
-      if (status.status.toLowerCase().includes("error")) {
+      if (status.status.toLowerCase().includes('error')) {
         return {
           success: false,
           error: `Force sync session error: ${status.status}`,
@@ -216,12 +216,12 @@ export async function forceSyncDirection(
 
     return {
       success: false,
-      error: "Timed out waiting for force sync session to start",
+      error: 'Timed out waiting for force sync session to start',
     };
   } catch (error) {
     return {
       success: false,
-      error: (error as Error).message || "Force sync failed",
+      error: (error as Error).message || 'Force sync failed',
     };
   } finally {
     if (created) {

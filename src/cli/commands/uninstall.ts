@@ -1,11 +1,11 @@
-import { promises as fs } from "fs";
-import { homedir } from "os";
-import { join, resolve } from "path";
-import { generateSessionId, EXIT_CODES } from "../../utils";
-import { terminateSync } from "../../sync";
-import { getConfigPath } from "../../config";
-import { getDefaultBinDir, removePath } from "../../installer/path";
-import { formatError, formatSuccess, log } from "../output";
+import { promises as fs } from 'fs';
+import { homedir } from 'os';
+import { join, resolve } from 'path';
+import { generateSessionId, EXIT_CODES } from '../../utils';
+import { terminateSync } from '../../sync';
+import { getConfigPath } from '../../config';
+import { getDefaultBinDir, removePath } from '../../installer/path';
+import { formatError, formatSuccess, log } from '../output';
 
 async function removeIfExists(filePath: string): Promise<boolean> {
   try {
@@ -26,7 +26,7 @@ export async function uninstall(): Promise<number> {
   try {
     await fs.rm(configPath, { force: true });
   } catch (error) {
-    log(formatError("Failed to remove config", (error as Error).message));
+    log(formatError('Failed to remove config', (error as Error).message));
     return EXIT_CODES.GENERAL_ERROR;
   }
 
@@ -34,16 +34,16 @@ export async function uninstall(): Promise<number> {
 
   // Windows installs use a dedicated directory. On Unix, the default bin dir is
   // often ~/.local/bin (shared with other tooling) so we must not delete it.
-  if (process.platform === "win32") {
+  if (process.platform === 'win32') {
     await fs.rm(binDir, { recursive: true, force: true });
     await removePath(binDir);
   } else {
     const candidates = new Set<string>();
-    const which = Bun.which("sinc");
+    const which = Bun.which('sinc');
     if (which) {
       candidates.add(which);
     }
-    candidates.add(join(binDir, "sinc"));
+    candidates.add(join(binDir, 'sinc'));
 
     const home = homedir();
     for (const candidate of candidates) {
@@ -64,7 +64,7 @@ export async function uninstall(): Promise<number> {
       if (!removed) {
         log(
           formatError(
-            "Failed to remove sinc binary",
+            'Failed to remove sinc binary',
             `Delete it manually: ${candidate}`
           )
         );
@@ -73,6 +73,6 @@ export async function uninstall(): Promise<number> {
     }
   }
 
-  log(formatSuccess("sincronizado uninstalled"));
+  log(formatSuccess('sincronizado uninstalled'));
   return EXIT_CODES.SUCCESS;
 }

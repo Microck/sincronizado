@@ -1,7 +1,7 @@
-import { EXIT_CODES } from "../../utils";
-import { log, formatError } from "../output";
-import { runSetupTui } from "../../installer/tui";
-import { spawnSetupInCmd } from "../../installer/windows-cmd";
+import { EXIT_CODES } from '../../utils';
+import { log, formatError } from '../output';
+import { runSetupTui } from '../../installer/tui';
+import { spawnSetupInCmd } from '../../installer/windows-cmd';
 
 export async function setup(): Promise<number> {
   if (spawnSetupInCmd()) {
@@ -15,7 +15,7 @@ export async function setup(): Promise<number> {
     }
     return EXIT_CODES.SUCCESS;
   } catch (error) {
-    log(formatError("Setup failed", (error as Error).message));
+    log(formatError('Setup failed', (error as Error).message));
     return EXIT_CODES.GENERAL_ERROR;
   }
 }

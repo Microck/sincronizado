@@ -1,9 +1,9 @@
-import { getCliVersion } from "../utils/version";
-import { isUpdateAvailable } from "./version";
-import { log } from "../cli/output";
-import { getOutputMode } from "../cli/output-context";
+import { getCliVersion } from '../utils/version';
+import { isUpdateAvailable } from './version';
+import { log } from '../cli/output';
+import { getOutputMode } from '../cli/output-context';
 
-const DEFAULT_REPO = "Microck/sincronizado";
+const DEFAULT_REPO = 'Microck/sincronizado';
 
 export interface UpdateInfo {
   current: string;
@@ -25,7 +25,7 @@ export async function checkForUpdates(options?: {
     const response = await fetch(
       `https://api.github.com/repos/${repo}/releases/latest`,
       {
-        headers: { Accept: "application/vnd.github+json" },
+        headers: { Accept: 'application/vnd.github+json' },
         signal: controller.signal,
       }
     );
@@ -35,7 +35,7 @@ export async function checkForUpdates(options?: {
     }
 
     const data = (await response.json()) as { tag_name?: string; html_url?: string };
-    const latest = data.tag_name || "";
+    const latest = data.tag_name || '';
     if (!latest) {
       return null;
     }

@@ -6,22 +6,22 @@ function quoteCmdArg(value: string): string {
 }
 
 export function spawnSetupInCmd(): boolean {
-  if (process.platform !== "win32") {
+  if (process.platform !== 'win32') {
     return false;
   }
-  if (process.env.SINC_CMD_SETUP === "1") {
+  if (process.env.SINC_CMD_SETUP === '1') {
     return false;
   }
 
   const execPath = process.argv[0];
   const args = process.argv.slice(1);
-  const commandLine = [execPath, ...args].map(quoteCmdArg).join(" ");
+  const commandLine = [execPath, ...args].map(quoteCmdArg).join(' ');
 
-  Bun.spawn(["cmd.exe", "/c", "start", "", "cmd.exe", "/c", commandLine], {
-    stdin: "inherit",
-    stdout: "inherit",
-    stderr: "inherit",
-    env: { ...process.env, SINC_CMD_SETUP: "1" },
+  Bun.spawn(['cmd.exe', '/c', 'start', '', 'cmd.exe', '/c', commandLine], {
+    stdin: 'inherit',
+    stdout: 'inherit',
+    stderr: 'inherit',
+    env: { ...process.env, SINC_CMD_SETUP: '1' },
   });
 
   return true;

@@ -1,18 +1,18 @@
 #!/usr/bin/env bun
-import { connect } from "./commands/connect";
-import { list } from "./commands/list";
-import { kill } from "./commands/kill";
-import { push } from "./commands/push";
-import { pull } from "./commands/pull";
-import { setup } from "./commands/setup";
-import { uninstall } from "./commands/uninstall";
-import { getCompletionScript } from "./completions";
-import { EXIT_CODES } from "../utils";
-import { log, formatError } from "./output";
-import { initOutput } from "./output-context";
-import { notifyIfUpdateAvailable } from "../updates/check";
-import { getCliVersion } from "../utils/version";
-import { resolveCliAction } from "./dispatch";
+import { connect } from './commands/connect';
+import { list } from './commands/list';
+import { kill } from './commands/kill';
+import { push } from './commands/push';
+import { pull } from './commands/pull';
+import { setup } from './commands/setup';
+import { uninstall } from './commands/uninstall';
+import { getCompletionScript } from './completions';
+import { EXIT_CODES } from '../utils';
+import { log, formatError } from './output';
+import { initOutput } from './output-context';
+import { notifyIfUpdateAvailable } from '../updates/check';
+import { getCliVersion } from '../utils/version';
+import { resolveCliAction } from './dispatch';
 
 const HELP_TEXT = `sinc - Connect to VPS AI agent with synced files
 
@@ -51,20 +51,20 @@ async function main(): Promise<number> {
   const { action, values } = resolved;
   initOutput({ quiet: values.quiet, verbose: values.verbose, json: values.json });
 
-  if (action === "help") {
+  if (action === 'help') {
     console.log(HELP_TEXT);
     return EXIT_CODES.SUCCESS;
   }
 
-  if (action === "version") {
+  if (action === 'version') {
     const version = await getCliVersion();
     console.log(`sinc version ${version}`);
     return EXIT_CODES.SUCCESS;
   }
 
-  if (action === "completions") {
+  if (action === 'completions') {
     try {
-      console.log(getCompletionScript(values.completions ?? ""));
+      console.log(getCompletionScript(values.completions ?? ''));
       return EXIT_CODES.SUCCESS;
     } catch (err) {
       log(formatError((err as Error).message));
@@ -72,31 +72,31 @@ async function main(): Promise<number> {
     }
   }
 
-  if (process.env.SINC_NO_UPDATE_CHECK !== "1") {
+  if (process.env.SINC_NO_UPDATE_CHECK !== '1') {
     await notifyIfUpdateAvailable();
   }
 
-  if (action === "list") {
+  if (action === 'list') {
     return await list();
   }
 
-  if (action === "kill") {
-    return await kill(values.kill ?? "");
+  if (action === 'kill') {
+    return await kill(values.kill ?? '');
   }
 
-  if (action === "push") {
+  if (action === 'push') {
     return await push({ yes: values.yes });
   }
 
-  if (action === "pull") {
+  if (action === 'pull') {
     return await pull({ yes: values.yes });
   }
 
-  if (action === "setup") {
+  if (action === 'setup') {
     return await setup();
   }
 
-  if (action === "uninstall") {
+  if (action === 'uninstall') {
     return await uninstall();
   }
 
@@ -106,6 +106,6 @@ async function main(): Promise<number> {
 main()
   .then((code) => process.exit(code))
   .catch((err) => {
-    log(formatError("Unexpected error", err.message));
+    log(formatError('Unexpected error', err.message));
     process.exit(EXIT_CODES.GENERAL_ERROR);
   });
