@@ -1,13 +1,13 @@
-import { promises as fs } from "fs";
-import { dirname } from "path";
-import { configSchema, type Config } from "./schema";
-import { DEFAULT_CONFIG } from "./defaults";
-import { getConfigPath as getConfigPathUtil } from "../utils/paths";
+import { promises as fs } from 'fs';
+import { dirname } from 'path';
+import { configSchema, type Config } from './schema';
+import { DEFAULT_CONFIG } from './defaults';
+import { getConfigPath as getConfigPathUtil } from '../utils/paths';
 
 export class ConfigError extends Error {
   constructor(message: string) {
     super(message);
-    this.name = "ConfigError";
+    this.name = 'ConfigError';
   }
 }
 
@@ -26,7 +26,7 @@ export async function loadConfig(): Promise<Config> {
 
   let raw: string;
   try {
-    raw = await fs.readFile(configPath, "utf8");
+    raw = await fs.readFile(configPath, 'utf8');
   } catch (error) {
     throw new ConfigError(`Unable to read config file: ${(error as Error).message}`);
   }

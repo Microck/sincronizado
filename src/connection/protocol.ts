@@ -1,15 +1,15 @@
-import type { Config } from "../config/schema";
+import type { Config } from '../config/schema';
 
-export type ConnectionProtocol = "ssh" | "et" | "mosh";
+export type ConnectionProtocol = 'ssh' | 'et' | 'mosh';
 
 const protocolBinary: Record<ConnectionProtocol, string> = {
-  ssh: "ssh",
-  et: "et",
-  mosh: "mosh",
+  ssh: 'ssh',
+  et: 'et',
+  mosh: 'mosh',
 };
 
 export function detectAvailableProtocols(
-  protocols: ConnectionProtocol[] = ["ssh", "et", "mosh"]
+  protocols: ConnectionProtocol[] = ['ssh', 'et', 'mosh']
 ): ConnectionProtocol[] {
   return protocols.filter((protocol) => Boolean(Bun.which(protocolBinary[protocol])));
 }
@@ -19,7 +19,7 @@ export function selectProtocol(config: Config): ConnectionProtocol {
   if (available.length > 0) {
     return available[0];
   }
-  return config.connection.protocols[0] ?? "ssh";
+  return config.connection.protocols[0] ?? 'ssh';
 }
 
 export function buildRemoteCommand(
@@ -29,23 +29,23 @@ export function buildRemoteCommand(
 ): string[] {
   const host = `${config.vps.user}@${config.vps.hostname}`;
   switch (protocol) {
-    case "et":
-      return ["et", "-t", remoteCommand, "-p", String(config.vps.port), host];
-    case "mosh":
-      return ["mosh", "-p", String(config.vps.port), host, "--", remoteCommand];
-    case "ssh":
-    default:
-      return [
-        "ssh",
-        "-o",
-        `ServerAliveInterval=${config.ssh.keepaliveInterval}`,
-        "-o",
-        "ServerAliveCountMax=3",
-        ...(config.ssh.identityFile ? ["-i", config.ssh.identityFile] : []),
-        "-p",
-        String(config.vps.port),
-        host,
-        remoteCommand,
-      ];
+  case 'et':
+    return ['et', '-t', remoteCommand, '-p', String(config.vps.port), host];
+  case 'mosh':
+    return ['mosh', '-p', String(config.vps.port), host, '--', remoteCommand];
+  case 'ssh':
+  default:
+    return [
+      'ssh',
+      '-o',
+      `ServerAliveInterval=${config.ssh.keepaliveInterval}`,
+      '-o',
+      'ServerAliveCountMax=3',
+      ...(config.ssh.identityFile ? ['-i', config.ssh.identityFile] : []),
+      '-p',
+      String(config.vps.port),
+      host,
+      remoteCommand,
+    ];
   }
 }

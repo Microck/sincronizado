@@ -1,6 +1,6 @@
-import type { Config } from "../config/schema";
-import { buildRemoteCommand, type ConnectionProtocol } from "./protocol";
-import { sshExec } from "./ssh";
+import type { Config } from '../config/schema';
+import { buildRemoteCommand, type ConnectionProtocol } from './protocol';
+import { sshExec } from './ssh';
 
 export async function hasSession(
   config: Config,
@@ -16,10 +16,10 @@ export async function hasSession(
 export async function listSessions(config: Config): Promise<string[]> {
   const result = await sshExec(
     config,
-    "tmux list-sessions -F '#{session_name}' 2>/dev/null | grep '^sinc-' || true"
+    'tmux list-sessions -F \'#{session_name}\' 2>/dev/null | grep \'^sinc-\' || true'
   );
   if (!result.success) return [];
-  return result.stdout.trim().split("\n").filter(Boolean);
+  return result.stdout.trim().split('\n').filter(Boolean);
 }
 
 export async function killSession(
@@ -40,8 +40,8 @@ export function buildTmuxAttachCommand(
   const tmuxCmd = `tmux new-session -A -s ${sessionName} -c ${workDir} '${initialCommand}'`;
 
   const args = buildRemoteCommand(config, protocol, tmuxCmd);
-  if (protocol === "ssh" && !args.includes("-t")) {
-    args.splice(1, 0, "-t");
+  if (protocol === 'ssh' && !args.includes('-t')) {
+    args.splice(1, 0, '-t');
   }
   return args;
 }
@@ -62,9 +62,9 @@ export async function attachTmuxSession(
   );
 
   const proc = Bun.spawn(args, {
-    stdin: "inherit",
-    stdout: "inherit",
-    stderr: "inherit",
+    stdin: 'inherit',
+    stdout: 'inherit',
+    stderr: 'inherit',
   });
 
   return await proc.exited;

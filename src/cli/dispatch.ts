@@ -1,18 +1,18 @@
-import { parseArgs } from "util";
-import { EXIT_CODES } from "../utils";
-import { formatError } from "./output";
+import { parseArgs } from 'util';
+import { EXIT_CODES } from '../utils';
+import { formatError } from './output';
 
 export type CliAction =
-  | "help"
-  | "version"
-  | "completions"
-  | "setup"
-  | "uninstall"
-  | "list"
-  | "kill"
-  | "push"
-  | "pull"
-  | "connect";
+  | 'help'
+  | 'version'
+  | 'completions'
+  | 'setup'
+  | 'uninstall'
+  | 'list'
+  | 'kill'
+  | 'push'
+  | 'pull'
+  | 'connect';
 
 export interface CliValues {
   help: boolean;
@@ -34,7 +34,7 @@ export type CliActionResult =
   | { ok: false; exitCode: number; message: string };
 
 function misuse(message: string, includeHelpHint = true): CliActionResult {
-  const suffix = includeHelpHint ? "\nRun 'sinc --help' for usage" : "";
+  const suffix = includeHelpHint ? '\nRun \'sinc --help\' for usage' : '';
   return {
     ok: false,
     exitCode: EXIT_CODES.MISUSE,
@@ -48,18 +48,18 @@ export function resolveCliAction(argv: string[]): CliActionResult {
     parsed = parseArgs({
       args: argv,
       options: {
-        help: { type: "boolean", short: "h" },
-        version: { type: "boolean", short: "V" },
-        resume: { type: "boolean", short: "r" },
-        quiet: { type: "boolean", short: "q" },
-        verbose: { type: "boolean", short: "v" },
-        json: { type: "boolean" },
-        yes: { type: "boolean" },
-        completions: { type: "string" },
-        list: { type: "boolean", short: "l" },
-        kill: { type: "string", short: "k" },
-        setup: { type: "boolean" },
-        uninstall: { type: "boolean" },
+        help: { type: 'boolean', short: 'h' },
+        version: { type: 'boolean', short: 'V' },
+        resume: { type: 'boolean', short: 'r' },
+        quiet: { type: 'boolean', short: 'q' },
+        verbose: { type: 'boolean', short: 'v' },
+        json: { type: 'boolean' },
+        yes: { type: 'boolean' },
+        completions: { type: 'string' },
+        list: { type: 'boolean', short: 'l' },
+        kill: { type: 'string', short: 'k' },
+        setup: { type: 'boolean' },
+        uninstall: { type: 'boolean' },
       },
       strict: true,
       allowPositionals: true,
@@ -77,45 +77,45 @@ export function resolveCliAction(argv: string[]): CliActionResult {
     json: Boolean(parsed.values.json),
     yes: Boolean(parsed.values.yes),
     completions:
-      typeof parsed.values.completions === "string"
+      typeof parsed.values.completions === 'string'
         ? parsed.values.completions
         : undefined,
     list: Boolean(parsed.values.list),
-    kill: typeof parsed.values.kill === "string" ? parsed.values.kill : undefined,
+    kill: typeof parsed.values.kill === 'string' ? parsed.values.kill : undefined,
     setup: Boolean(parsed.values.setup),
     uninstall: Boolean(parsed.values.uninstall),
   };
   const { positionals } = parsed;
 
   if (values.help) {
-    return { ok: true, action: "help", values };
+    return { ok: true, action: 'help', values };
   }
 
   if (values.version) {
-    return { ok: true, action: "version", values };
+    return { ok: true, action: 'version', values };
   }
 
   if (values.completions) {
-    return { ok: true, action: "completions", values };
+    return { ok: true, action: 'completions', values };
   }
 
   const [command, ...rest] = positionals;
   let actionFromCommand: CliAction | null = null;
   if (command) {
-    if (command === "list") {
+    if (command === 'list') {
       if (rest.length !== 0) {
-        return misuse("'sinc list' takes no arguments");
+        return misuse('\'sinc list\' takes no arguments');
       }
       values.list = true;
-    } else if (command === "kill") {
+    } else if (command === 'kill') {
       if (rest.length !== 1) {
-        return misuse("Usage: sinc kill <id>", false);
+        return misuse('Usage: sinc kill <id>', false);
       }
       if (values.kill && values.kill !== rest[0]) {
-        return misuse("Multiple kill targets specified");
+        return misuse('Multiple kill targets specified');
       }
       values.kill = rest[0];
-    } else if (command === "push" || command === "pull") {
+    } else if (command === 'push' || command === 'pull') {
       if (rest.length !== 0) {
         return misuse(`'sinc ${command}' takes no arguments`);
       }
@@ -133,15 +133,15 @@ export function resolveCliAction(argv: string[]): CliActionResult {
     Number(Boolean(actionFromCommand));
 
   if (actionCount > 1) {
-    return misuse("Only one command may be used at a time");
+    return misuse('Only one command may be used at a time');
   }
 
   if (values.list) {
-    return { ok: true, action: "list", values };
+    return { ok: true, action: 'list', values };
   }
 
   if (values.kill) {
-    return { ok: true, action: "kill", values };
+    return { ok: true, action: 'kill', values };
   }
 
   if (actionFromCommand) {
@@ -149,12 +149,12 @@ export function resolveCliAction(argv: string[]): CliActionResult {
   }
 
   if (values.setup) {
-    return { ok: true, action: "setup", values };
+    return { ok: true, action: 'setup', values };
   }
 
   if (values.uninstall) {
-    return { ok: true, action: "uninstall", values };
+    return { ok: true, action: 'uninstall', values };
   }
 
-  return { ok: true, action: "connect", values };
+  return { ok: true, action: 'connect', values };
 }

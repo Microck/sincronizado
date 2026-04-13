@@ -1,16 +1,16 @@
-import { promises as fs } from "fs";
-import { join } from "path";
-import type { Config } from "../config/schema";
-import { sshExec } from "../connection/ssh";
+import { promises as fs } from 'fs';
+import { join } from 'path';
+import type { Config } from '../config/schema';
+import { sshExec } from '../connection/ssh';
 
 function shellQuote(value: string): string {
-  return `'${value.replace(/'/g, `'"'"'`)}'`;
+  return `'${value.replace(/'/g, '\'"\'"\'')}'`;
 }
 
 export async function runVpsSetup(config: Config): Promise<{ success: boolean; error?: string }> {
-  const scriptPath = join(process.cwd(), "scripts", "setup-vps.sh");
-  const script = await fs.readFile(scriptPath, "utf8");
-  const encoded = Buffer.from(script, "utf8").toString("base64");
+  const scriptPath = join(process.cwd(), 'scripts', 'setup-vps.sh');
+  const script = await fs.readFile(scriptPath, 'utf8');
+  const encoded = Buffer.from(script, 'utf8').toString('base64');
   const workspace = shellQuote(config.sync.remoteBase);
   const command = `SINC_WORKSPACE=${workspace} bash -c "echo ${encoded} | base64 -d | bash"`;
 
@@ -22,9 +22,9 @@ export async function runVpsSetup(config: Config): Promise<{ success: boolean; e
 }
 
 export async function runVpsHardening(config: Config): Promise<{ success: boolean; error?: string }> {
-  const scriptPath = join(process.cwd(), "scripts", "harden-vps.sh");
-  const script = await fs.readFile(scriptPath, "utf8");
-  const encoded = Buffer.from(script, "utf8").toString("base64");
+  const scriptPath = join(process.cwd(), 'scripts', 'harden-vps.sh');
+  const script = await fs.readFile(scriptPath, 'utf8');
+  const encoded = Buffer.from(script, 'utf8').toString('base64');
   const command = `bash -c "echo ${encoded} | base64 -d | sudo bash -s -- --yes"`;
 
   const result = await sshExec(config, command);

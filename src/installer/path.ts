@@ -1,21 +1,21 @@
-import { homedir } from "os";
-import { join } from "path";
-import { promises as fs } from "fs";
-import { dirname } from "path";
+import { homedir } from 'os';
+import { join } from 'path';
+import { promises as fs } from 'fs';
+import { dirname } from 'path';
 
 export function getDefaultBinDir(): string {
-  if (process.platform === "win32") {
-    return join(homedir(), "AppData", "Local", "Programs", "sincronizado");
+  if (process.platform === 'win32') {
+    return join(homedir(), 'AppData', 'Local', 'Programs', 'sincronizado');
   }
-  return join(homedir(), ".local", "bin");
+  return join(homedir(), '.local', 'bin');
 }
 
 async function fileContains(path: string, snippet: string): Promise<boolean> {
   try {
-    const contents = await fs.readFile(path, "utf8");
+    const contents = await fs.readFile(path, 'utf8');
     return contents.includes(snippet);
   } catch (error) {
-    if ((error as NodeJS.ErrnoException).code === "ENOENT") {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
       return false;
     }
     throw error;
@@ -31,9 +31,9 @@ async function ensureUnixPath(binDir: string): Promise<boolean> {
   const exportLine = `export PATH="${binDir}:$PATH"`;
   const fishLine = `set -gx PATH ${binDir} $PATH`;
 
-  const bashrc = join(homedir(), ".bashrc");
-  const zshrc = join(homedir(), ".zshrc");
-  const fishConfig = join(homedir(), ".config", "fish", "config.fish");
+  const bashrc = join(homedir(), '.bashrc');
+  const zshrc = join(homedir(), '.zshrc');
+  const fishConfig = join(homedir(), '.config', 'fish', 'config.fish');
 
   let updated = false;
   if (!(await fileContains(bashrc, exportLine))) {
@@ -62,17 +62,17 @@ async function ensureWindowsPath(binDir: string): Promise<boolean> {
     }
   `;
 
-  const proc = Bun.spawn(["powershell", "-NoProfile", "-Command", command], {
-    stdout: "pipe",
-    stderr: "pipe",
+  const proc = Bun.spawn(['powershell', '-NoProfile', '-Command', command], {
+    stdout: 'pipe',
+    stderr: 'pipe',
   });
   const output = await new Response(proc.stdout).text();
   await proc.exited;
-  return output.includes("updated");
+  return output.includes('updated');
 }
 
 export async function ensurePath(binDir: string): Promise<boolean> {
-  if (process.platform === "win32") {
+  if (process.platform === 'win32') {
     return ensureWindowsPath(binDir);
   }
   await fs.mkdir(binDir, { recursive: true });
@@ -81,16 +81,16 @@ export async function ensurePath(binDir: string): Promise<boolean> {
 
 async function removePathFromFile(path: string, needle: string): Promise<boolean> {
   try {
-    const contents = await fs.readFile(path, "utf8");
+    const contents = await fs.readFile(path, 'utf8');
     const lines = contents.split(/\r?\n/);
     const filtered = lines.filter((line) => !line.includes(needle));
     if (filtered.length === lines.length) {
       return false;
     }
-    await fs.writeFile(path, filtered.join("\n"));
+    await fs.writeFile(path, filtered.join('\n'));
     return true;
   } catch (error) {
-    if ((error as NodeJS.ErrnoException).code === "ENOENT") {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
       return false;
     }
     throw error;
@@ -98,9 +98,9 @@ async function removePathFromFile(path: string, needle: string): Promise<boolean
 }
 
 async function removeUnixPath(binDir: string): Promise<boolean> {
-  const bashrc = join(homedir(), ".bashrc");
-  const zshrc = join(homedir(), ".zshrc");
-  const fishConfig = join(homedir(), ".config", "fish", "config.fish");
+  const bashrc = join(homedir(), '.bashrc');
+  const zshrc = join(homedir(), '.zshrc');
+  const fishConfig = join(homedir(), '.config', 'fish', 'config.fish');
 
   const removed = await Promise.all([
     removePathFromFile(bashrc, binDir),
@@ -123,17 +123,17 @@ async function removeWindowsPath(binDir: string): Promise<boolean> {
     }
   `;
 
-  const proc = Bun.spawn(["powershell", "-NoProfile", "-Command", command], {
-    stdout: "pipe",
-    stderr: "pipe",
+  const proc = Bun.spawn(['powershell', '-NoProfile', '-Command', command], {
+    stdout: 'pipe',
+    stderr: 'pipe',
   });
   const output = await new Response(proc.stdout).text();
   await proc.exited;
-  return output.includes("removed");
+  return output.includes('removed');
 }
 
 export async function removePath(binDir: string): Promise<boolean> {
-  if (process.platform === "win32") {
+  if (process.platform === 'win32') {
     return removeWindowsPath(binDir);
   }
   return removeUnixPath(binDir);
@@ -141,20 +141,20 @@ export async function removePath(binDir: string): Promise<boolean> {
 
 export async function createAlias(name: string, target: string): Promise<void> {
   const binDir = getDefaultBinDir();
-  const aliasPath = join(binDir, name + (process.platform === "win32" ? ".cmd" : ""));
+  const aliasPath = join(binDir, name + (process.platform === 'win32' ? '.cmd' : ''));
   
-  if (process.platform === "win32") {
+  if (process.platform === 'win32') {
     // Windows wrapper
     const wrapper = `@echo off\r\n"${target}" %*`;
     await fs.writeFile(aliasPath, wrapper);
   } else {
     // Symlink on Unix
     await fs.symlink(target, aliasPath).catch(async (err) => {
-        // Fallback if symlink fails (e.g., cross-device)
-        if (err.code === 'EEXIST') {
-            await fs.unlink(aliasPath);
-            await fs.symlink(target, aliasPath);
-        }
+      // Fallback if symlink fails (e.g., cross-device)
+      if (err.code === 'EEXIST') {
+        await fs.unlink(aliasPath);
+        await fs.symlink(target, aliasPath);
+      }
     });
   }
 }

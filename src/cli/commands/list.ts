@@ -1,16 +1,16 @@
-import { loadConfig } from "../../config";
-import { listSessions } from "../../connection";
-import { getSyncStatus } from "../../sync";
-import { EXIT_CODES } from "../../utils";
-import { emitJson, formatError, log } from "../output";
-import { getOutputMode, isJson } from "../output-context";
+import { loadConfig } from '../../config';
+import { listSessions } from '../../connection';
+import { getSyncStatus } from '../../sync';
+import { EXIT_CODES } from '../../utils';
+import { emitJson, formatError, log } from '../output';
+import { getOutputMode, isJson } from '../output-context';
 
 export async function list(): Promise<number> {
   let config;
   try {
     config = await loadConfig();
   } catch (err) {
-    log(formatError("Failed to load config", (err as Error).message));
+    log(formatError('Failed to load config', (err as Error).message));
     return EXIT_CODES.CONFIG_ERROR;
   }
 
@@ -40,21 +40,21 @@ export async function list(): Promise<number> {
 
   if (sessions.length === 0) {
     if (!mode.quiet) {
-      console.log("No active sessions");
+      console.log('No active sessions');
     }
     return EXIT_CODES.SUCCESS;
   }
 
   if (!mode.quiet) {
-    console.log("Active sessions:");
+    console.log('Active sessions:');
   }
   for (const session of sessions) {
     const syncStatus = await getSyncStatus(session);
     const syncIndicator = syncStatus.exists
       ? syncStatus.watching
-        ? "syncing"
-        : "paused"
-      : "no sync";
+        ? 'syncing'
+        : 'paused'
+      : 'no sync';
     if (!mode.quiet) {
       console.log(`  ${session} (${syncIndicator})`);
     }
