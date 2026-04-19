@@ -4,8 +4,29 @@ export interface SyncConflict {
   betaVersion?: string;
 }
 
+type ConflictRecord = Record<string, unknown> & {
+  path?: string;
+  relativePath?: string;
+  file?: string;
+  alphaVersion?: unknown;
+  betaVersion?: unknown;
+  alpha?: Record<string, unknown>;
+  beta?: Record<string, unknown>;
+  conflicts?: unknown[];
+};
+
+type SessionRecord = Record<string, unknown> & {
+  conflicts?: unknown[];
+};
+
+function toConflictRecords(raw: unknown): ConflictRecord[] {
+  return Array.isArray(raw) ? (raw.filter((item): item is ConflictRecord =>
+    item != null && typeof item === "object" && !Array.isArray(item)
+  )) : [];
+}
+
 export function extractConflicts(sessionJson: unknown): SyncConflict[] {
-  let data: any = sessionJson;
+  let data: unknown = sessionJson;
 
   if (typeof sessionJson === "string") {
     try {
@@ -15,22 +36,21 @@ export function extractConflicts(sessionJson: unknown): SyncConflict[] {
     }
   }
 
-  if (!data || typeof data !== "object") {
+  if (!data || typeof data !== "object" || Array.isArray(data)) {
     return [];
   }
 
-  const sessions = Array.isArray(data.sessions) ? data.sessions : [];
+  const dataObj = data as Record<string, unknown>;
+  const sessions: SessionRecord[] = Array.isArray(dataObj.sessions)
+    ? dataObj.sessions.filter((s): s is SessionRecord =>
+        s != null && typeof s === "object" && !Array.isArray(s)
+      )
+    : [];
   const conflicts: SyncConflict[] = [];
 
   for (const session of sessions) {
-    if (!session || typeof session !== "object") {
-      continue;
-    }
-    const sessionConflicts = Array.isArray(session.conflicts) ? session.conflicts : [];
+    const sessionConflicts = toConflictRecords(session.conflicts);
     for (const conflict of sessionConflicts) {
-      if (!conflict || typeof conflict !== "object") {
-        continue;
-      }
       const path = conflict.path || conflict.relativePath || conflict.file;
       if (!path || typeof path !== "string") {
         continue;
