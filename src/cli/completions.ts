@@ -45,6 +45,12 @@ function fishScript(): string {
   return `${lines.join("\n")}\n`;
 }
 
+/**
+ * Generates a shell completion script for the given shell.
+ * @param shell - The target shell: "bash", "zsh", or "fish".
+ * @returns The completion script as a string.
+ * @throws Error if the shell is not supported.
+ */
 export function getCompletionScript(shell: string): string {
   switch (shell) {
     case "bash":

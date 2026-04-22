@@ -4,6 +4,13 @@ export interface SyncConflict {
   betaVersion?: string;
 }
 
+/**
+ * Extracts sync conflicts from a Mutagen session JSON object.
+ * Handles both raw JSON objects and JSON-serialized strings, with flexible
+ * field naming to accommodate different Mutagen output formats.
+ * @param sessionJson - A Mutagen session JSON object or its JSON string representation.
+ * @returns An array of SyncConflict objects.
+ */
 export function extractConflicts(sessionJson: unknown): SyncConflict[] {
   let data: any = sessionJson;
 
@@ -50,6 +57,11 @@ export function extractConflicts(sessionJson: unknown): SyncConflict[] {
   return conflicts;
 }
 
+/**
+ * Formats a list of sync conflicts into a human-readable string.
+ * @param conflicts - The array of SyncConflict objects.
+ * @returns A string where each conflict is on its own line.
+ */
 export function formatConflicts(conflicts: SyncConflict[]): string {
   if (conflicts.length === 0) {
     return "No conflicts";

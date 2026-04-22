@@ -1,6 +1,9 @@
 import type { Config } from "../config/schema";
 import { extractConflicts, type SyncConflict } from "./conflicts";
 
+/**
+ * Represents the status of a Mutagen sync session.
+ */
 export interface SyncStatus {
   exists: boolean;
   status: string;
@@ -51,6 +54,16 @@ function resolveRemoteEndpoint(config: Config, remotePath: string): string {
   return `${user}@${hostPart}:${remotePath}`;
 }
 
+/**
+ * Creates a new Mutagen sync session between a local and remote directory.
+ * @param config - The sincronizado configuration.
+ * @param name - A unique name for the sync session.
+ * @param localPath - Absolute path to the local directory.
+ * @param remotePath - Absolute path on the VPS for the remote directory.
+ * @param ignore - Array of ignore patterns (passed as --ignore flags).
+ * @param options - Optional sync mode and direction overrides.
+ * @returns An object indicating success or an error message.
+ */
 export async function createSyncSession(
   config: Config,
   name: string,
@@ -91,6 +104,11 @@ export async function createSyncSession(
   return { success: false, error: result.stderr.trim() };
 }
 
+/**
+ * Gets the current status of a Mutagen sync session by name.
+ * @param name - The name of the sync session to inspect.
+ * @returns A SyncStatus object describing the session's state.
+ */
 export async function getSyncStatus(name: string): Promise<SyncStatus> {
   const result = await mutagenExec(["sync", "list", "--long", name]);
 
@@ -115,6 +133,11 @@ export async function getSyncStatus(name: string): Promise<SyncStatus> {
   };
 }
 
+/**
+ * Retrieves the list of conflicts for a Mutagen sync session.
+ * @param name - The name of the sync session.
+ * @returns An array of SyncConflict objects, or an empty array if unavailable.
+ */
 export async function getSyncConflicts(name: string): Promise<SyncConflict[]> {
   // Mutagen's current CLI output isn't JSON by default. Until we add template-based
   // JSON output, conflicts are treated as unavailable in this layer.
@@ -122,31 +145,67 @@ export async function getSyncConflicts(name: string): Promise<SyncConflict[]> {
   return status.exists ? status.conflicts : [];
 }
 
+/**
+ * Flushes pending changes in a Mutagen sync session, ensuring all queued
+ * file transfers are completed before returning.
+ * @param name - The name of the session to flush.
+ * @returns True if the flush completed successfully, false otherwise.
+ */
 export async function flushSync(name: string): Promise<boolean> {
   const result = await mutagenExec(["sync", "flush", name]);
   return result.success;
 }
 
+/**
+ * Pauses an active Mutagen sync session.
+ * @param name - The name of the session to pause.
+ * @returns True if the session was paused successfully, false otherwise.
+ */
 export async function pauseSync(name: string): Promise<boolean> {
   const result = await mutagenExec(["sync", "pause", name]);
   return result.success;
 }
 
+/**
+ * Resumes a paused Mutagen sync session.
+ * @param name - The name of the session to resume.
+ * @returns True if the session was resumed successfully, false otherwise.
+ */
 export async function resumeSync(name: string): Promise<boolean> {
   const result = await mutagenExec(["sync", "resume", name]);
   return result.success;
 }
 
+/**
+ * Terminates (deletes) an active Mutagen sync session.
+ * @param name - The name of the session to terminate.
+ * @returns True if the session was terminated successfully, false otherwise.
+ */
 export async function terminateSync(name: string): Promise<boolean> {
   const result = await mutagenExec(["sync", "terminate", name]);
   return result.success;
 }
 
+/**
+ * Checks whether the Mutagen binary is installed and available on PATH.
+ * @returns True if Mutagen is available, false otherwise.
+ */
 export async function isMutagenInstalled(): Promise<boolean> {
   const result = await mutagenExec(["version"]);
   return result.success;
 }
 
+/**
+ * Forces a one-time sync in the specified direction by creating a temporary
+ * one-way-replica session, flushing it, waiting for completion, then cleaning up.
+ * @param config - The sincronizado configuration.
+ * @param sessionName - Base name for the session.
+ * @param localPath - Absolute path to the local directory.
+ * @param remotePath - Absolute path on the VPS for the remote directory.
+ * @param ignore - Array of ignore patterns.
+ * @param direction - The sync direction ("local-to-remote" or "remote-to-local").
+ * @returns An object indicating success or an error message.
+ */
 export async function forceSyncDirection(
   config: Config,
   sessionName: string,
