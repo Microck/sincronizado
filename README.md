@@ -82,6 +82,10 @@ graph TB
     cli <-->|ssh stream| tmux
     tmux <--> agent
     agent <--> fs
+
+    style mut fill:#bbf,stroke:#00a
+    linkStyle 1 stroke:#00a,stroke-width:2px
+    note right of mut: two-way sync (bare sinc)\n    note left of fs: push (local -> remote)\n    note right of fs: pull (remote -> local)
 ```
 
 ## installation
@@ -191,6 +195,65 @@ sinc -l
 sinc list
 ```
 
+### uninstall
+
+remove sincronizado configuration and local data.
+
+```bash
+sinc --uninstall
+```
+
+### shell completions
+
+enable tab completion for bash, zsh, or fish.
+
+```bash
+# bash
+sinc --completions bash >> ~/.bashrc
+source ~/.bashrc
+
+# zsh
+sinc --completions zsh >> ~/.zshrc
+
+# fish
+sinc --completions fish > ~/.config/fish/completions/sinc.fish
+```
+
+### explicit connect
+
+run the connect flow explicitly (same as bare `sinc`).
+
+```bash
+sinc connect
+```
+
+## flags
+
+| flag | short | description |
+| :--- | :--- | :--- |
+| `--help` | `-h` | show help |
+| `--version` | `-V` | show version |
+| `--resume` | `-r` | resume existing session |
+| `--quiet` | `-q` | suppress logs (for scripts) |
+| `--verbose` | `-v` | show debug output |
+| `--json` | | machine-readable output |
+| `--yes` | | skip confirmation prompts |
+| `--kill <id>` | `-k <id>` | kill a session |
+| `--list` | `-l` | list active sessions |
+| `--setup` | | run interactive setup |
+| `--uninstall` | | remove configuration |
+| `--completions <shell>` | | print shell completion script |
+
+## json output
+
+use `--json` for scriptable output:
+
+```bash
+sinc --json --list
+```
+
+returns session data as structured JSON — useful for piping into other tools.
+
 ## configuration
 
 config lives at `~/.config/sincronizado/config.json`.
@@ -244,7 +307,7 @@ local:
 
 remote (vps):
 - `tmux`: required for session persistence.
-- `opencode` or `claude`: the agent you want to run.
+- `opencode` or `claude`: the agent you want to run. set `"agent": "opencode"` or `"agent": "claude"` in config.
 - `git`: recommended for version control operations.
 
 bootstrap a fresh vps with our script:
