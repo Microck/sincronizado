@@ -1,4 +1,4 @@
-import type { Config } from "../config/schema";
+import type { Config } from '../config/schema';
 
 export interface ExecResult {
   success: boolean;
@@ -12,24 +12,24 @@ export async function sshExec(
   command: string
 ): Promise<ExecResult> {
   const args = [
-    "-o",
+    '-o',
     `ConnectTimeout=${config.ssh.connectTimeout}`,
-    "-o",
+    '-o',
     `ServerAliveInterval=${config.ssh.keepaliveInterval}`,
-    "-o",
-    "ServerAliveCountMax=3",
-    "-o",
-    "BatchMode=yes",
-    ...(config.ssh.identityFile ? ["-i", config.ssh.identityFile] : []),
-    "-p",
+    '-o',
+    'ServerAliveCountMax=3',
+    '-o',
+    'BatchMode=yes',
+    ...(config.ssh.identityFile ? ['-i', config.ssh.identityFile] : []),
+    '-p',
     String(config.vps.port),
     `${config.vps.user}@${config.vps.hostname}`,
     command,
   ];
 
-  const proc = Bun.spawn(["ssh", ...args], {
-    stdout: "pipe",
-    stderr: "pipe",
+  const proc = Bun.spawn(['ssh', ...args], {
+    stdout: 'pipe',
+    stderr: 'pipe',
   });
 
   const [stdout, stderr] = await Promise.all([
@@ -44,22 +44,22 @@ export async function sshExec(
 export async function testConnection(
   config: Config
 ): Promise<{ success: boolean; error?: string }> {
-  const result = await sshExec(config, "echo ok");
+  const result = await sshExec(config, 'echo ok');
   if (result.success) {
     return { success: true };
   }
 
-  if (result.stderr.includes("Connection timed out")) {
-    return { success: false, error: "Connection timed out" };
+  if (result.stderr.includes('Connection timed out')) {
+    return { success: false, error: 'Connection timed out' };
   }
-  if (result.stderr.includes("Connection refused")) {
-    return { success: false, error: "Connection refused - check if SSH is running" };
+  if (result.stderr.includes('Connection refused')) {
+    return { success: false, error: 'Connection refused - check if SSH is running' };
   }
-  if (result.stderr.includes("Permission denied")) {
-    return { success: false, error: "Permission denied - check SSH key" };
+  if (result.stderr.includes('Permission denied')) {
+    return { success: false, error: 'Permission denied - check SSH key' };
   }
-  if (result.stderr.includes("Could not resolve hostname")) {
-    return { success: false, error: "Could not resolve hostname" };
+  if (result.stderr.includes('Could not resolve hostname')) {
+    return { success: false, error: 'Could not resolve hostname' };
   }
-  return { success: false, error: result.stderr.trim() || "Unknown connection error" };
+  return { success: false, error: result.stderr.trim() || 'Unknown connection error' };
 }

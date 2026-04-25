@@ -1,13 +1,13 @@
 export function normalizeVersion(value: string): string {
   const trimmed = value.trim();
-  const noPrefix = trimmed.startsWith("v") ? trimmed.slice(1) : trimmed;
-  const withoutMeta = noPrefix.split("-")[0];
+  const noPrefix = trimmed.startsWith('v') ? trimmed.slice(1) : trimmed;
+  const withoutMeta = noPrefix.split('-')[0];
   return withoutMeta;
 }
 
 function parseVersion(value: string): number[] {
   return normalizeVersion(value)
-    .split(".")
+    .split('.')
     .map((part) => Number(part))
     .map((part) => (Number.isFinite(part) ? part : 0));
 }

@@ -1,16 +1,16 @@
-import { loadConfig } from "../../config";
-import { killSession } from "../../connection";
-import { terminateSync } from "../../sync";
-import { EXIT_CODES } from "../../utils";
-import { emitJson, formatError, formatSuccess, log } from "../output";
-import { isJson } from "../output-context";
+import { loadConfig } from '../../config';
+import { killSession } from '../../connection';
+import { terminateSync } from '../../sync';
+import { EXIT_CODES } from '../../utils';
+import { emitJson, formatError, formatSuccess, log } from '../output';
+import { isJson } from '../output-context';
 
 export async function kill(sessionName: string): Promise<number> {
   let config;
   try {
     config = await loadConfig();
   } catch (err) {
-    log(formatError("Failed to load config", (err as Error).message));
+    log(formatError('Failed to load config', (err as Error).message));
     return EXIT_CODES.CONFIG_ERROR;
   }
 
@@ -32,7 +32,7 @@ export async function kill(sessionName: string): Promise<number> {
   }
 
   if (isJson()) {
-    emitJson({ session: sessionName, terminated: false, error: "not found" });
+    emitJson({ session: sessionName, terminated: false, error: 'not found' });
   } else {
     log(formatError(`Session ${sessionName} not found`));
   }

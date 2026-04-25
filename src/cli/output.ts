@@ -1,11 +1,11 @@
-import ora, { type Ora } from "ora";
-import chalk from "chalk";
-import { getOutputMode, isJson, isVerbose, shouldLog } from "./output-context";
+import ora, { type Ora } from 'ora';
+import chalk from 'chalk';
+import { getOutputMode, isJson, isVerbose, shouldLog } from './output-context';
 
 export function createSpinner(text: string): Ora {
   const mode = getOutputMode();
   const isSilent = mode.quiet || mode.json;
-  return ora({ text, color: "cyan", isSilent });
+  return ora({ text, color: 'cyan', isSilent });
 }
 
 export function formatError(message: string, suggestion?: string): string {

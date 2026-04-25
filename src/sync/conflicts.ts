@@ -7,7 +7,7 @@ export interface SyncConflict {
 export function extractConflicts(sessionJson: unknown): SyncConflict[] {
   let data: any = sessionJson;
 
-  if (typeof sessionJson === "string") {
+  if (typeof sessionJson === 'string') {
     try {
       data = JSON.parse(sessionJson);
     } catch {
@@ -15,7 +15,7 @@ export function extractConflicts(sessionJson: unknown): SyncConflict[] {
     }
   }
 
-  if (!data || typeof data !== "object") {
+  if (!data || typeof data !== 'object') {
     return [];
   }
 
@@ -23,16 +23,16 @@ export function extractConflicts(sessionJson: unknown): SyncConflict[] {
   const conflicts: SyncConflict[] = [];
 
   for (const session of sessions) {
-    if (!session || typeof session !== "object") {
+    if (!session || typeof session !== 'object') {
       continue;
     }
     const sessionConflicts = Array.isArray(session.conflicts) ? session.conflicts : [];
     for (const conflict of sessionConflicts) {
-      if (!conflict || typeof conflict !== "object") {
+      if (!conflict || typeof conflict !== 'object') {
         continue;
       }
       const path = conflict.path || conflict.relativePath || conflict.file;
-      if (!path || typeof path !== "string") {
+      if (!path || typeof path !== 'string') {
         continue;
       }
       const alphaVersion =
@@ -41,8 +41,8 @@ export function extractConflicts(sessionJson: unknown): SyncConflict[] {
         conflict.betaVersion || conflict.beta?.version || conflict.beta?.path;
       conflicts.push({
         path,
-        alphaVersion: typeof alphaVersion === "string" ? alphaVersion : undefined,
-        betaVersion: typeof betaVersion === "string" ? betaVersion : undefined,
+        alphaVersion: typeof alphaVersion === 'string' ? alphaVersion : undefined,
+        betaVersion: typeof betaVersion === 'string' ? betaVersion : undefined,
       });
     }
   }
@@ -52,7 +52,7 @@ export function extractConflicts(sessionJson: unknown): SyncConflict[] {
 
 export function formatConflicts(conflicts: SyncConflict[]): string {
   if (conflicts.length === 0) {
-    return "No conflicts";
+    return 'No conflicts';
   }
 
   return conflicts
@@ -64,7 +64,7 @@ export function formatConflicts(conflicts: SyncConflict[]): string {
       if (versions.length === 0) {
         return conflict.path;
       }
-      return `${conflict.path} (${versions.join(", ")})`;
+      return `${conflict.path} (${versions.join(', ')})`;
     })
-    .join("\n");
+    .join('\n');
 }
