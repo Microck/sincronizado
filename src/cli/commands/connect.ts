@@ -25,7 +25,7 @@ interface ConnectOptions {
   resume?: boolean;
 }
 
-function quoteRemotePathForShell(path: string): string {
+export function quoteRemotePathForShell(path: string): string {
   if (path === "~") {
     return '"$HOME"';
   }
