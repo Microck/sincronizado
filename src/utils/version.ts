@@ -11,6 +11,12 @@ async function getBundledVersion(): Promise<string | null> {
   }
 }
 
+/**
+ * Returns the current version of the sincronizado CLI.
+ * Caches the result after first lookup. Tries the bundled version first,
+ * then falls back to reading the package.json version.
+ * @returns The version string (e.g. "1.2.3").
+ */
 export async function getCliVersion(): Promise<string> {
   if (cachedVersion) {
     return cachedVersion;
