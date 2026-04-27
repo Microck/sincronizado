@@ -1,6 +1,7 @@
 import type { Config } from "../config/schema";
 import { buildRemoteCommand, type ConnectionProtocol } from "./protocol";
 import { sshExec } from "./ssh";
+import { shellQuote } from "../utils/shell";
 
 export async function hasSession(
   config: Config,
@@ -8,7 +9,7 @@ export async function hasSession(
 ): Promise<boolean> {
   const result = await sshExec(
     config,
-    `tmux has-session -t ${sessionName} 2>/dev/null`
+    `tmux has-session -t ${shellQuote(sessionName)} 2>/dev/null`
   );
   return result.success;
 }
@@ -26,7 +27,7 @@ export async function killSession(
   config: Config,
   sessionName: string
 ): Promise<boolean> {
-  const result = await sshExec(config, `tmux kill-session -t ${sessionName}`);
+  const result = await sshExec(config, `tmux kill-session -t ${shellQuote(sessionName)}`);
   return result.success;
 }
 
@@ -37,7 +38,7 @@ export function buildTmuxAttachCommand(
   workDir: string,
   initialCommand: string
 ): string[] {
-  const tmuxCmd = `tmux new-session -A -s ${sessionName} -c ${workDir} '${initialCommand}'`;
+  const tmuxCmd = `tmux new-session -A -s ${shellQuote(sessionName)} -c ${shellQuote(workDir)} ${shellQuote(initialCommand)}`;
 
   const args = buildRemoteCommand(config, protocol, tmuxCmd);
   if (protocol === "ssh" && !args.includes("-t")) {
