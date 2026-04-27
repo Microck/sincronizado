@@ -1,0 +1,17 @@
+# CODEOWNERS - Bus Factor Mitigation
+# See MAINTAINERS.md for project ownership details
+
+# Default owner for everything
+* @Microck
+
+# Documentation
+/docs/ @Microck
+
+# Core modules - knowledge concentration areas
+/src/sync/ @Microck
+/src/connection/ @Microck
+/src/installer/ @Microck
+/src/config/ @Microck
+
+# CLI commands
+/src/cli/commands/ @Microck
