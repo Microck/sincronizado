@@ -18,5 +18,7 @@ jobs:
           bun-version: latest
       - name: Install dependencies
         run: bun install
+      - name: Build to catch type errors
+        run: bun run build
       - name: Run tests
         run: bun test

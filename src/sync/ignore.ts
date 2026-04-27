@@ -7,13 +7,20 @@ export async function loadSyncIgnore(projectPath: string): Promise<string[]> {
   try {
     contents = await fs.readFile(filePath, "utf8");
   } catch (error) {
-    if ((error as NodeJS.ErrnoException).code === "ENOENT") {
+    // EC-27 fix: handle permission denied (EACCES) gracefully by returning empty patterns.
+    // EC-01 adjacent fix: also handle ENOENT by returning [].
+    const code = (error as NodeJS.ErrnoException).code;
+    if (code === "ENOENT" || code === "EACCES") {
       return [];
     }
     throw error;
   }
 
-  return contents
+  // EC-26 fix: strip UTF-8 BOM before processing. A BOM at the start of the file
+  // would otherwise become part of the first pattern or cause silent mis-matches.
+  const withoutBom = contents.replace(/^\uFEFF/, "");
+
+  return withoutBom
     .split(/\r?\n/)
     .map((line) => line.trim())
     .filter((line) => line.length > 0)

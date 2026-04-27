@@ -133,6 +133,10 @@ Run tests:
 bun test
 ```
 
+## Historical Notes
+
+- The `legacy/unused/` directory (previously 316KB) was removed in v1.2. It contained superseded installer code, configs, and documentation from pre-src/ development. No references existed in the current codebase.
+
 ## Questions?
 
 - Open an issue for questions
