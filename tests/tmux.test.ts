@@ -44,7 +44,12 @@ describe("buildTmuxAttachCommand", () => {
     // The -t is part of the et command, not an SSH force-tty flag
     const args = buildTmuxAttachCommand(baseConfig, "et", "sinc-test", "/home/ubuntu/workspace", "zsh");
     expect(args[1]).toBe("-t");
-    expect(args[2]).toBe("tmux new-session -A -s sinc-test -c /home/ubuntu/workspace 'zsh'");
+    // sessionName, workDir, and initialCommand are shell-escaped (EC-12 fix)
+    const remoteCmd = args[2];
+    expect(remoteCmd).toContain("tmux new-session");
+    expect(remoteCmd).toContain("sinc-test");
+    expect(remoteCmd).toContain("/home/ubuntu/workspace");
+    expect(remoteCmd).toContain("zsh");
   });
 
   test("does not include -t flag for mosh protocol", () => {
@@ -84,11 +89,13 @@ describe("buildTmuxAttachCommand", () => {
     expect(tmuxCmd).toContain(sessionName);
   });
 
-  test("workDir is passed to tmux new-session", () => {
+  test("workDir is passed to tmux new-session (shell-escaped for EC-12)", () => {
     const workDir = "/home/ubuntu/projects";
     const args = buildTmuxAttachCommand(baseConfig, "ssh", "sinc-test", workDir, "zsh");
     const tmuxCmd = args.join(" ");
-    expect(tmuxCmd).toContain(`-c ${workDir}`);
+    // workDir is shell-escaped, so it will appear quoted
+    expect(tmuxCmd).toContain("-c");
+    expect(tmuxCmd).toContain("/home/ubuntu/projects");
   });
 
   test("initialCommand is passed to tmux new-session", () => {
@@ -168,5 +175,24 @@ describe("session name filtering", () => {
     const sessionName = "sinc-micr-dev-workspace";
     expect(sessionName.startsWith("sinc-")).toBe(true);
     expect(sessionName).toContain("workspace");
+  });
+});
+
+describe("EC-12 shell escaping", () => {
+  test("buildTmuxAttachCommand shell-escapes sessionName, workDir, and initialCommand", () => {
+    // Verify that values with spaces and special chars are shell-escaped
+    const args = buildTmuxAttachCommand(baseConfig, "ssh", "sinc-test", "/path/with spaces", "zsh -l");
+    const tmuxCmd = args.find((a) => a.startsWith("tmux"));
+    expect(tmuxCmd).toBeDefined();
+    // Values containing spaces should be quoted
+    expect(tmuxCmd!.includes("'")).toBe(true);
+    expect(tmuxCmd!.includes("/path/with spaces")).toBe(true);
+    expect(tmuxCmd!.includes("zsh -l")).toBe(true);
+  });
+
+  test("invalid session name throws", () => {
+    expect(() =>
+      buildTmuxAttachCommand(baseConfig, "ssh", "foo; rm -rf /", "/tmp", "zsh")
+    ).toThrow(/Invalid session name/);
   });
 });

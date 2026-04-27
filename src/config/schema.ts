@@ -1,9 +1,20 @@
 import { z } from "zod";
 
+// Validates that a string contains only safe characters for use in SSH arguments.
+// Prevents command injection via malicious hostname/user values in config.
+const safeIdentifier = (fieldName: string) =>
+  z
+    .string()
+    .min(1, `${fieldName} cannot be empty`)
+    .regex(
+      /^[a-zA-Z0-9]([a-zA-Z0-9._-]*[a-zA-Z0-9])?$/,
+      `${fieldName} contains invalid characters. Only letters, numbers, dots, hyphens, and underscores are allowed.`
+    );
+
 export const configSchema = z.object({
   vps: z.object({
-    hostname: z.string().min(1),
-    user: z.string().default("ubuntu"),
+    hostname: safeIdentifier("Hostname"),
+    user: safeIdentifier("Username").default("ubuntu"),
     port: z.number().int().positive().default(22),
   }),
   sync: z

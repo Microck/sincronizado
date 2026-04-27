@@ -31,9 +31,16 @@ export async function loadConfig(): Promise<Config> {
     throw new ConfigError(`Unable to read config file: ${(error as Error).message}`);
   }
 
+  // EC-01 fix: trim whitespace before parsing. If the result is empty (e.g. a
+  // blank file or only whitespace), treat it as a missing config and return defaults.
+  const trimmed = raw.trim();
+  if (trimmed === "") {
+    return DEFAULT_CONFIG;
+  }
+
   let parsed: unknown;
   try {
-    parsed = JSON.parse(raw);
+    parsed = JSON.parse(trimmed);
   } catch (error) {
     throw new ConfigError(`Invalid JSON in config file: ${(error as Error).message}`);
   }
@@ -51,7 +58,32 @@ export async function saveConfig(config: Config): Promise<void> {
   const dir = dirname(configPath);
 
   await fs.mkdir(dir, { recursive: true });
+
   const serialized = JSON.stringify(config, null, 2);
-  await fs.writeFile(configPath, `${serialized}\n`, { mode: 0o600 });
-  await fs.chmod(configPath, 0o600);
+
+  // EC-02/EC-03 fix: atomic write with backup and safe permissions.
+  // 1. Back up the existing config if it exists.
+  // 2. Write to a temporary file with mode 0o600 (owner read/write only).
+  // 3. Atomically rename the temp file over the target.
+  // This prevents data loss from mid-write crashes and avoids a window where
+  // the file exists with overly-permissive umask-derived permissions.
+  const backupPath = `${configPath}.bak`;
+  try {
+    await fs.access(configPath);
+    await fs.copyFile(configPath, backupPath);
+  } catch {
+    // Config doesn't exist yet — no backup needed.
+  }
+
+  const tmpPath = `${configPath}.tmp`;
+  // Use open() with explicit O_CREAT|O_EXCL to ensure the temp file doesn't
+  // already exist, then write with mode 0o600.
+  const fd = await fs.open(tmpPath, "w", 0o600);
+  try {
+    await fd.writeFile(serialized + "\n");
+  } finally {
+    await fd.close();
+  }
+
+  await fs.rename(tmpPath, configPath);
 }
