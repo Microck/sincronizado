@@ -11,30 +11,7 @@
   <a href="https://bun.sh/"><img alt="bun" src="https://img.shields.io/badge/bun-1.0+-yellow.svg" /></a>
   <a href="https://nodejs.org/"><img alt="node" src="https://img.shields.io/badge/node-18+-green.svg" /></a>
   <a href="https://sincronizado.micr.dev"><img alt="docs" src="https://img.shields.io/badge/docs-mintlify-00C7B7.svg" /></a>
-  <a href="https://github.com/Microck/sincronizado/actions"><img alt="ci" src="https://img.shields.io/github/actions/workflow/status/Microck/sincronizado/ci.yml?style=flat-square" /></a>
-  <a href="https://github.com/Microck/sincronizado/stargazers"><img alt="stars" src="https://img.shields.io/github/stars/Microck/sincronizado?style=flat-square" /></a>
-  <a href="https://github.com/Microck/sincronizado/releases"><img alt="version" src="https://img.shields.io/github/v/release/Microck/sincronizado?style=flat-square" /></a>
 </p>
-
----
-
-## quick start
-
-```bash
-# 1. install (linux/macos)
-curl -fsSL https://sync.micr.dev/install.sh | bash
-
-# 2. configure your vps
-sinc --setup
-
-# 3. go to any project and start syncing
-cd ~/my-project
-sinc
-```
-
-**what happens:** your local files sync to `~/workspace/my-project` on your vps and a tmux session opens — paste your agent command there.
-
-for windows, see [installation](#installation). for manual install from source, see [manual](#manual-from-source).
 
 ---
 
